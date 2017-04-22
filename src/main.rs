@@ -6,13 +6,13 @@ use clap::{Arg, App, SubCommand};
 use lib::arch;
 use std::error::Error;
 
-const VERSION: &'static str = "0.1.0";
+const VERSION: &'static str = "v0.1.0";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 
 fn main()
 {
     let arguments: Vec<String> = std::env::args().collect();
-    let program = arguments[0].clone();
+    let program = std::path::Path::new(&arguments[0]).file_name().unwrap().to_str().unwrap();
     let matches = App::new(program)
                           .version(VERSION)
                           .author(AUTHOR)

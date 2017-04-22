@@ -26,7 +26,7 @@ pub struct Container {
     changed: Timespec
 }
 impl Container {
-    pub fn new<TEXT: Into<String>>(path: TEXT, name: TEXT, md5: TEXT) -> Self {
+    pub fn new<TEXT: Into<Text>>(path: TEXT, name: TEXT, md5: TEXT) -> Self {
         Container {
             id: 0,
             path: path.into(),
@@ -50,7 +50,7 @@ pub struct File {
     changed: Timespec
 }
 impl File {
-    pub fn new<TEXT: Into<String>>(container: Id, path: TEXT, name: TEXT, md5: TEXT) -> Self {
+    pub fn new<TEXT: Into<Text>>(container: Id, path: TEXT, name: TEXT, md5: TEXT) -> Self {
         File {
             id: 0,
             container: container,
