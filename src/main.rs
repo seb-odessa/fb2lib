@@ -62,18 +62,10 @@ fn main()
             println!("Using input ZIP file: {}", filename);
         }
         match arch::open_zip(&filename) {
-            Ok(mut archive) => show(&mut archive),
+            Ok(mut archive) => arch::show(&mut archive),
             Err(e) => println!("Caused by: {}", e.cause().unwrap())
         }
     }
 }
 
-fn show(archive: &mut zip::ZipArchive<std::fs::File>)
-{
-    for i in 0..archive.len()
-    {
-        let file = archive.by_index(i).unwrap();
-        let outpath = arch::sanitize_filename(file.name());
-        println!("{}", outpath.display());
-    }
-}
+

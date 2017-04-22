@@ -15,15 +15,20 @@ pub enum Status {
     FAILED = 6
 }
 
+pub enum Registrable {
+    Container(Container),
+    File(File),
+}
+
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Container {
-    id: Id,
-    path: Text,
-    name: Text,
-    md5: Text,
-    status: Status,
-    changed: Timespec
+    pub id: Id,
+    pub path: Text,
+    pub name: Text,
+    pub md5: Text,
+    pub status: Status,
+    pub changed: Timespec
 }
 impl Container {
     pub fn new<TEXT: Into<Text>>(path: TEXT, name: TEXT, md5: TEXT) -> Self {
@@ -41,13 +46,13 @@ impl Container {
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct File {
-    id: Id,
-    container: Id,
-    path: Text,
-    name: Text,
-    md5: Text,
-    status: Status,
-    changed: Timespec
+    pub id: Id,
+    pub container: Id,
+    pub path: Text,
+    pub name: Text,
+    pub md5: Text,
+    pub status: Status,
+    pub changed: Timespec
 }
 impl File {
     pub fn new<TEXT: Into<Text>>(container: Id, path: TEXT, name: TEXT, md5: TEXT) -> Self {

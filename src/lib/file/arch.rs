@@ -14,6 +14,16 @@ pub fn open_zip(name: &str) -> zip::result::ZipResult<zip::ZipArchive<std::fs::F
     zip::ZipArchive::new(file)
 }
 
+pub fn show(archive: &mut zip::ZipArchive<std::fs::File>)
+{
+    for i in 0..archive.len()
+    {
+        let file = archive.by_index(i).unwrap();
+        let outpath = sanitize_filename(file.name());
+        println!("{}", outpath.display());
+    }
+}
+
 #[cfg(unix)]
 pub fn convert_permissions(mode: Option<u32>) -> Option<fs::Permissions>
 {
