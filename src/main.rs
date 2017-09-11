@@ -1,71 +1,99 @@
 extern crate zip;
-extern crate lib;
 extern crate clap;
 
-use clap::{Arg, App, SubCommand};
-use lib::arch;
-use std::error::Error;
+use clap::{Arg, App, SubCommand, AppSettings};
+
+use std::io::Read;
+use zip::result::ZipResult;
 
 const VERSION: &'static str = "v0.1.0";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
+const ARCHIVE: &'static str = "fb_archive.zip";
+const FILE: &'static str = "fb_book.fb2";
 
-fn main()
-{
+const CMD_LS: &'static str = "ls";
+const CMD_CAT: &'static str = "cat";
+
+fn main() {
     let arguments: Vec<String> = std::env::args().collect();
-    let program = std::path::Path::new(&arguments[0]).file_name().unwrap().to_str().unwrap();
+    let program = std::path::Path::new(&arguments[0])
+        .file_name()
+        .unwrap()
+        .to_str()
+        .unwrap();
+
     let matches = App::new(program)
-                          .version(VERSION)
-                          .author(AUTHOR)
-                          .about("FictionBook 2.0 Database CLI tool")
-                          .arg(Arg::with_name("database")
-                               .short("D")
-                               .long("database")
-                               .value_name("FILE")
-                               .help("Sets a custom database file, e.g.: fb2lib.db")
-                               .takes_value(true))
-                          .arg(Arg::with_name("v")
-                               .short("v")
-                               .multiple(true)
-                               .help("Sets the level of verbosity"))
-                          .subcommand(SubCommand::with_name("show")
-                                      .about("List content of the zip container")
-                                      .version(VERSION)
-                                      .author(AUTHOR)
-                                      .arg(Arg::with_name("file.zip")
-                                        .help("Container with FB2 files, e.g.: fb2-618000-620999.zip")
-                                        .required(true)
-                                        .index(1)))
-                          .subcommand(SubCommand::with_name("load")
-                                      .about("Load content of the zip container into DB")
-                                      .version(VERSION)
-                                      .author(AUTHOR)
-                                      .arg(Arg::with_name("file.zip")
-                                        .help("Container with FB2 files, e.g.: fb2-618000-620999.zip")
-                                        .required(true)
-                                        .index(1)))
-                          .get_matches();
+        .version(VERSION)
+        .author(AUTHOR)
+        .about("FictionBook Library Archive Manager")
+        .setting(AppSettings::ArgRequiredElseHelp)
+        .subcommand(
+            SubCommand::with_name(CMD_LS)
+                .about("List archive contents")
+                .arg(Arg::with_name(ARCHIVE)
+                    .help("Zip archive with books in FB2 format")
+                    .required(true)
+                    .index(1),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name(CMD_CAT)
+                .about("Concatenate files and print on the standard output")
+                .arg(Arg::with_name(ARCHIVE)
+                    .help("Zip archive with books in FB2 format")
+                    .required(true)
+                    .index(1)
+                .arg(Arg::with_name(ARCHIVE)
+                    .help("File in FB2 format")
+                    .required(true)
+                    .index(2),
+                ),
 
-    let verbose = match matches.occurrences_of("v") {
-        0 => false,
-        1 => true,
-        _ => { println!("Only one verbose level implemented."); true }
+        )
+        .get_matches();
+
+    let result = if let Some(matches) = matches.subcommand_matches(CMD_LS) {
+        let archive_name = matches.value_of(ARCHIVE).unwrap();
+        do_ls(&archive_name);
+    } else if let Some(matches) = matches.subcommand_matches(CMD_CAT) {
+        let archive_name = matches.value_of(ARCHIVE).unwrap();
+        let book_name = matches.value_of(FILE).unwrap();
+        do_cat(&archive_name, &book_name);
     };
+/*
+    match (result) {
+        Ok() => {},
+        Err(err) => { println!("{}", err.description()); },
+    }
+*/
+}
 
-    let database = matches.value_of("database").unwrap_or("fb2lib.db");
-    if verbose {
-        println!("FictionBook 2.0 Library DataBase: {}", database);
+fn do_ls(archive_name: &str) -> ZipResult<()> {
+    let file = std::fs::File::open(&std::path::Path::new(archive_name))?;
+    let mut archive = zip::ZipArchive::new(file)?;
+
+    for i in 0..archive.len() {
+        let zip_file = archive.by_index(i)?;
+        println!(
+            "Filename: {}, {} / {}",
+            zip_file.name(),
+            zip_file.compressed_size(),
+            zip_file.size()
+        );
+
+        let bytes = zip_file.bytes().take(1024);
+
+        for byte in bytes {
+            //            print!("{}", byte.unwrap() as char);
+        }
+        println!("");
     }
 
-    if let Some(matches) = matches.subcommand_matches("show") {
-        let filename = matches.value_of("file.zip").unwrap();
-        if verbose {
-            println!("Using input ZIP file: {}", filename);
-        }
-        match arch::open_zip(&filename) {
-            Ok(mut archive) => arch::show(&mut archive),
-            Err(e) => println!("Caused by: {}", e.cause().unwrap())
-        }
-    }
+    Ok(())
 }
 
 
+fn do_cat(archive_name: &str, filename: &str) -> ZipResult<()> {
+
+    Ok(())
+}
