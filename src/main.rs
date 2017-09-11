@@ -111,11 +111,22 @@ fn do_cat(archive_name: &str, file_name: &str) -> ZipResult<()> {
             zip_file.size()
         );
         if zip_file.name() == file_name {
-            let bytes = zip_file.bytes().take(1024);
-            for byte in bytes {
-                print!("{}", byte.unwrap() as char);
+            let mut bytes = vec!();
+            for byte in zip_file.bytes().take(8192) {
+                match byte {
+                    Ok(b) => bytes.push(b),
+                    Err(e) => break,
+                }
             }
-            println!("");
+
+            match String::from_utf8(bytes) {
+                Ok(utf8) => {
+                    print!("{}", utf8)
+                },
+                Err(e) => {
+                        println!("Non UTF8");
+                }
+            };
         }
     }
     Ok(())
