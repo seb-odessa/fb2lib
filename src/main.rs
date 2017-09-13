@@ -1,10 +1,11 @@
+extern crate lib;
 extern crate zip;
 extern crate clap;
 
 use clap::{Arg, App, SubCommand, AppSettings};
 use std::error::Error;
-use std::io::{Read, ErrorKind};
-use zip::result::ZipResult;
+use lib::result::Fb2Error;
+use lib::subcommands::{do_ls, do_cat};
 
 
 const VERSION: &'static str = "v0.1.0";
@@ -31,24 +32,27 @@ fn main() {
         .subcommand(
             SubCommand::with_name(CMD_LS)
                 .about("List archive contents")
-                .arg(Arg::with_name(ARCHIVE)
-                    .help("Zip archive with books in FB2 format")
-                    .required(true)
-                    .index(1),
+                .arg(
+                    Arg::with_name(ARCHIVE)
+                        .help("Zip archive with books in FB2 format")
+                        .required(true)
+                        .index(1),
                 ),
         )
         .subcommand(
             SubCommand::with_name(CMD_CAT)
                 .about("Concatenate files and print on the standard output")
-                .arg(Arg::with_name(ARCHIVE)
-                    .help("Zip archive with books in FB2 format")
-                    .required(true)
-                    .index(1),
+                .arg(
+                    Arg::with_name(ARCHIVE)
+                        .help("Zip archive with books in FB2 format")
+                        .required(true)
+                        .index(1),
                 )
-                .arg(Arg::with_name(FILE)
-                    .help("File in FB2 format")
-                    .required(true)
-                    .index(2),
+                .arg(
+                    Arg::with_name(FILE)
+                        .help("File in FB2 format")
+                        .required(true)
+                        .index(2),
                 ),
         )
         .get_matches();
@@ -56,67 +60,18 @@ fn main() {
     let result = match app.subcommand() {
         (CMD_LS, Some(cmd)) => {
             let archive_name = cmd.value_of(ARCHIVE).unwrap();
-            make(do_ls(&archive_name))
-        },
+            do_ls(&archive_name)
+        }
         (CMD_CAT, Some(cmd)) => {
             let archive_name = cmd.value_of(ARCHIVE).unwrap();
             let book_name = cmd.value_of(FILE).unwrap();
-            make(do_cat(&archive_name, &book_name))
-        },
-        _ => {
-            Err(std::io::Error::new(ErrorKind::Other, "SubCommand not found"))
-        },
+            do_cat(&archive_name, &book_name)
+        }
+        _ => Err(Fb2Error::UnsupportedSubCommand),
     };
 
     match result {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(e) => println!("{}", e.description()),
     }
-}
-
-fn make(src: ZipResult<()>) -> std::result::Result<(), std::io::Error> {
-    match src {
-        Ok(_) => Ok(()),
-        Err(e) => Err(std::io::Error::new(ErrorKind::Other, e.description())),
-    }
-}
-
-
-fn do_ls(archive_name: &str) -> ZipResult<()> {
-    let file = std::fs::File::open(&std::path::Path::new(archive_name))?;
-    let mut archive = zip::ZipArchive::new(file)?;
-
-    for i in 0..archive.len() {
-        let zip_file = archive.by_index(i)?;
-        println!(
-            "Filename: {}, {} / {}",
-            zip_file.name(),
-            zip_file.compressed_size(),
-            zip_file.size()
-        );
-    }
-    Ok(())
-}
-
-fn do_cat(archive_name: &str, file_name: &str) -> ZipResult<()> {
-    let file = std::fs::File::open(&std::path::Path::new(archive_name))?;
-    let mut archive = zip::ZipArchive::new(file)?;
-
-    for i in 0..archive.len() {
-        let zip_file = archive.by_index(i)?;
-        println!(
-            "Filename: {}, {} / {}",
-            zip_file.name(),
-            zip_file.compressed_size(),
-            zip_file.size()
-        );
-        if zip_file.name() == file_name {
-            let bytes = zip_file.bytes().take(1024);
-            for byte in bytes {
-                print!("{}", byte.unwrap() as char);
-            }
-            println!("");
-        }
-    }
-    Ok(())
 }

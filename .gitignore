@@ -3,3 +3,5 @@ target
 Cargo.lock
 db/*-journal
 data/fb2-393072-405875.zip
+*.rs.bk
+*.rs.fmt
