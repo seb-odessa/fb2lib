@@ -12,3 +12,4 @@ path = "src/lib/lib.rs"
     rusqlite = "*"
     time = "*"
     clap = "*"
+    iconv-rs = { git = "https://github.com/seb-odessa/iconv-rs.git" }

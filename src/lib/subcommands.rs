@@ -1,5 +1,3 @@
-extern crate std;
-extern crate zip;
 
 use tools;
 use archive;

@@ -32,8 +32,8 @@ fn load(file: &mut ZipFile, result: &mut Vec<u8>) -> Fb2Result<usize> {
 pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
     while let Some(_) = load(file, &mut header).ok() {
-        if let Some(size) = tools::find_subsequence(&header, DESC_CLOSE_TAG.as_bytes()) {
-            header.resize(size, 0u8);
+        if let Some(position) = tools::find(&header, DESC_CLOSE_TAG.as_bytes()) {
+            header.resize(position, 0u8);
             header.extend_from_slice(DESC_CLOSE_TAG.as_bytes());
             header.extend_from_slice(FB_CLOSE_TAG.as_bytes());
             return Ok(header);

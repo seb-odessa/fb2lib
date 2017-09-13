@@ -1,5 +1,4 @@
 extern crate lib;
-extern crate zip;
 extern crate clap;
 
 use clap::{Arg, App, SubCommand, AppSettings};
@@ -14,7 +13,7 @@ const ARCHIVE: &'static str = "fb_archive.zip";
 const FILE: &'static str = "fb_book.fb2";
 
 const CMD_LS: &'static str = "ls";
-const CMD_INFO: &'static str = "cat";
+const CMD_INFO: &'static str = "info";
 
 fn main() {
     let arguments: Vec<String> = std::env::args().collect();
