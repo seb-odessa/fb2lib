@@ -7,6 +7,7 @@ use std::io::Read;
 use zip::read::ZipFile;
 
 const BUFFER_LENGTH: usize = 1024;
+const FB_CLOSE_TAG: &'static str = "\n</FictionBook>";
 const DESCRIPTION_TAG: &'static str = "</description>";
 
 fn do_open_archive(archive_name: &str) -> Fb2Result<zip::ZipArchive<std::fs::File>> {
@@ -57,7 +58,8 @@ fn load_header(file: &mut ZipFile, header: &mut Vec<u8>) -> Fb2Result<()> {
     while let Some(size) = load(file, header).ok() {
         println!("Loaded {} bytes", size);
         if let Some(size) = find_subsequence_end(&header, DESCRIPTION_TAG.as_bytes()) {            
-            header.resize(size, 0);
+            header.resize(size, 0);            
+            header.extend_from_slice(FB_CLOSE_TAG.as_bytes());
             return Ok(());
         }
     }    
