@@ -20,6 +20,9 @@ pub enum Fb2Error {
     /// This archive is not supported
     UnsupportedArchive(&'static str),
 
+    /// This archive is not supported
+    UnableToLoadFb2Header,
+
     /// The requested file could not be found in the archive
     FileNotFound,
 
@@ -38,8 +41,9 @@ impl Fb2Error {
             Fb2Error::InvalidArchive(msg) |
             Fb2Error::UnsupportedArchive(msg) => {
                 (self.description().to_string() + ": " + msg).into()
-            }
+            }            
             Fb2Error::FileNotFound |
+            Fb2Error::UnableToLoadFb2Header |
             Fb2Error::UnsupportedSubCommand => self.description().into(),
         }
     }
@@ -80,6 +84,7 @@ impl error::Error for Fb2Error {
             Fb2Error::Io(ref io_err) => (io_err as &error::Error).description(),
             Fb2Error::InvalidArchive(..) => "Invalid Zip archive",
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
+            Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 Header (<description></description>)",
             Fb2Error::UnsupportedSubCommand => "Unsupported sub command",
             Fb2Error::FileNotFound => "Specified file not found in archive",
         }

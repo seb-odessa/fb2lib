@@ -2,7 +2,12 @@ extern crate std;
 extern crate zip;
 
 use result::Fb2Result;
+use result::Fb2Error;
 use std::io::Read;
+use zip::read::ZipFile;
+
+const BUFFER_LENGTH: usize = 1024;
+const DESCRIPTION_TAG: &'static str = "</description>";
 
 fn do_open_archive(archive_name: &str) -> Fb2Result<zip::ZipArchive<std::fs::File>> {
     let file = std::fs::File::open(&std::path::Path::new(archive_name))?;
@@ -24,12 +29,43 @@ pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     Ok(())
 }
 
+fn load(file: &mut ZipFile, result: &mut Vec<u8>) -> Fb2Result<usize> {
+    let mut buffer: [u8; BUFFER_LENGTH] = [0; BUFFER_LENGTH];
+    match file.read(&mut buffer) {
+        Ok(size) => {
+            result.extend_from_slice(&buffer);
+            Ok(size)
+        },
+        Err(err) => {
+            Err(Fb2Error::Io(err))
+        },
+    }
+}
+
+fn find_subsequence(haystack: &[u8], needle: &[u8]) -> Option<usize> {
+    haystack.windows(needle.len()).position(|window| window == needle)
+}
+
+fn load_header(file: &mut ZipFile, header: &mut Vec<u8>) -> Fb2Result<()> {    
+    while let Some(size) = load(file, header).ok() {
+        println!("Loaded {} bytes", size);
+        if find_subsequence(&header, DESCRIPTION_TAG.as_bytes()).is_some() {
+            return Ok(());
+        }
+    }    
+    Err(Fb2Error::UnableToLoadFb2Header)
+            // match std::str::from_utf8(&header) {
+            //     Ok(utf8) => 
+            //     Err(_) => {}
+            // }
+}
+
 pub fn do_cat(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let mut archive = do_open_archive(archive_name)?;
-    let zip_file = archive.by_name(file_name)?;
-    let bytes = zip_file.bytes().take(1024);
-    for byte in bytes {
-        print!("{}", byte.unwrap() as char);
-    }
+    let mut file = archive.by_name(file_name)?;
+    let mut header: Vec<u8> = Vec::new();
+    load_header(&mut file, &mut header)?;    
+    println!("Header length: {}", header.len());   
+    
     Ok(())
 }
