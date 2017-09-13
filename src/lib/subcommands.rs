@@ -83,7 +83,7 @@ pub fn do_cat(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     load_header(&mut file, &mut header)?;
     let description = as_utf8(&header)?;
     println!("Header length: {}", header.len());
-    println!("Header length: {}", description);
+    println!("{}", description);
     
     Ok(())
 }
