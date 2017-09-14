@@ -67,6 +67,11 @@ impl convert::From<std::str::Utf8Error> for Fb2Error {
     }
 }
 
+impl convert::From<std::string::FromUtf8Error> for Fb2Error {
+    fn from(_: std::string::FromUtf8Error) -> Fb2Error {
+        Fb2Error::UnableToMakeUtf8
+    }
+}
 
 impl convert::From<ZipError> for Fb2Error {
     fn from(err: ZipError) -> Fb2Error {

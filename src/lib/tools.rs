@@ -1,8 +1,6 @@
-
 use result::Fb2Result;
 use result::Fb2Error;
 use iconv::Converter;
-
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     haystack.windows(needle.len()).position(
@@ -25,16 +23,18 @@ pub fn get_encoding(header: &Vec<u8>) -> Option<String> {
 }
 
 pub fn as_utf8(header: &Vec<u8>) -> Fb2Result<String> {
+    let mut result = header.clone();
     if let Some(encoding) = get_encoding(&header) {
         if encoding != String::from("utf-8") {
-            let mut result = Vec::new();    
-            result.resize(4 * header.len(), 0u8);
-            let (_, _, _) = Converter::new(&encoding, "utf-8").convert(&header, &mut result);
-            Ok(String::from(String::from_utf8_lossy(&result)))
-        } else {
-            Ok(String::from(String::from_utf8_lossy(&header)))
-        }   
-    } else {
-        Err(Fb2Error::UnableToMakeUtf8)
+            result.resize(3 * header.len(), 0);
+            let (_, output_length, ret) = Converter::new(&encoding, "utf-8").convert(&header, &mut result);
+            if 0 != ret && output_length == result.len() {
+                return Err(Fb2Error::UnableToMakeUtf8);
+            }
+        }
+    }
+    match String::from_utf8(result) {
+        Ok(utf8) => Ok(utf8),
+        Err(_) => Err(Fb2Error::UnableToMakeUtf8)
     }
 }
