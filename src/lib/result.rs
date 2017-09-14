@@ -1,4 +1,6 @@
 //! Error types that can be emitted from this library
+extern crate std;
+
 use std::convert;
 use std::error;
 use std::fmt;
@@ -58,6 +60,13 @@ impl convert::From<io::Error> for Fb2Error {
         Fb2Error::Io(err)
     }
 }
+
+impl convert::From<std::str::Utf8Error> for Fb2Error {
+    fn from(_: std::str::Utf8Error) -> Fb2Error {
+        Fb2Error::UnableToMakeUtf8
+    }
+}
+
 
 impl convert::From<ZipError> for Fb2Error {
     fn from(err: ZipError) -> Fb2Error {

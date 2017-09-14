@@ -1,16 +1,19 @@
 
 use std::io;
-//use std::io::{Result, Error, Write, Read};
 use std::mem;
 use std::ptr;
 use std::str;
 use std::ffi::CString;
-//use std::iter;
-use libc::{c_char, size_t, c_int}; //, c_void
-use iconv_rs::iconv_t;
-use iconv_rs::iconv;
-use iconv_rs::iconv_open;
-use iconv_rs::iconv_close;
+use libc::{c_char, size_t, c_int, c_void}; 
+
+#[allow(non_camel_case_types)]
+type iconv_t = *mut c_void;
+
+extern "C" {
+    fn iconv_open(__tocode: *const c_char, __fromcode: *const c_char) -> iconv_t;
+    fn iconv(__cd: iconv_t, __inbuf: *mut *mut c_char, __inbytesleft: *mut size_t, __outbuf: *mut *mut c_char, __outbytesleft: *mut size_t) -> size_t;
+    fn iconv_close(__cd: iconv_t) -> c_int;
+}
 
 pub struct Converter {
     cd: iconv_t

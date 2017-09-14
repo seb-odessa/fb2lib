@@ -1,4 +1,3 @@
-extern crate std;
 
 use result::Fb2Result;
 use result::Fb2Error;
@@ -11,27 +10,31 @@ pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     )
 }
 
-pub fn from(input: &Vec<u8>) -> () {
-    const UTF8: &str = "utf-8";
-    const WIN_RU: &str = "windows-1251";
-    let mut out = Vec::new();
-    out.resize(2 * input.len(), 0u8);
-    let conv = Converter::new(WIN_RU, UTF8);
-    let (a, b, c) = conv.convert(&input, &mut out);
-    println!("({}, {}, {})", a,b,c);
-    println!("{}", std::str::from_utf8(&out).unwrap());
+pub fn get_encoding(header: &Vec<u8>) -> Option<String> {
+    // Looking for <?xml version="1.0" encoding="Windows-1251"?> subsequence
+    const BEGIN: &str = "encoding=\"";
+    const END: &str = "\"?>";
+    if let Some(pos) = find(&header, BEGIN.as_bytes()) {
+        if let Some(end) = find(&header, END.as_bytes()) {
+            let start = pos + BEGIN.len();
+            let encoding = String::from_utf8_lossy(&header[start..end]).to_lowercase();
+            return Some(encoding);
+        }
+    }
+    None
 }
 
 pub fn as_utf8(header: &Vec<u8>) -> Fb2Result<String> {
-    match std::str::from_utf8(&header) {
-        Ok(utf8) => Ok(String::from(utf8)),
-        Err(err) => {
-            println!(
-                "Non UTF8 content. Was able to read only {} bytes.",
-                err.valid_up_to()
-            );
-            from(header);
-            Err(Fb2Error::UnableToMakeUtf8)
-        }
+    if let Some(encoding) = get_encoding(&header) {
+        if encoding != String::from("utf-8") {
+            let mut result = Vec::new();    
+            result.resize(4 * header.len(), 0u8);
+            let (_, _, _) = Converter::new(&encoding, "utf-8").convert(&header, &mut result);
+            Ok(String::from(String::from_utf8_lossy(&result)))
+        } else {
+            Ok(String::from(String::from_utf8_lossy(&header)))
+        }   
+    } else {
+        Err(Fb2Error::UnableToMakeUtf8)
     }
 }
