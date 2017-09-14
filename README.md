@@ -1,5 +1,6 @@
 # fb2lib
 
+### List contet
 ```
 $ ./target/debug/fb2lib data/arch.zip ls
 book1.fb2            241143       562015
@@ -9,6 +10,7 @@ book3.fb2            463975      1118067
 book5.fb2            631985      1505856
 ```
 
+### Show information for concrete FB2 book
 ```
 $ ./target/debug/fb2lib data/arch.zip info book1.fb2
 <?xml version="1.0" encoding="Windows-1251"?>
