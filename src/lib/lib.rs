@@ -3,6 +3,7 @@
 extern crate zip;
 extern crate libc;
 
+pub mod book;
 pub mod tools;
 pub mod iconv;
 pub mod result;
