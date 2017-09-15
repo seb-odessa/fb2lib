@@ -1,6 +1,7 @@
 use result::Fb2Result;
 use result::Fb2Error;
 use iconv::Converter;
+use fb2parser::fb::{Description, Author};
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     haystack.windows(needle.len()).position(
@@ -38,4 +39,23 @@ pub fn as_utf8(header: &Vec<u8>) -> Fb2Result<String> {
         Ok(utf8) => Ok(utf8),
         Err(_) => Err(Fb2Error::UnableToMakeUtf8)
     }
+}
+
+fn make_author(authors: &Vec<Author>) -> String{
+    let mut result = String::new();
+    for author in authors {
+        if !result.is_empty() {
+            result += ", ";
+        }
+        result += &format!("{} {} {} ", &author.first_name, &author.middle_name, &author.last_name);
+    }
+    return result;
+}
+
+
+pub fn make_info(description: &Description) -> String {
+    format!("'{}' - {}",
+        &description.title_info.book_title, 
+        make_author(&description.title_info.author)
+        )
 }
