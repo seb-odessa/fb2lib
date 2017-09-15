@@ -2,6 +2,7 @@
 use tools;
 use archive;
 use result::Fb2Result;
+use fb2parser::fb::FictionBook;
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     let mut zip = archive::open(archive_name)?;
@@ -17,11 +18,21 @@ pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     Ok(())
 }
 
-pub fn do_info(archive_name: &str, file_name: &str) -> Fb2Result<()> {
+pub fn do_desc(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let mut zip = archive::open(archive_name)?;
     let mut file = zip.by_name(file_name)?;
     let header = archive::load_header(&mut file)?;
     let description = tools::as_utf8(&header)?;
     println!("{}", description);
+    Ok(())
+}
+
+pub fn do_info(archive_name: &str, file_name: &str) -> Fb2Result<()> {
+    let mut zip = archive::open(archive_name)?;
+    let mut file = zip.by_name(file_name)?;
+    let header = archive::load_header(&mut file)?;
+    let description = tools::as_utf8(&header)?;
+    let fb = FictionBook::new(&description)?;
+    println!("{:#?}", fb);
     Ok(())
 }

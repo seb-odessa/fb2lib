@@ -5,6 +5,7 @@ use std::convert;
 use std::error;
 use std::fmt;
 use std::io;
+use fb2parser::XmlParseError;
 use zip::result::ZipError;
 
 /// Generic result type with Fb2Error as its error variant
@@ -28,6 +29,9 @@ pub enum Fb2Error {
     /// This file has unknown character symbols
     UnableToMakeUtf8,
 
+    /// Unable to deserialize xml
+    UnableDeserializeXML,
+
     /// The requested file could not be found in the archive
     FileNotFound,
 
@@ -49,6 +53,7 @@ impl Fb2Error {
             }
             Fb2Error::FileNotFound |
             Fb2Error::UnableToMakeUtf8 |
+            Fb2Error::UnableDeserializeXML |
             Fb2Error::UnableToLoadFb2Header |
             Fb2Error::UnsupportedSubCommand => self.description().into(),
         }
@@ -70,6 +75,12 @@ impl convert::From<std::str::Utf8Error> for Fb2Error {
 impl convert::From<std::string::FromUtf8Error> for Fb2Error {
     fn from(_: std::string::FromUtf8Error) -> Fb2Error {
         Fb2Error::UnableToMakeUtf8
+    }
+}
+
+impl convert::From<XmlParseError> for Fb2Error {
+    fn from(_: XmlParseError) -> Fb2Error {
+        Fb2Error::UnableDeserializeXML
     }
 }
 
@@ -103,9 +114,8 @@ impl error::Error for Fb2Error {
             Fb2Error::InvalidArchive(..) => "Invalid Zip archive",
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
             Fb2Error::UnableToMakeUtf8 => "Unable to convert content into UTF8",
-            Fb2Error::UnableToLoadFb2Header => {
-                "Unable to load FB2 Header (<description></description>)"
-            }
+            Fb2Error::UnableDeserializeXML => "Unable to deserialize from XML",
+            Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",
             Fb2Error::UnsupportedSubCommand => "Unsupported sub command",
             Fb2Error::FileNotFound => "Specified file not found in archive",
         }
