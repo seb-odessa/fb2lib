@@ -1,5 +1,30 @@
 # fb2lib
 
+### Usage
+```
+$ ./target/debug/fb2lib
+fb2lib v0.1.0
+seb <seb@ukr.net>
+FictionBook Library Archive Manager
+
+USAGE:
+    fb2lib <fb_archive.zip> [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+ARGS:
+    <fb_archive.zip>    Zip archive with books in FB2 format
+
+SUBCOMMANDS:
+    desc    Print XML content of the fb2 description
+    fb      Print parsed FictionBook structure
+    help    Prints this message or the help of the given subcommand(s)
+    info    Print human readable info for the fb2 file
+    ls      List archive contents
+```
+
 ### List contet
 ```
 $ ./target/debug/fb2lib data/arch.zip ls
@@ -10,9 +35,9 @@ book3.fb2            463975      1118067
 book5.fb2            631985      1505856
 ```
 
-### Show information for concrete FB2 book
+### Show description part for concrete FB2 book
 ```
-$ ./target/debug/fb2lib data/arch.zip info book1.fb2
+$ ./target/debug/fb2lib data/arch.zip desc book1.fb2
 <?xml version="1.0" encoding="Windows-1251"?>
 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
  <description>
@@ -52,5 +77,53 @@ $ ./target/debug/fb2lib data/arch.zip info book1.fb2
   </document-info>
  </description>
 </FictionBook>
+```
+
+### Show FictionBook structure for concrete FB2 book
+```
+$ ./target/debug/fb2lib data/arch.zip fb book5.fb2
+FictionBook {
+    description: Description {
+        title_info: TitleInfo {
+            author: [
+                Author {
+                    first_name: "Кристофер",
+                    middle_name: "",
+                    last_name: "Паолини",
+                    nick_name: "",
+                    home_page: "",
+                    email: ""
+                }
+            ],
+            book_title: "Эрагон. Возвращение",
+            lang: "ru",
+            src_lang: "en",
+            translator: [
+                Author {
+                    first_name: "Ирина",
+                    middle_name: "",
+                    last_name: "Тогоева",
+                    nick_name: "",
+                    home_page: "",
+                    email: ""
+                }
+            ],
+            sequence: [
+                Sequence {
+                    name: "Эрагон",
+                    number: "2",
+                    lang: ""
+                }
+            ]
+        }
+    }
+}
+```
+
+### Show Book Title and Author(s)
+```
+$ ./target/debug/fb2lib data/arch.zip info book5.fb2
+'Эрагон. Возвращение' - Кристофер  Паолини 
+
 ```
 
