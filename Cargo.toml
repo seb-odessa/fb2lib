@@ -11,6 +11,6 @@ path = "src/lib/lib.rs"
     zip = "*"
     rusqlite = "*"
     time = "*"
-    clap = "*"    
+    clap = "*"
     fb2parser = { git = "https://github.com/seb-odessa/fb2parser.git" }
 

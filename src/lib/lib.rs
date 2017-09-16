@@ -1,4 +1,8 @@
 #![feature(libc)]
+#![feature(test)]
+
+#[allow(unused_extern_crates)]
+extern crate test;
 
 extern crate zip;
 extern crate libc;
