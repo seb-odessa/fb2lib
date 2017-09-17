@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0"
+  xmlns:l="http://www.w3.org/1999/xlink">
+  <description>
+  <title-info>
+   <genre>adv_geo</genre>
+   <author>    
+    <first-name>Александр</first-name>
+    <last-name>Караванов</last-name>
+   </author>
+   <book-title>Путешествуя с GPS&Palm&сотовый телефон или Мобильное трио</book-title>
+   <lang>ru</lang>
+  </title-info>
+  <document-info>
+   <author>
+    <nickname>rusec</nickname>
+    <email>lib_at_rus.ec</email>
+   </author>
+   <program-used>LibRusEc kit</program-used>
+   <date value="2007-06-12">2007-06-12</date>
+   <id>Tue Jun 12 03:34:06 2007</id>
+   <version>1.0</version>
+  </document-info>
+ </description>
+</FictionBook>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0"
+  xmlns:l="http://www.w3.org/1999/xlink">
+  <description>
+  <title-info>
+   <genre>humor</genre>
+   <author>    
+    <first-name>Павел</first-name>
+    <last-name>Бегемотов</last-name>
+    <middle-name>Николаевич</middle-name>
+    <last-name>Бегемотов</last-name>
+   </author>
+   <author>    
+    <first-name>Нестор</first-name>
+    <middle-name>Онуфриевич</middle-name>
+    <last-name>Бегемотов</last-name>
+   </author>
+   <book-title>Мы - Рюриковичи !</book-title>
+   <lang>ru</lang>
+  </title-info>
+  <document-info>
+   <author>
+    <nickname>rusec</nickname>
+    <email>lib_at_rus.ec</email>
+   </author>
+   <program-used>LibRusEc kit</program-used>
+   <date value="2007-06-11">2007-06-11</date>
+   <id>Mon Jun 11 02:36:58 2007</id>
+   <version>1.0</version>
+  </document-info>
+ </description>
+</FictionBook>

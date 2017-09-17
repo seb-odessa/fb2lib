@@ -12,5 +12,6 @@ path = "src/lib/lib.rs"
     rusqlite = "*"
     time = "*"
     clap = "*"
+    regex = "*"
     fb2parser = { git = "https://github.com/seb-odessa/fb2parser.git" }
 
