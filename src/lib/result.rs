@@ -90,8 +90,8 @@ impl convert::From<regex::Error> for Fb2Error {
 }
 
 
-impl convert::From<fb2parser::XmlParseError> for Fb2Error {
-    fn from(_: fb2parser::XmlParseError) -> Fb2Error {
+impl convert::From<fb2parser::fb::Error> for Fb2Error {
+    fn from(_: fb2parser::fb::Error) -> Fb2Error {
         Fb2Error::UnableDeserializeXML
     }
 }

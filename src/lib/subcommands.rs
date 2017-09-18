@@ -2,8 +2,10 @@
 use tools;
 use archive;
 use result::Fb2Result;
-use fb2parser::fb::FictionBook;
 use zip::read::ZipFile;
+use std::error::Error;
+
+extern crate fb2parser;
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     apply(archive_name, |file| {
@@ -43,7 +45,7 @@ pub fn do_fb(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let mut file = zip.by_name(file_name)?;
     let header = archive::load_header(&mut file)?;
     let xml = tools::as_utf8(&header)?;
-    let fb = FictionBook::new(&xml)?;
+    let fb = fb2parser::create(xml)?;
     println!("{:#?}", fb);
     Ok(())
 }
@@ -55,9 +57,9 @@ pub fn do_info(archive_name: &str, file_name: &str) -> Fb2Result<()> {
         let mut file: ZipFile = zip.by_index(i)?;
         let header = archive::load_header(&mut file)?;
         let xml = tools::as_utf8(&header)?;
-        match FictionBook::new(&xml) {
+        match fb2parser::create(xml) {
             Ok(fb) => println!("{}", tools::make_info(&fb.description)),
-            Err(_) => println!("!!!!Can't parse {}", &file.name())
+            Err(err) => println!("Can't parse {} with error {} ", &file.name(), err.description())
         }
     }
     Ok(())
