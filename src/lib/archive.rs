@@ -21,13 +21,6 @@ pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     Ok(archive)
 }
 
-pub fn find_by_name<'a>(zip: &'a mut ZipArchive, file_name: &str) -> Fb2Result<ZipFile<'a>> {
-    match zip.by_name(file_name) {
-        Ok(file) => Ok(file),
-        Err(_) => Err(Fb2Error::FileNotFound)
-    }
-}
-
 fn load_buffer(file: &mut ZipFile, result: &mut Vec<u8>) -> Fb2Result<usize> {
     let mut buffer: [u8; BUFFER_LENGTH] = [0; BUFFER_LENGTH];
     match file.read(&mut buffer) {
@@ -70,7 +63,7 @@ where
 {
     match archive.by_name(file_name) {
         Ok(file) => visitor(file),
-        Err(_) => Err(Fb2Error::FileNotFound)
+        Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name)))
     }
 }
 

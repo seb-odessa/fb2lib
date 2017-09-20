@@ -50,7 +50,6 @@ pub fn create_fb2(xml: String) -> Fb2Result<FictionBook> {
     }
 }
 
-
 fn fmt_author(authors: &Vec<Author>) -> String{
     let mut result = String::new();
     for author in authors {
@@ -61,7 +60,6 @@ fn fmt_author(authors: &Vec<Author>) -> String{
     }
     return result;
 }
-
 
 pub fn fmt_info(description: &Description) -> String {
     format!("'{}' - {}",

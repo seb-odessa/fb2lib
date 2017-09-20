@@ -37,9 +37,10 @@ pub fn do_desc(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     }
 }
 
-
 fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
-    let fb = archive::load_header(&mut file).and_then(as_utf8).and_then(create_fb2)?;
+    let fb = archive::load_header(&mut file).and_then(as_utf8).and_then(
+        create_fb2,
+    )?;
     println!("{:#?}", fb);
     Ok(())
 }
@@ -56,7 +57,13 @@ pub fn do_fb(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 fn print_info(mut file: ZipFile) -> Fb2Result<()> {
     match archive::load_fb2(&mut file) {
         Ok(fb) => println!("{}", tools::fmt_info(&fb.description)),
-        Err(err) => println!( "Can't parse {} with error {} ", file.name(), err.description())
+        Err(err) => {
+            println!(
+                "Can't parse {} with error {} ",
+                file.name(),
+                err.description()
+            )
+        }
     }
     Ok(())
 }
@@ -81,7 +88,12 @@ mod tests {
     fn bench_each_book_count(bencher: &mut Bencher) {
         bencher.iter(|| {
             let mut cnt: u32 = 0;
-            apply_all(ARCHIVE_NAME, |_| { cnt += 1; }).unwrap();
+            let zip = archive::open(ARCHIVE_NAME);
+            assert!(zip.is_ok());
+            archive::apply_all(zip.unwrap(), |_| {
+                cnt += 1;
+                Ok(())
+            }).unwrap();
             assert_eq!(5, cnt);;
         });
     }
@@ -89,22 +101,27 @@ mod tests {
     #[bench]
     fn bench_each_book_load_header(bencher: &mut Bencher) {
         let mut result = Ok(());
+
         bencher.iter(|| {
-            result = apply_all(ARCHIVE_NAME, |mut book| {
+            let zip = archive::open(ARCHIVE_NAME);
+            assert!(zip.is_ok());
+            result = archive::apply_all(zip.unwrap(), |mut book| {
                 assert!(archive::load_header(&mut book).is_ok());
+                Ok(())
             });
         });
         assert!(result.is_ok());
     }
 
     #[bench]
-    fn bench_each_book_load_as_utf8(bencher: &mut Bencher) {
+    fn bench_each_book_load_as_xml(bencher: &mut Bencher) {
         let mut result = Ok(());
         bencher.iter(|| {
-            result = apply_all(ARCHIVE_NAME, |mut book| {
-                let header = archive::load_header(&mut book);
-                assert!(header.is_ok());
-                assert!(tools::as_utf8(&header.unwrap()).is_ok());
+            let zip = archive::open(ARCHIVE_NAME);
+            assert!(zip.is_ok());
+            result = archive::apply_all(zip.unwrap(), |mut book| {
+                assert!(archive::load_xml(&mut book).is_ok());
+                Ok(())
             });
         });
         assert!(result.is_ok());
@@ -114,12 +131,11 @@ mod tests {
     fn bench_each_book_load_as_fb2(bencher: &mut Bencher) {
         let mut result = Ok(());
         bencher.iter(|| {
-            result = apply_all(ARCHIVE_NAME, |mut book| {
-                let header = archive::load_header(&mut book);
-                assert!(header.is_ok());
-                let xml = tools::as_utf8(&header.unwrap());
-                assert!(xml.is_ok());
-                assert!(FictionBook::new(&xml.unwrap()).is_ok());
+            let zip = archive::open(ARCHIVE_NAME);
+            assert!(zip.is_ok());
+            result = archive::apply_all(zip.unwrap(), |mut book| {
+                assert!(archive::load_fb2(&mut book).is_ok());
+                Ok(())
             });
         });
         assert!(result.is_ok());

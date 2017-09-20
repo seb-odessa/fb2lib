@@ -34,7 +34,7 @@ pub enum Fb2Error {
     UnableDeserializeXML,
 
     /// The requested file could not be found in the archive
-    FileNotFound,
+    FileNotFound(String),
 
     /// This SubCommand was not found
     UnsupportedSubCommand,
@@ -47,12 +47,16 @@ impl Fb2Error {
         match *self {
             Fb2Error::Io(ref io_err) => {
                 ("Io Error: ".to_string() + (io_err as &error::Error).description()).into()
-            }
+            }            
             Fb2Error::InvalidArchive(msg) |
             Fb2Error::UnsupportedArchive(msg) => {
                 (self.description().to_string() + ": " + msg).into()
             }
-            Fb2Error::FileNotFound |
+
+            Fb2Error::FileNotFound(ref msg) => {
+                (self.description().to_string() + ": " + msg).into()
+            }
+
             Fb2Error::UnableToMakeUtf8 |
             Fb2Error::UnableDeserializeXML |
             Fb2Error::UnableToLoadFb2Header |
@@ -91,7 +95,7 @@ impl convert::From<zip::result::ZipError> for Fb2Error {
             zip::result::ZipError::Io(io_err) => Fb2Error::Io(io_err),
             zip::result::ZipError::InvalidArchive(msg) => Fb2Error::InvalidArchive(msg),
             zip::result::ZipError::UnsupportedArchive(msg) => Fb2Error::UnsupportedArchive(msg),
-            zip::result::ZipError::FileNotFound => Fb2Error::FileNotFound,
+            zip::result::ZipError::FileNotFound => Fb2Error::FileNotFound(String::from("File not found")),
         }
     }
 }
@@ -118,7 +122,7 @@ impl error::Error for Fb2Error {
             Fb2Error::UnableDeserializeXML => "Unable to deserialize from XML",
             Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",
             Fb2Error::UnsupportedSubCommand => "Unsupported sub command",
-            Fb2Error::FileNotFound => "Specified file not found in archive",
+            Fb2Error::FileNotFound(..) => "Specified file was not found in archive",
         }
     }
 
