@@ -1,7 +1,9 @@
+extern crate fb2parser;
+
 use result::Fb2Result;
 use result::Fb2Error;
 use iconv::Converter;
-use fb2parser::fb::{Description, Author};
+use fb2parser::fb::{FictionBook, Description, Author};
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     haystack.windows(needle.len()).position(
@@ -23,7 +25,7 @@ pub fn get_encoding(header: &Vec<u8>) -> Option<String> {
     None
 }
 
-pub fn as_utf8(header: &Vec<u8>) -> Fb2Result<String> {
+pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
     let mut result = header.clone();
     if let Some(encoding) = get_encoding(&header) {
         if encoding != String::from("utf-8") {
@@ -41,21 +43,29 @@ pub fn as_utf8(header: &Vec<u8>) -> Fb2Result<String> {
     }
 }
 
-fn make_author(authors: &Vec<Author>) -> String{
+pub fn create_fb2(xml: String) -> Fb2Result<FictionBook> {
+    match fb2parser::create(xml) {
+        Ok(fb) => Ok(fb),
+        Err(_) => Err(Fb2Error::UnableDeserializeXML)
+    }
+}
+
+
+fn fmt_author(authors: &Vec<Author>) -> String{
     let mut result = String::new();
     for author in authors {
         if !result.is_empty() {
             result += ", ";
         }
-        result += &format!("{} {} {} ", &author.first_name, &author.middle_name, &author.last_name);
+        result += &format!("{} {} {}", &author.first_name, &author.middle_name, &author.last_name);
     }
     return result;
 }
 
 
-pub fn make_info(description: &Description) -> String {
+pub fn fmt_info(description: &Description) -> String {
     format!("'{}' - {}",
         &description.title_info.book_title, 
-        make_author(&description.title_info.author)
+        fmt_author(&description.title_info.author)
         )
 }

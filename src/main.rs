@@ -20,8 +20,8 @@ const CMD_INFO: &'static str = "info";
 fn main() {
     let arguments: Vec<String> = std::env::args().collect();
     let program = std::path::Path::new(&arguments[0]).file_name().unwrap().to_str().unwrap();
-    let archive = Arg::with_name(ARCHIVE).help("Zip archive with books in FB2 format").required(true).index(1);
-    let book = Arg::with_name(FILE).help("File in FB2 format").required(true).index(1);           
+    let archive = Arg::with_name(ARCHIVE).help("Zip archive with books in FB2 format").index(1).required(true);
+    let book = Arg::with_name(FILE).help("File in FB2 format").index(1).required(true);
 
     let app = App::new(program)
         .version(VERSION)
@@ -32,15 +32,16 @@ fn main() {
         .subcommand(SubCommand::with_name(CMD_LS).about("List archive contents"))
         .subcommand(SubCommand::with_name(CMD_DESC).about("Print XML content of the fb2 description").arg(book.clone()))
         .subcommand(SubCommand::with_name(CMD_FB).about("Print parsed FictionBook structure").arg(book.clone()))
-        .subcommand(SubCommand::with_name(CMD_INFO).about("Print human readable info for the fb2 file").arg(book.clone()))
+        .subcommand(SubCommand::with_name(CMD_INFO).about("Print human readable info for the fb2 file").arg(book.clone().required(false)))
         .get_matches();
 
-    let archive = app.value_of(ARCHIVE).unwrap();
+    let archive = app.value_of(ARCHIVE).unwrap_or("");
     let result = match app.subcommand() {
-        (CMD_LS, Some(_)) => do_ls(&archive),
-        (CMD_DESC,  Some(cmd)) => do_desc(&archive, &cmd.value_of(FILE).unwrap()),
-        (CMD_FB,    Some(cmd)) => do_fb(&archive, &cmd.value_of(FILE).unwrap()),
-        (CMD_INFO,  Some(cmd)) => do_info(&archive, &cmd.value_of(FILE).unwrap()),
+        (CMD_LS,      Some(_)) => do_ls(&archive),
+        (CMD_DESC,  Some(cmd)) => do_desc(&archive, &cmd.value_of(FILE).unwrap_or("")),
+        (CMD_FB,    Some(cmd)) => do_fb(&archive, &cmd.value_of(FILE).unwrap_or("")),
+        (CMD_INFO,  Some(cmd)) => do_info(&archive, &cmd.value_of(FILE).unwrap_or("")),
+        ("",                _) => do_ls(&archive),
         _ => Err(Fb2Error::UnsupportedSubCommand),
     };
 

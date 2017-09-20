@@ -1,9 +1,7 @@
 #![feature(libc)]
 #![feature(test)]
+#[allow(unused_extern_crates)] extern crate test;
 
-#[allow(unused_extern_crates)]
-extern crate test;
-extern crate regex;
 extern crate zip;
 extern crate libc;
 extern crate fb2parser;

@@ -1,7 +1,6 @@
 //! Error types that can be emitted from this library
 extern crate std;
 extern crate zip;
-extern crate regex;
 extern crate fb2parser;
 
 use std::convert;
@@ -31,8 +30,6 @@ pub enum Fb2Error {
     /// This file has unknown character symbols
     UnableToMakeUtf8,
 
-    UnableToMakeRegex,
-
     /// Unable to deserialize xml
     UnableDeserializeXML,
 
@@ -57,7 +54,6 @@ impl Fb2Error {
             }
             Fb2Error::FileNotFound |
             Fb2Error::UnableToMakeUtf8 |
-            Fb2Error::UnableToMakeRegex |
             Fb2Error::UnableDeserializeXML |
             Fb2Error::UnableToLoadFb2Header |
             Fb2Error::UnsupportedSubCommand => self.description().into(),
@@ -82,13 +78,6 @@ impl convert::From<std::string::FromUtf8Error> for Fb2Error {
         Fb2Error::UnableToMakeUtf8
     }
 }
-
-impl convert::From<regex::Error> for Fb2Error {
-    fn from(_: regex::Error) -> Fb2Error {
-        Fb2Error::UnableToMakeRegex
-    }
-}
-
 
 impl convert::From<fb2parser::fb::Error> for Fb2Error {
     fn from(_: fb2parser::fb::Error) -> Fb2Error {
@@ -126,7 +115,6 @@ impl error::Error for Fb2Error {
             Fb2Error::InvalidArchive(..) => "Invalid Zip archive",
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
             Fb2Error::UnableToMakeUtf8 => "Unable to convert content into UTF8",
-            Fb2Error::UnableToMakeRegex => "Unable to make regez from arg",
             Fb2Error::UnableDeserializeXML => "Unable to deserialize from XML",
             Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",
             Fb2Error::UnsupportedSubCommand => "Unsupported sub command",
