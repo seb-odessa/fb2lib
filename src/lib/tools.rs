@@ -25,22 +25,28 @@ pub fn get_encoding(header: &Vec<u8>) -> Option<String> {
     None
 }
 
-pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
-    let mut result = header.clone();
-    if let Some(encoding) = get_encoding(&header) {
-        if encoding != String::from("utf-8") {
-            result.resize(3 * header.len(), 0u8);
-            let (_, length, ret) = Converter::new(&encoding, "utf-8").convert(&header, &mut result);
-            if 0 != ret && length == result.len() {
-                return Err(Fb2Error::UnableToMakeUtf8);
-            }
-            result.resize(length, 0u8);
-        }
-    }
-    match String::from_utf8(result) {
+fn convert_to_utf8(src: Vec<u8>) -> Fb2Result<String> {
+    match String::from_utf8(src) {
         Ok(utf8) => Ok(utf8),
         Err(_) => Err(Fb2Error::UnableToMakeUtf8)
     }
+}
+
+pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
+    if let Some(encoding) = get_encoding(&header) {
+        if encoding != String::from("utf-8") {
+            let expected_len = 4 * header.len();
+            let mut buffer = Vec::with_capacity(expected_len);
+            buffer.resize(expected_len, 0u8);
+            let (_, length, ret) = Converter::new(&encoding, "utf-8").convert(&header, &mut buffer);
+            if 0 != ret && length == buffer.len() {
+                return Err(Fb2Error::UnableToMakeUtf8);
+            }
+            buffer.resize(length, 0u8);
+            return convert_to_utf8(buffer)
+        }
+    }
+    convert_to_utf8(header)
 }
 
 pub fn create_fb2(xml: String) -> Fb2Result<FictionBook> {

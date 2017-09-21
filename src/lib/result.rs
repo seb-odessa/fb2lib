@@ -38,6 +38,9 @@ pub enum Fb2Error {
 
     /// This SubCommand was not found
     UnsupportedSubCommand,
+
+    /// Finish processing
+    Done,
 }
 
 impl Fb2Error {
@@ -57,6 +60,7 @@ impl Fb2Error {
                 (self.description().to_string() + ": " + msg).into()
             }
 
+            Fb2Error::Done |
             Fb2Error::UnableToMakeUtf8 |
             Fb2Error::UnableDeserializeXML |
             Fb2Error::UnableToLoadFb2Header |
@@ -118,6 +122,7 @@ impl error::Error for Fb2Error {
             Fb2Error::Io(ref io_err) => (io_err as &error::Error).description(),
             Fb2Error::InvalidArchive(..) => "Invalid Zip archive",
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
+            Fb2Error::Done => "Done",
             Fb2Error::UnableToMakeUtf8 => "Unable to convert content into UTF8",
             Fb2Error::UnableDeserializeXML => "Unable to deserialize from XML",
             Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",

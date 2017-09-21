@@ -2,6 +2,7 @@
 use tools;
 use archive;
 use result::Fb2Result;
+use result::Fb2Error;
 use zip::read::ZipFile;
 use std::error::Error;
 
@@ -77,7 +78,57 @@ pub fn do_info(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     }
 }
 
+pub fn do_parse(archive_name: &str) -> Fb2Result<()> {
+    
 
+//     let (sender1, receiver1) = sync_channel(1);
+//     let (sender2, receiver2) = sync_channel(1);
+// //    let (sender3, receiver3) = sync_channel(1);
+// //    let (sender4, receiver4) = sync_channel(1);
+
+//     thread::spawn(move|| {
+//         loop {
+//             let msg = receiver1.recv().expect("The receiver1 is broken\n");
+//             match msg {
+//                 Ok(file) => sender2.send(load_header(file)).expect("The sender2 is broken\n"),
+//                 Err(Fb2Error::Done) => break,
+//                 Err(err) => 
+                
+//             }
+//         }
+//     });
+
+    // thread::spawn(move|| { 
+    //     let arg = receiver2.recv().unwrap();
+        
+    //     sender3.send(temp).unwrap(); 
+    // });
+
+    // thread::spawn(move|| { 
+    //     let arg: String = receiver3.recv().unwrap();
+    //     let temp = make_fb(arg);
+    //     sender4.send(temp).unwrap(); 
+    // });
+   
+    let zip = archive::open(archive_name)?;
+    // for i in 0..zip.len() {
+    //     let file = archive.by_index(i)?;
+    //     sender1.send(Ok(&mut file)).unwrap(); 
+    // }
+
+    archive::apply_all(zip, |file| {
+        println!(
+            "{:16}{:10}{:10}",
+            file.name(),
+            file.size(),
+            file.compressed_size()
+        );
+        Ok(())
+    })
+}
+
+
+///*************************************************************************************************************************//
 #[cfg(test)]
 mod tests {
     use super::*;

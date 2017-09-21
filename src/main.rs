@@ -16,6 +16,7 @@ const CMD_LS: &'static str = "ls";
 const CMD_DESC: &'static str = "desc";
 const CMD_FB: &'static str = "fb";
 const CMD_INFO: &'static str = "info";
+const CMD_PARSE: &'static str = "parse";
 
 fn main() {
     let arguments: Vec<String> = std::env::args().collect();
@@ -33,6 +34,7 @@ fn main() {
         .subcommand(SubCommand::with_name(CMD_DESC).about("Print XML content of the fb2 description").arg(book.clone()))
         .subcommand(SubCommand::with_name(CMD_FB).about("Print parsed FictionBook structure").arg(book.clone()))
         .subcommand(SubCommand::with_name(CMD_INFO).about("Print human readable info for the fb2 file").arg(book.clone().required(false)))
+        .subcommand(SubCommand::with_name(CMD_PARSE).about("Parse all books in archive"))
         .get_matches();
 
     let archive = app.value_of(ARCHIVE).unwrap_or("");
@@ -41,6 +43,7 @@ fn main() {
         (CMD_DESC,  Some(cmd)) => do_desc(&archive, &cmd.value_of(FILE).unwrap_or("")),
         (CMD_FB,    Some(cmd)) => do_fb(&archive, &cmd.value_of(FILE).unwrap_or("")),
         (CMD_INFO,  Some(cmd)) => do_info(&archive, &cmd.value_of(FILE).unwrap_or("")),
+        (CMD_PARSE,   Some(_)) => do_parse(&archive),
         ("",                _) => do_ls(&archive),
         _ => Err(Fb2Error::UnsupportedSubCommand),
     };
