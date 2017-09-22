@@ -10,21 +10,23 @@ use tools::as_utf8;
 use tools::create_fb2;
 
 use std::sync::mpsc::Receiver;
-use std::sync::mpsc::Sender;
-use std::sync::mpsc::channel;
+use std::sync::mpsc::SyncSender;
+use std::sync::mpsc::sync_channel;
 use std::thread;
+
+fn print_file_info(file: ZipFile) -> Fb2Result<()> {
+    println!(
+        "{:16}{:10}{:10}",
+        file.name(),
+        file.size(),
+        file.compressed_size()
+    );
+    Ok(())
+}
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    archive::apply_all(zip, |file| {
-        println!(
-            "{:16}{:10}{:10}",
-            file.name(),
-            file.size(),
-            file.compressed_size()
-        );
-        Ok(())
-    })
+    archive::apply_all(zip, print_file_info)
 }
 
 fn print_desc(mut file: ZipFile) -> Fb2Result<()> {
@@ -83,7 +85,7 @@ pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 }
 
 fn is_done<T>(msg: &Result<T, Fb2Error>) -> bool {
-    match *msg {        
+    match *msg {
         Err(Fb2Error::Done) => true,
         _ => false,
     }
@@ -91,7 +93,7 @@ fn is_done<T>(msg: &Result<T, Fb2Error>) -> bool {
 
 fn worker<I, O, F>(
     receiver: Receiver<Result<I, Fb2Error>>,
-    sender: Sender<Result<O, Fb2Error>>,
+    sender: SyncSender<Result<O, Fb2Error>>,
     mut processor: F,
 ) where
     F: FnMut(Result<I, Fb2Error>) -> Result<O, Fb2Error>,
@@ -106,9 +108,9 @@ fn worker<I, O, F>(
 }
 
 pub fn do_parse(archive_name: &str) -> Fb2Result<()> {
-    let (sender1, receiver1) = channel();
-    let (sender2, receiver2) = channel();
-    let (sender3, receiver3) = channel();
+    let (sender1, receiver1) = sync_channel(100);
+    let (sender2, receiver2) = sync_channel(100);
+    let (sender3, receiver3) = sync_channel(100);
 
     thread::spawn(move || { worker(receiver1, sender2, pipe::converter); });
     thread::spawn(move || { worker(receiver2, sender3, pipe::maker); });
