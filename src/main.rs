@@ -29,7 +29,7 @@ fn main() {
     let cmd_show = SubCommand::with_name(CMD_SHOW).about("Request to extract and print some kind of content");
     let cmd_show_xml = SubCommand::with_name(CMD_XML).about("Print XML content of the fb2 description").arg(book.clone());
     let cmd_show_fb2 = SubCommand::with_name(CMD_FB2).about("Print parsed FictionBook structure").arg(book.clone());
-    let cmd_show_inf = SubCommand::with_name(CMD_INF).about("Print human readable info for the fb2 file").arg(book.clone());
+    let cmd_show_inf = SubCommand::with_name(CMD_INF).about("Print human readable info for the fb2 file").arg(book.required(false).clone());
 
     let app = App::new(program)
         .version(VERSION)
@@ -45,8 +45,6 @@ fn main() {
             .subcommand(cmd_show_inf)
         )
         .get_matches();
-
-
 
     let archive = app.value_of(ARCHIVE).unwrap_or("");
     let result = match app.subcommand() {
