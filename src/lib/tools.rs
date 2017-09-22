@@ -73,3 +73,8 @@ pub fn fmt_info(description: &Description) -> String {
         fmt_author(&description.title_info.author)
         )
 }
+
+pub fn fmt_book(fb: &FictionBook) -> String {
+    fmt_info(&fb.description)
+}
+

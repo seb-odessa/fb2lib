@@ -1,4 +1,4 @@
-
+use pipe;
 use tools;
 use archive;
 use result::Fb2Result;
@@ -9,6 +9,10 @@ use std::error::Error;
 use tools::as_utf8;
 use tools::create_fb2;
 
+use std::sync::mpsc::Receiver;
+use std::sync::mpsc::Sender;
+use std::sync::mpsc::channel;
+use std::thread;
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
@@ -78,53 +82,53 @@ pub fn do_info(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     }
 }
 
+fn is_done<T>(msg: &Result<T, Fb2Error>) -> bool {
+    match *msg {        
+        Err(Fb2Error::Done) => true,
+        _ => false,
+    }
+}
+
+fn worker<I, O, F>(
+    receiver: Receiver<Result<I, Fb2Error>>,
+    sender: Sender<Result<O, Fb2Error>>,
+    mut processor: F,
+) where
+    F: FnMut(Result<I, Fb2Error>) -> Result<O, Fb2Error>,
+{
+    let mut have_tasks = true;
+    while have_tasks {
+        let input = receiver.recv().expect("The channel is broken\n");
+        have_tasks = !is_done(&input);
+        let output = processor(input);
+        sender.send(output).expect("The channel is broken\n");
+    }
+}
+
 pub fn do_parse(archive_name: &str) -> Fb2Result<()> {
-    
+    let (sender1, receiver1) = channel();
+    let (sender2, receiver2) = channel();
+    let (sender3, receiver3) = channel();
 
-//     let (sender1, receiver1) = sync_channel(1);
-//     let (sender2, receiver2) = sync_channel(1);
-// //    let (sender3, receiver3) = sync_channel(1);
-// //    let (sender4, receiver4) = sync_channel(1);
+    thread::spawn(move || { worker(receiver1, sender2, pipe::converter); });
+    thread::spawn(move || { worker(receiver2, sender3, pipe::maker); });
 
-//     thread::spawn(move|| {
-//         loop {
-//             let msg = receiver1.recv().expect("The receiver1 is broken\n");
-//             match msg {
-//                 Ok(file) => sender2.send(load_header(file)).expect("The sender2 is broken\n"),
-//                 Err(Fb2Error::Done) => break,
-//                 Err(err) => 
-                
-//             }
-//         }
-//     });
-
-    // thread::spawn(move|| { 
-    //     let arg = receiver2.recv().unwrap();
-        
-    //     sender3.send(temp).unwrap(); 
-    // });
-
-    // thread::spawn(move|| { 
-    //     let arg: String = receiver3.recv().unwrap();
-    //     let temp = make_fb(arg);
-    //     sender4.send(temp).unwrap(); 
-    // });
-   
-    let zip = archive::open(archive_name)?;
-    // for i in 0..zip.len() {
-    //     let file = archive.by_index(i)?;
-    //     sender1.send(Ok(&mut file)).unwrap(); 
-    // }
-
-    archive::apply_all(zip, |file| {
-        println!(
-            "{:16}{:10}{:10}",
-            file.name(),
-            file.size(),
-            file.compressed_size()
-        );
-        Ok(())
-    })
+    let mut zip = archive::open(archive_name)?;
+    for i in 0..zip.len() {
+        let mut file = zip.by_index(i)?;
+        let header = archive::load_header(&mut file);
+        sender1.send(header).expect("The channel is broken\n");
+        let msg = receiver3.recv().expect("The channel is broken\n");
+        match msg {
+            Ok(fb) => println!("{}", tools::fmt_book(&fb)),
+            Err(Fb2Error::Done) => break,
+            Err(err) => println!("!!! {} -> {}", file.name(), err.description()),
+        }
+    }
+    sender1.send(Err(Fb2Error::Done)).expect(
+        "The channel is broken\n",
+    );
+    Ok(())
 }
 
 
