@@ -33,7 +33,7 @@ fn print_desc(mut file: ZipFile) -> Fb2Result<()> {
     Ok(())
 }
 
-pub fn do_desc(archive_name: &str, file_name: &str) -> Fb2Result<()> {
+pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
     if file_name.is_empty() {
         archive::apply_all(zip, print_desc)
@@ -50,7 +50,7 @@ fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
     Ok(())
 }
 
-pub fn do_fb(archive_name: &str, file_name: &str) -> Fb2Result<()> {
+pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
     if file_name.is_empty() {
         archive::apply_all(zip, print_fb)
@@ -73,7 +73,7 @@ fn print_info(mut file: ZipFile) -> Fb2Result<()> {
     Ok(())
 }
 
-pub fn do_info(archive_name: &str, file_name: &str) -> Fb2Result<()> {
+pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
     if file_name.is_empty() {
         archive::apply_all(zip, print_info)

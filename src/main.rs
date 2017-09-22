@@ -6,16 +6,16 @@ use std::error::Error;
 use lib::result::Fb2Error;
 use lib::subcommands::*;
 
-
-const VERSION: &'static str = "v0.1.0";
+const VERSION: &'static str = "v0.4.0";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ARCHIVE: &'static str = "fb_archive.zip";
 const FILE: &'static str = "fb_book.fb2";
 
 const CMD_LS: &'static str = "ls";
-const CMD_DESC: &'static str = "desc";
-const CMD_FB: &'static str = "fb";
-const CMD_INFO: &'static str = "info";
+const CMD_SHOW: &'static str = "show";
+const CMD_XML: &'static str = "xml";
+const CMD_FB2: &'static str = "fb2";
+const CMD_INF: &'static str = "info";
 const CMD_PARSE: &'static str = "parse";
 
 fn main() {
@@ -24,26 +24,42 @@ fn main() {
     let archive = Arg::with_name(ARCHIVE).help("Zip archive with books in FB2 format").index(1).required(true);
     let book = Arg::with_name(FILE).help("File in FB2 format").index(1).required(true);
 
+    let cmd_ls = SubCommand::with_name(CMD_LS).about("List archive contents");
+    let cmd_parse = SubCommand::with_name(CMD_PARSE).about("Parse all books in archive");
+    let cmd_show = SubCommand::with_name(CMD_SHOW).about("Request to extract and print some kind of content");
+    let cmd_show_xml = SubCommand::with_name(CMD_XML).about("Print XML content of the fb2 description").arg(book.clone());
+    let cmd_show_fb2 = SubCommand::with_name(CMD_FB2).about("Print parsed FictionBook structure").arg(book.clone());
+    let cmd_show_inf = SubCommand::with_name(CMD_INF).about("Print human readable info for the fb2 file").arg(book.clone());
+
     let app = App::new(program)
         .version(VERSION)
         .author(AUTHOR)
         .about("FictionBook Library Archive Manager")
         .setting(AppSettings::ArgRequiredElseHelp)
         .arg(archive)
-        .subcommand(SubCommand::with_name(CMD_LS).about("List archive contents"))
-        .subcommand(SubCommand::with_name(CMD_DESC).about("Print XML content of the fb2 description").arg(book.clone()))
-        .subcommand(SubCommand::with_name(CMD_FB).about("Print parsed FictionBook structure").arg(book.clone()))
-        .subcommand(SubCommand::with_name(CMD_INFO).about("Print human readable info for the fb2 file").arg(book.clone().required(false)))
-        .subcommand(SubCommand::with_name(CMD_PARSE).about("Parse all books in archive"))
+        .subcommand(cmd_ls)
+        .subcommand(cmd_parse)
+        .subcommand(cmd_show
+            .subcommand(cmd_show_xml)
+            .subcommand(cmd_show_fb2)
+            .subcommand(cmd_show_inf)
+        )
         .get_matches();
+
+
 
     let archive = app.value_of(ARCHIVE).unwrap_or("");
     let result = match app.subcommand() {
         (CMD_LS,      Some(_)) => do_ls(&archive),
-        (CMD_DESC,  Some(cmd)) => do_desc(&archive, &cmd.value_of(FILE).unwrap_or("")),
-        (CMD_FB,    Some(cmd)) => do_fb(&archive, &cmd.value_of(FILE).unwrap_or("")),
-        (CMD_INFO,  Some(cmd)) => do_info(&archive, &cmd.value_of(FILE).unwrap_or("")),
         (CMD_PARSE,   Some(_)) => do_parse(&archive),
+        (CMD_SHOW,    Some(cmd)) => {
+            match cmd.subcommand() {                
+                (CMD_XML,   Some(cmd)) => show_xml(&archive, &cmd.value_of(FILE).unwrap_or("")),
+                (CMD_FB2,   Some(cmd)) => show_fb2(&archive, &cmd.value_of(FILE).unwrap_or("")),
+                (CMD_INF,   Some(cmd)) => show_inf(&archive, &cmd.value_of(FILE).unwrap_or("")),
+                (_,                 _) => Err(Fb2Error::UnsupportedSubCommand),
+            }
+        },
         ("",                _) => do_ls(&archive),
         _ => Err(Fb2Error::UnsupportedSubCommand),
     };
