@@ -135,13 +135,19 @@ pub fn do_parse(archive_name: &str) -> Fb2Result<()> {
 
 pub fn do_check(archive_name: &str) -> Fb2Result<()> {
     let mut zip = archive::open(archive_name)?;
-    for i in 0..zip.len() {
+    let book_count = zip.len();
+    let mut succ = 0;
+    print!("Progress:   %");
+    for i in 0..book_count {
         let mut file = zip.by_index(i)?;
         match archive::load_fb2(&mut file) {
-            Ok(_) => print!("."),
+            Ok(_) => succ += 1,
             Err(_) => println!("\n{}",file.name())
         }
+        print!("\r");
+        print!("Progress: {:3}%", 100 * (1 + i) / book_count);
     }
+    println!("\nSucceeded {}/{} ({}%)", succ, book_count, 100 * succ / book_count);
     Ok(())
 }
 
