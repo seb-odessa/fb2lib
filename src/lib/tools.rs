@@ -1,14 +1,24 @@
-extern crate fb2parser;
-
 use result::Fb2Result;
 use result::Fb2Error;
 use iconv::Converter;
-use fb2parser::fb::{FictionBook, Description, Author};
+use fb;
+use helper;
+use fb::{FictionBook, Description, Author};
+use std::error::Error;
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     haystack.windows(needle.len()).position(
         |window| window == needle,
     )
+}
+
+pub fn create(xml: String) -> Result<FictionBook, fb::SerdeError> {
+    return helper::try_fast(xml).
+        or_else(helper::try_escaped).
+        or_else(helper::try_fix_lang).
+        or_else(helper::try_fix_title_info_double_last_name).
+        or_else(helper::try_fix_doc_info_double_nickname).
+        or_else(helper::done);
 }
 
 pub fn get_encoding(header: &Vec<u8>) -> Option<String> {
@@ -50,9 +60,9 @@ pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
 }
 
 pub fn create_fb2(xml: String) -> Fb2Result<FictionBook> {
-    match fb2parser::create(xml) {
+    match create(xml) {
         Ok(fb) => Ok(fb),
-        Err(_) => Err(Fb2Error::UnableDeserializeXML)
+        Err(e) => Err(Fb2Error::UnableDeserializeXML(String::from(e.description())))
     }
 }
 
@@ -69,7 +79,7 @@ fn fmt_author(authors: &Vec<Author>) -> String{
 
 pub fn fmt_info(description: &Description) -> String {
     format!("'{}' - {}",
-        &description.title_info.book_title, 
+        &description.title_info.book_title,
         fmt_author(&description.title_info.author)
         )
 }

@@ -1,12 +1,13 @@
 //! Error types that can be emitted from this library
 extern crate std;
 extern crate zip;
-extern crate fb2parser;
+extern crate serde_xml_rs;
 
 use std::convert;
 use std::error;
 use std::fmt;
 use std::io;
+use fb;
 
 /// Generic result type with Fb2Error as its error variant
 pub type Fb2Result<T> = Result<T, Fb2Error>;
@@ -31,7 +32,7 @@ pub enum Fb2Error {
     UnableToMakeUtf8,
 
     /// Unable to deserialize xml
-    UnableDeserializeXML,
+    UnableDeserializeXML(String),
 
     /// The requested file could not be found in the archive
     FileNotFound(String),
@@ -50,19 +51,19 @@ impl Fb2Error {
         match *self {
             Fb2Error::Io(ref io_err) => {
                 ("Io Error: ".to_string() + (io_err as &error::Error).description()).into()
-            }            
+            }
             Fb2Error::InvalidArchive(msg) |
             Fb2Error::UnsupportedArchive(msg) => {
                 (self.description().to_string() + ": " + msg).into()
             }
 
-            Fb2Error::FileNotFound(ref msg) => {
+            Fb2Error::FileNotFound(ref msg) |
+            Fb2Error::UnableDeserializeXML(ref msg) => {
                 (self.description().to_string() + ": " + msg).into()
             }
 
             Fb2Error::Done |
             Fb2Error::UnableToMakeUtf8 |
-            Fb2Error::UnableDeserializeXML |
             Fb2Error::UnableToLoadFb2Header |
             Fb2Error::UnsupportedSubCommand => self.description().into(),
         }
@@ -87,9 +88,13 @@ impl convert::From<std::string::FromUtf8Error> for Fb2Error {
     }
 }
 
-impl convert::From<fb2parser::fb::Error> for Fb2Error {
-    fn from(_: fb2parser::fb::Error) -> Fb2Error {
-        Fb2Error::UnableDeserializeXML
+impl convert::From<fb::SerdeError> for Fb2Error {
+    fn from(err: fb::SerdeError) -> Fb2Error {
+        match err {
+            serde_xml_rs::Error::UnsupportedOperation(msg) |
+            serde_xml_rs::Error::Custom(msg) => Fb2Error::UnableDeserializeXML(msg),
+            _ => Fb2Error::UnableDeserializeXML("Unable to deserialize XML".to_owned()),
+        }
     }
 }
 
@@ -124,7 +129,7 @@ impl error::Error for Fb2Error {
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
             Fb2Error::Done => "Done",
             Fb2Error::UnableToMakeUtf8 => "Unable to convert content into UTF8",
-            Fb2Error::UnableDeserializeXML => "Unable to deserialize from XML",
+            Fb2Error::UnableDeserializeXML(..) => "Unable to deserialize from XML",
             Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",
             Fb2Error::UnsupportedSubCommand => "Unsupported sub command",
             Fb2Error::FileNotFound(..) => "Specified file was not found in archive",

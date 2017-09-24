@@ -6,7 +6,7 @@ use std::io::Read;
 use result::Fb2Result;
 use result::Fb2Error;
 use zip::read::ZipFile;
-use fb2parser::fb::FictionBook;
+use fb::FictionBook;
 
 const BUFFER_LENGTH: usize = 1024;
 const DESC_CLOSE_TAG: &'static str = "</description>";

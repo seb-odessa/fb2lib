@@ -10,8 +10,8 @@ use tools::create_fb2;
 
 use std::fs::File;
 use std::io::Read;
+use std::io::Write;
 use std::io;
-
 
 fn print_file_info(file: ZipFile) -> Fb2Result<()> {
     println!(
@@ -112,6 +112,7 @@ pub fn do_check(archive_name: &str) -> Fb2Result<()> {
         }
         print!("\r");
         print!("Progress: {:3}%", 100 * (1 + i) / book_count);
+        io::stdout().flush()?;
     }
     println!("\nSucceeded {}/{} ({}%)", succ, book_count, 100 * succ / book_count);
     Ok(())
