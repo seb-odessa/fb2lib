@@ -7,7 +7,6 @@ extern crate zip;
 extern crate libc;
 extern crate fb2parser;
 
-pub mod pipe;
 pub mod tools;
 pub mod iconv;
 pub mod result;

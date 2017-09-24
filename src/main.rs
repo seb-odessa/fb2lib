@@ -9,7 +9,8 @@ use lib::subcommands::*;
 const VERSION: &'static str = "v0.4.1";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ARCHIVE: &'static str = "fb_archive.zip";
-const FILE: &'static str = "fb_book.fb2";
+const FILE: &'static str = "fictionbook.fb2";
+const XML: &'static str = "fictionbook.xml";
 
 const CMD_LS: &'static str = "ls";
 const CMD_SHOW: &'static str = "show";
@@ -22,11 +23,12 @@ const CMD_CHECK: &'static str = "check";
 fn main() {
     let arguments: Vec<String> = std::env::args().collect();
     let program = std::path::Path::new(&arguments[0]).file_name().unwrap().to_str().unwrap();
-    let archive = Arg::with_name(ARCHIVE).help("Zip archive with books in FB2 format").index(1).required(true);
-    let book = Arg::with_name(FILE).help("File in FB2 format").index(1).required(true);
+    let archive = Arg::with_name(ARCHIVE).help("Zip archive with books in FB2 format").index(1).required(false);
+    let book = Arg::with_name(FILE).help("file.fb2 in archive").index(1).required(true);
+    let xml = Arg::with_name(XML).help("Xml file in FB2 format").index(1).required(true);
 
     let cmd_ls = SubCommand::with_name(CMD_LS).about("List archive contents");
-    let cmd_parse = SubCommand::with_name(CMD_PARSE).about("Parse all books in archive");
+    let cmd_parse = SubCommand::with_name(CMD_PARSE).about("Try parse xml into fb2 and print it").arg(xml.clone());
     let cmd_check = SubCommand::with_name(CMD_CHECK).about("Try parse all archive and print only failured books");
     let cmd_show = SubCommand::with_name(CMD_SHOW).about("Request to extract and print some kind of content");
     let cmd_show_xml = SubCommand::with_name(CMD_XML).about("Print XML content of the fb2 description").arg(book.clone());
@@ -53,7 +55,7 @@ fn main() {
     let result = match app.subcommand() {
         (CMD_LS,      Some(_)) => do_ls(&archive),
         (CMD_CHECK,   Some(_)) => do_check(&archive),
-        (CMD_PARSE,   Some(_)) => do_parse(&archive),
+        (CMD_PARSE,   Some(arg)) => do_parse(&arg.value_of(XML).unwrap_or("")),
         (CMD_SHOW,    Some(cmd)) => {
             match cmd.subcommand() {
                 (CMD_XML,   Some(cmd)) => show_xml(&archive, &cmd.value_of(FILE).unwrap_or("")),

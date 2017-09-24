@@ -1,4 +1,3 @@
-use pipe;
 use tools;
 use archive;
 use result::Fb2Result;
@@ -9,10 +8,10 @@ use std::error::Error;
 use tools::as_utf8;
 use tools::create_fb2;
 
-use std::sync::mpsc::Receiver;
-use std::sync::mpsc::SyncSender;
-use std::sync::mpsc::sync_channel;
-use std::thread;
+use std::fs::File;
+use std::io::Read;
+use std::io;
+
 
 fn print_file_info(file: ZipFile) -> Fb2Result<()> {
     println!(
@@ -84,52 +83,19 @@ pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     }
 }
 
-fn is_done<T>(msg: &Result<T, Fb2Error>) -> bool {
-    match *msg {
-        Err(Fb2Error::Done) => true,
-        _ => false,
-    }
+fn read_file(file_name: &str) -> io::Result<Vec<u8>> {
+    let mut buffer = Vec::new();
+    let mut file = File::open(file_name)?;
+    file.read_to_end(&mut buffer)?;
+    Ok(buffer)
 }
 
-fn worker<I, O, F>(
-    receiver: Receiver<Result<I, Fb2Error>>,
-    sender: SyncSender<Result<O, Fb2Error>>,
-    mut processor: F,
-) where
-    F: FnMut(Result<I, Fb2Error>) -> Result<O, Fb2Error>,
-{
-    let mut have_tasks = true;
-    while have_tasks {
-        let input = receiver.recv().expect("The channel is broken\n");
-        have_tasks = !is_done(&input);
-        let output = processor(input);
-        sender.send(output).expect("The channel is broken\n");
-    }
-}
-
-pub fn do_parse(archive_name: &str) -> Fb2Result<()> {
-    let (sender1, receiver1) = sync_channel(100);
-    let (sender2, receiver2) = sync_channel(100);
-    let (sender3, receiver3) = sync_channel(100);
-
-    thread::spawn(move || { worker(receiver1, sender2, pipe::converter); });
-    thread::spawn(move || { worker(receiver2, sender3, pipe::maker); });
-
-    let mut zip = archive::open(archive_name)?;
-    for i in 0..zip.len() {
-        let mut file = zip.by_index(i)?;
-        let header = archive::load_header(&mut file);
-        sender1.send(header).expect("The channel is broken\n");
-        let msg = receiver3.recv().expect("The channel is broken\n");
-        match msg {
-            Ok(fb) => println!("{}", tools::fmt_book(&fb)),
-            Err(Fb2Error::Done) => break,
-            Err(err) => println!("!!! {} -> {}", file.name(), err.description()),
-        }
-    }
-    sender1.send(Err(Fb2Error::Done)).expect(
-        "The channel is broken\n",
-    );
+pub fn do_parse(file_name: &str) -> Fb2Result<()> {
+    let fb = match read_file(file_name) {
+        Ok(xml) => tools::as_utf8(xml).and_then(tools::create_fb2),
+        Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name))),
+    }?;
+    tools::fmt_book(&fb);
     Ok(())
 }
 
