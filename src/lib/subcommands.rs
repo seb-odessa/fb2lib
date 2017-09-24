@@ -133,6 +133,17 @@ pub fn do_parse(archive_name: &str) -> Fb2Result<()> {
     Ok(())
 }
 
+pub fn do_check(archive_name: &str) -> Fb2Result<()> {
+    let mut zip = archive::open(archive_name)?;
+    for i in 0..zip.len() {
+        let mut file = zip.by_index(i)?;
+        match archive::load_fb2(&mut file) {
+            Ok(_) => print!("."),
+            Err(_) => println!("\n{}",file.name())
+        }
+    }
+    Ok(())
+}
 
 ///*************************************************************************************************************************//
 #[cfg(test)]
