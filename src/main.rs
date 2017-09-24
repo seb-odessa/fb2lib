@@ -6,7 +6,7 @@ use std::error::Error;
 use lib::result::Fb2Error;
 use lib::subcommands::*;
 
-const VERSION: &'static str = "v0.4.0";
+const VERSION: &'static str = "v0.4.1";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ARCHIVE: &'static str = "fb_archive.zip";
 const FILE: &'static str = "fb_book.fb2";
@@ -27,7 +27,7 @@ fn main() {
 
     let cmd_ls = SubCommand::with_name(CMD_LS).about("List archive contents");
     let cmd_parse = SubCommand::with_name(CMD_PARSE).about("Parse all books in archive");
-    let cmd_check = SubCommand::with_name(CMD_PARSE).about("Try parse all archive and print only failured books");
+    let cmd_check = SubCommand::with_name(CMD_CHECK).about("Try parse all archive and print only failured books");
     let cmd_show = SubCommand::with_name(CMD_SHOW).about("Request to extract and print some kind of content");
     let cmd_show_xml = SubCommand::with_name(CMD_XML).about("Print XML content of the fb2 description").arg(book.clone());
     let cmd_show_fb2 = SubCommand::with_name(CMD_FB2).about("Print parsed FictionBook structure").arg(book.clone());
