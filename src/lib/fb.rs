@@ -1,6 +1,8 @@
 pub use serde_xml_rs::deserialize;
 pub use serde_xml_rs::Error;
 
+pub type SerdeError = Error;
+
 //  Элемент <sequence>
 // Атрибуты
 //     name (обязательный) - название серии;

@@ -15,6 +15,7 @@ const FB_CLOSE_TAG: &'static str = "\n</FictionBook>";
 
 pub type ZipArchive = zip::ZipArchive<std::fs::File>;
 
+
 pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     let file = std::fs::File::open(&std::path::Path::new(name))?;
     let archive = ZipArchive::new(file)?;

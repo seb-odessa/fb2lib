@@ -1,14 +1,16 @@
 # fb2lib
+Tool for managing FB2 books in ZIP archives.
+E.g. fb2-612000-614999.zip - official archive of the lib.rus.ec online library.
 
 ### Usage
 ```
-$ ./target/debug/fb2lib
-fb2lib v0.1.0
+$ fb2lib
+fb2lib v0.4.1
 seb <seb@ukr.net>
 FictionBook Library Archive Manager
 
 USAGE:
-    fb2lib <fb_archive.zip> [SUBCOMMAND]
+    fb2lib [fb_archive.zip] [SUBCOMMAND]
 
 FLAGS:
     -h, --help       Prints help information
@@ -18,16 +20,17 @@ ARGS:
     <fb_archive.zip>    Zip archive with books in FB2 format
 
 SUBCOMMANDS:
-    desc    Print XML content of the fb2 description
-    fb      Print parsed FictionBook structure
-    help    Prints this message or the help of the given subcommand(s)
-    info    Print human readable info for the fb2 file
-    ls      List archive contents
+    check    Try parse all archive and print only failured books
+    help     Prints this message or the help of the given subcommand(s)
+    ls       List archive contents
+    parse    Try parse xml into fb2 and print it
+    show     Request to extract and print some kind of content
 ```
 
 ### List contet
 ```
-$ ./target/debug/fb2lib data/arch.zip ls
+$ fb2lib data/arch.zip ls
+
 book1.fb2            241143       562015
 book2.fb2            235547       783762
 book4.fb2             85787       160987
@@ -37,7 +40,8 @@ book5.fb2            631985      1505856
 
 ### Show description part for concrete FB2 book
 ```
-$ ./target/debug/fb2lib data/arch.zip desc book1.fb2
+$ fb2lib data/arch.zip show xml book1.fb2
+
 <?xml version="1.0" encoding="Windows-1251"?>
 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
  <description>
@@ -81,7 +85,8 @@ $ ./target/debug/fb2lib data/arch.zip desc book1.fb2
 
 ### Show FictionBook structure for concrete FB2 book
 ```
-$ ./target/debug/fb2lib data/arch.zip fb book5.fb2
+$ fb2lib data/arch.zip show xml book1.fb2
+
 FictionBook {
     description: Description {
         title_info: TitleInfo {
@@ -122,7 +127,7 @@ FictionBook {
 
 ### Show Book Title and Author(s)
 ```
-$ ./target/debug/fb2lib data/arch.zip info book5.fb2
+$ fb2lib data/arch.zip show info book5.fb2
 'Эрагон. Возвращение' - Кристофер  Паолини 
 
 ```

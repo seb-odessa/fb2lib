@@ -21,17 +21,16 @@ pub struct Converter {
 
 impl Converter {
     /// Creates a new Converter from ``from`` encoding and ``to`` encoding.
-    pub fn new(from: &str, to: &str) -> Converter {
-        let from_encoding = CString::new(from).unwrap();
+    pub fn new(from: &str, to: &str) -> Result<Converter, String> {
+        let from_encoding = CString::new(from).unwrap(); // Null ptr is not allowed in safe Rust
         let to_encoding = CString::new(to).unwrap();
-
         let handle = unsafe {
             iconv_open(to_encoding.as_ptr(), from_encoding.as_ptr())
         };
         if handle as isize == -1 {
-            panic!("Error creating conversion descriptor from {:} to {:}", from, to);
+            return Err(format!("Error creating conversion descriptor from {:} to {:}", from, to))
         }
-        Converter { cd: handle }
+        Ok(Converter { cd: handle })
     }
 
     /// Convert from input into output.
