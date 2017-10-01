@@ -1,6 +1,6 @@
 [package]
 name = "fb2lib"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["seb-odessa <seb@ukr.net>"]
 
 [lib]
@@ -8,7 +8,7 @@ name = "lib"
 path = "src/lib/lib.rs"
 
 [dependencies]
-    zip = "0.2.3"
+    zip = "*"
     rusqlite = "*"
     time = "0.1.38"
     clap = "2.26.2"

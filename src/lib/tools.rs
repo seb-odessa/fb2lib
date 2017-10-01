@@ -6,7 +6,7 @@ use helper;
 use fb::{FictionBook, Description, Author};
 use std::error::Error;
 
-pub fn create(xml: String) -> Result<FictionBook, fb::SerdeError> {
+fn create(xml: String) -> Result<FictionBook, fb::SerdeError> {
     return helper::try_fast(xml).
         or_else(helper::try_escaped).
         or_else(helper::try_fix_lang).
@@ -29,7 +29,7 @@ pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     )
 }
 
-pub fn get_encoding(header: &Vec<u8>) -> Option<String> {
+fn get_encoding(header: &Vec<u8>) -> Option<String> {
     const BEGIN: &str = "encoding=\"";
     const END: &str = "\"?>";
     if let Some(pos) = find(&header, BEGIN.as_bytes()) {
@@ -64,10 +64,10 @@ fn try_create_converter(src: &str, dst: &str) -> Fb2Result<Converter> {
 
 fn try_convert(converter: &Converter, src: &Vec<u8>) -> Fb2Result<Vec<u8>> {
     let expected_len = 4 * src.len();
-    let mut dst = Vec::with_capacity(expected_len);    
+    let mut dst = Vec::with_capacity(expected_len);
     dst.resize(expected_len, 0u8);
     let (_, length, ret) = converter.convert(&src, &mut dst);
-    if 0 != ret {        
+    if 0 != ret {
         return Err(Fb2Error::Custom(String::from("Unable to convert input buffer")))
     }
     if length == dst.len() {
@@ -114,16 +114,16 @@ pub fn fmt_book(fb: &FictionBook) -> String {
 #[cfg(test)]
 mod tests {
 
-    const FB2_HEADER: &str = 
+    const FB2_HEADER: &str =
         "<?xml version=\"1.0\" encoding=\"Utf-8\"?>
             <FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\">
             <description>
                 <title-info>
                     <genre>жанр</genre>
-                    <author>    
+                    <author>
                         <first-name>Имя</first-name>
                         <middle-name>Отчество</middle-name>
-                        <last-name>Фамилия</last-name>                    
+                        <last-name>Фамилия</last-name>
                     </author>
                     <book-title>Название с невалидным XML символом & (амперсанд)</book-title>
                     <lang>ru</lang>
@@ -207,5 +207,5 @@ mod tests {
             }
         );
     }
-*/    
+*/
 }

@@ -140,9 +140,9 @@ pub struct Description {
     #[cfg(not(test))]
     #[serde(rename = "document-info")]
     pub document_info: DocumentInfo,
-    #[cfg(not(test))]
-    #[serde(rename = "publish-info", default)]
-    pub publish_info: Vec<PublishInfo>,
+    // #[cfg(not(test))]
+    // #[serde(rename = "publish-info", default)]
+    // pub publish_info: Vec<PublishInfo>,
 }
 
 #[derive(Debug, Deserialize, PartialEq)]

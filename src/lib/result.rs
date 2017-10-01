@@ -10,11 +10,8 @@ use std::io;
 use fb;
 
 
-//pub type Fb2Result<T> = Result<T, String>;
-
 /// Generic result type with Fb2Error as its error variant
 pub type Fb2Result<T> = Result<T, Fb2Error>;
-
 
 /// Error type for Zip
 #[derive(Debug)]
@@ -96,7 +93,7 @@ impl convert::From<fb::SerdeError> for Fb2Error {
         match err {
             serde_xml_rs::Error::UnsupportedOperation(msg) |
             serde_xml_rs::Error::Custom(msg) => Fb2Error::UnableDeserializeXML(msg),
-            _ => Fb2Error::UnableDeserializeXML("Unable to deserialize XML".to_owned()),
+            _ => Fb2Error::UnableDeserializeXML("Unable to deserialize XML ".to_owned()),
         }
     }
 }
@@ -132,7 +129,7 @@ impl error::Error for Fb2Error {
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
             Fb2Error::Custom(ref msg) => msg,
             Fb2Error::UnableToMakeUtf8 => "Unable to convert content into UTF8",
-            Fb2Error::UnableDeserializeXML(..) => "Unable to deserialize from XML",
+            Fb2Error::UnableDeserializeXML(ref msg) => msg,
             Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",
             Fb2Error::UnsupportedSubCommand => "Unsupported sub command",
             Fb2Error::FileNotFound(..) => "Specified file was not found in archive",
