@@ -86,6 +86,14 @@ pub fn try_fix_doc_info_double_nickname(xml: String) -> Result<fb::FictionBook, 
     }
 }
 
+pub fn try_fix_double_doc_info(xml: String) -> Result<fb::FictionBook, String> {
+    let fixed_xml = remove_first_tag(&xml, "description", "document-info");
+    match fb::deserialize(fixed_xml.as_bytes()) {
+        Ok(result) => Ok(result),
+        Err(_) => Err(fixed_xml),
+    }
+}
+
 pub fn done(xml: String) -> Result<fb::FictionBook, fb::Error> {
     match fb::deserialize(xml.as_bytes()) {
         Ok(result) => Ok(result),

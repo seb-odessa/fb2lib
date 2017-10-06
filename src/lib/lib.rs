@@ -5,6 +5,7 @@ extern crate test;
 
 extern crate zip;
 extern crate libc;
+extern crate regex;
 
 #[macro_use]
 extern crate serde_derive;

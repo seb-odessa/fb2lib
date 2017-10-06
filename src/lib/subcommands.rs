@@ -25,7 +25,7 @@ fn print_file_info(file: ZipFile) -> Fb2Result<()> {
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    archive::apply_all(zip, print_file_info)
+    archive::apply(zip, "*", print_file_info)
 }
 
 fn print_desc(mut file: ZipFile) -> Fb2Result<()> {
@@ -36,11 +36,7 @@ fn print_desc(mut file: ZipFile) -> Fb2Result<()> {
 
 pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    if file_name.is_empty() {
-        archive::apply_all(zip, print_desc)
-    } else {
-        archive::apply_one(zip, file_name, print_desc)
-    }
+    archive::apply(zip, file_name, print_desc)
 }
 
 fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
@@ -53,15 +49,11 @@ fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
 
 pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    if file_name.is_empty() {
-        archive::apply_all(zip, print_fb)
-    } else {
-        archive::apply_one(zip, file_name, print_fb)
-    }
+    archive::apply(zip, file_name, print_fb)
 }
 
 fn print_info(mut file: ZipFile) -> Fb2Result<()> {
-    match archive::load_fb2(&mut file) {        
+    match archive::load_fb2(&mut file) {
         Ok(fb) => println!("{:20}: {}", file.name(), tools::fmt_info(&fb.description)),
         Err(err) => {
             println!(
@@ -76,11 +68,7 @@ fn print_info(mut file: ZipFile) -> Fb2Result<()> {
 
 pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    if file_name.is_empty() {
-        archive::apply_all(zip, print_info)
-    } else {
-        archive::apply_one(zip, file_name, print_info)
-    }
+    archive::apply(zip, file_name, print_info)
 }
 
 fn read_file(file_name: &str) -> io::Result<Vec<u8>> {

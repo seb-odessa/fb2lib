@@ -1,13 +1,14 @@
 extern crate std;
 extern crate zip;
-extern crate regex;
+
 
 use tools;
-//use regex::Regex;
+use regex::Regex;
 use std::io::Read;
 use result::Fb2Result;
 use result::Fb2Error;
 use zip::read::ZipFile;
+use std::error::Error;
 use fb::FictionBook;
 
 const BUFFER_LENGTH: usize = 1024;
@@ -48,26 +49,21 @@ pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
     Err(Fb2Error::UnableToLoadFb2Header)
 }
 
-pub fn apply_all<F>(mut archive: ZipArchive, mut visitor: F) -> Fb2Result<()>
+pub fn apply<F>(mut archive: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
 where
-    F: FnMut(ZipFile) -> Fb2Result<()>
+    F: FnMut(ZipFile) -> Fb2Result<()>,
 {
-    for i in 0..archive.len() {
-        let file: ZipFile = archive.by_index(i)?;
-        visitor(file)?;
-    }
-    Ok(())
-}
-
-pub fn apply_one<F>(mut archive: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
-where
-    F: FnMut(ZipFile) -> Fb2Result<()>
-{
-
-// regexp expected here
-    match archive.by_name(file_name) {
-        Ok(file) => visitor(file),
-        Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name)))
+    match Regex::new(&wildcards_to_regex(file_name)) {
+        Ok(re) => {
+            for i in 0..archive.len() {
+                let file: ZipFile = archive.by_index(i)?;
+                if re.is_match(file.name()) {
+                    visitor(file)?;
+                }
+            }
+            return Ok(());
+        }
+        Err(e) => Err(Fb2Error::Custom(String::from(e.description()))),
     }
 }
 
@@ -80,13 +76,16 @@ pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {
 }
 
 #[allow(dead_code)]
-fn wildcards_to_regex(arg: &str) -> String {    
+fn wildcards_to_regex(arg: &str) -> String {
     let reg = String::from("^") + arg + "$";
-    reg.replace(".","\\.")
-       .replace("\\*", "\0").replace("*", "(.*)").replace("\0", "\\*")
-       .replace("\\?", "\0").replace("?", "(.{1})").replace("\0", "\\?")
+    reg.replace(".", "\\.")
+        .replace("\\*", "\0")
+        .replace("*", "(.*)")
+        .replace("\0", "\\*")
+        .replace("\\?", "\0")
+        .replace("?", "(.{1})")
+        .replace("\0", "\\?")
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -96,14 +95,23 @@ mod tests {
     fn expand_asterix_to_regexp() {
         assert_eq!("^file\\.txt$", &super::wildcards_to_regex("file.txt"));
         assert_eq!("^file(.*)\\.txt$", &super::wildcards_to_regex("file*.txt"));
-        assert_eq!("^file\\*(.*)\\.txt$", &super::wildcards_to_regex("file\\**.txt"));
+        assert_eq!(
+            "^file\\*(.*)\\.txt$",
+            &super::wildcards_to_regex("file\\**.txt")
+        );
     }
 
     #[test]
     fn expand_question_to_regexp() {
         assert_eq!("^file\\.txt$", &super::wildcards_to_regex("file.txt"));
-        assert_eq!("^file(.{1})\\.txt$", &super::wildcards_to_regex("file?.txt"));
-        assert_eq!("^file\\?(.{1})\\.txt$", &super::wildcards_to_regex("file\\??.txt"));
+        assert_eq!(
+            "^file(.{1})\\.txt$",
+            &super::wildcards_to_regex("file?.txt")
+        );
+        assert_eq!(
+            "^file\\?(.{1})\\.txt$",
+            &super::wildcards_to_regex("file\\??.txt")
+        );
     }
 
     #[test]
@@ -156,4 +164,3 @@ mod tests {
         assert!(!re.is_match("file.txt.file.txt"));
     }
 }
-

@@ -6,7 +6,7 @@ use std::error::Error;
 use lib::result::Fb2Error;
 use lib::subcommands::*;
 
-const VERSION: &'static str = "v0.4.1";
+const VERSION: &'static str = "v0.4.2";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ARCHIVE: &'static str = "fb_archive.zip";
 const FILE: &'static str = "fictionbook.fb2";
@@ -58,9 +58,9 @@ fn main() {
         (CMD_PARSE,   Some(arg)) => do_parse(&arg.value_of(XML).unwrap_or("")),
         (CMD_SHOW,    Some(cmd)) => {
             match cmd.subcommand() {
-                (CMD_XML,   Some(cmd)) => show_xml(&archive, &cmd.value_of(FILE).unwrap_or("")),
-                (CMD_FB2,   Some(cmd)) => show_fb2(&archive, &cmd.value_of(FILE).unwrap_or("")),
-                (CMD_INF,   Some(cmd)) => show_inf(&archive, &cmd.value_of(FILE).unwrap_or("")),
+                (CMD_XML,   Some(cmd)) => show_xml(&archive, &cmd.value_of(FILE).unwrap_or("*")),
+                (CMD_FB2,   Some(cmd)) => show_fb2(&archive, &cmd.value_of(FILE).unwrap_or("*")),
+                (CMD_INF,   Some(cmd)) => show_inf(&archive, &cmd.value_of(FILE).unwrap_or("*")),
                 (_,                 _) => Err(Fb2Error::UnsupportedSubCommand),
             }
         },

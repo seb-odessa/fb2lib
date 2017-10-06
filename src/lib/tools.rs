@@ -12,6 +12,7 @@ fn create(xml: String) -> Result<FictionBook, fb::SerdeError> {
         or_else(helper::try_fix_lang).
         or_else(helper::try_fix_title_info_double_last_name).
         or_else(helper::try_fix_doc_info_double_nickname).
+        or_else(helper::try_fix_double_doc_info).
         or_else(helper::done);
 }
 
