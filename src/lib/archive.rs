@@ -1,7 +1,9 @@
 extern crate std;
 extern crate zip;
+extern crate regex;
 
 use tools;
+//use regex::Regex;
 use std::io::Read;
 use result::Fb2Result;
 use result::Fb2Error;
@@ -61,6 +63,8 @@ pub fn apply_one<F>(mut archive: ZipArchive, file_name: &str, mut visitor: F) ->
 where
     F: FnMut(ZipFile) -> Fb2Result<()>
 {
+
+// regexp expected here
     match archive.by_name(file_name) {
         Ok(file) => visitor(file),
         Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name)))
@@ -74,3 +78,82 @@ pub fn load_xml(file: &mut ZipFile) -> Fb2Result<String> {
 pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {
     load_xml(file).and_then(tools::create_fb2)
 }
+
+#[allow(dead_code)]
+fn wildcards_to_regex(arg: &str) -> String {    
+    let reg = String::from("^") + arg + "$";
+    reg.replace(".","\\.")
+       .replace("\\*", "\0").replace("*", "(.*)").replace("\0", "\\*")
+       .replace("\\?", "\0").replace("?", "(.{1})").replace("\0", "\\?")
+}
+
+
+#[cfg(test)]
+mod tests {
+    extern crate regex;
+
+    #[test]
+    fn expand_asterix_to_regexp() {
+        assert_eq!("^file\\.txt$", &super::wildcards_to_regex("file.txt"));
+        assert_eq!("^file(.*)\\.txt$", &super::wildcards_to_regex("file*.txt"));
+        assert_eq!("^file\\*(.*)\\.txt$", &super::wildcards_to_regex("file\\**.txt"));
+    }
+
+    #[test]
+    fn expand_question_to_regexp() {
+        assert_eq!("^file\\.txt$", &super::wildcards_to_regex("file.txt"));
+        assert_eq!("^file(.{1})\\.txt$", &super::wildcards_to_regex("file?.txt"));
+        assert_eq!("^file\\?(.{1})\\.txt$", &super::wildcards_to_regex("file\\??.txt"));
+    }
+
+    #[test]
+    fn regex_asterix() {
+        let re = regex::Regex::new("^file(.*).txt$").unwrap();
+        assert!(re.is_match("file.txt"));
+        assert!(re.is_match("file_long_name.txt"));
+        assert!(re.is_match("file*.txt"));
+        assert!(re.is_match("file..txt"));
+    }
+
+    #[test]
+    fn regex_question() {
+        let re = regex::Regex::new("^file(.{1})txt$").unwrap();
+        assert!(re.is_match("file.txt"));
+        assert!(!re.is_match("filetxt"));
+        assert!(re.is_match("file_txt"));
+        assert!(re.is_match("file*txt"));
+    }
+
+    #[test]
+    fn regex_user_input_asterix() {
+        let re = regex::Regex::new(&super::wildcards_to_regex("fil*.txt")).unwrap();
+        assert!(re.is_match("file.txt"));
+        assert!(re.is_match("file1.txt"));
+        assert!(re.is_match("file_with_long_name.txt"));
+        assert!(re.is_match("filefile.txt"));
+        assert!(re.is_match("file.txt.file.txt"));
+    }
+
+    #[test]
+    fn regex_user_input_question() {
+        let re = regex::Regex::new(&super::wildcards_to_regex("fil??txt")).unwrap();
+        assert!(re.is_match("file.txt"));
+        assert!(re.is_match("fil__txt"));
+        assert!(!re.is_match("file_with_long_name.txt"));
+        assert!(!re.is_match("filefile.txt"));
+        assert!(!re.is_match("file.txt.file.txt"));
+    }
+
+    #[test]
+    fn regex_user_input_wo_wildcards() {
+        let re = regex::Regex::new(&super::wildcards_to_regex("file.txt")).unwrap();
+        assert!(re.is_match("file.txt"));
+        assert!(!re.is_match(".file.txt"));
+        assert!(!re.is_match("file.txt."));
+        assert!(!re.is_match("fil__txt"));
+        assert!(!re.is_match("file_with_long_name.txt"));
+        assert!(!re.is_match("filefile.txt"));
+        assert!(!re.is_match("file.txt.file.txt"));
+    }
+}
+

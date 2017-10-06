@@ -124,7 +124,7 @@ pub fn do_check(archive_name: &str) -> Fb2Result<()> {
 }
 
 ///*************************************************************************************************************************//
-#[cfg(test)]
+#[cfg(bench)]
 mod tests {
     use super::*;
     use test::Bencher;
