@@ -1,5 +1,6 @@
 #![feature(libc)]
 #![feature(test)]
+#![feature(const_fn)]
 #[allow(unused_extern_crates)]
 extern crate test;
 
@@ -10,6 +11,9 @@ extern crate regex;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_xml_rs;
+
+#[macro_use]
+extern crate lazy_static;
 
 
 pub mod tools;

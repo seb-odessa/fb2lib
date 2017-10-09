@@ -5,6 +5,16 @@ use fb;
 use helper;
 use fb::{FictionBook, Description, Author};
 use std::error::Error;
+// use std::collections::HashMap;
+// use std::sync::Mutex;
+
+// lazy_static! {
+//     static ref HASHMAP: HashMap<&'static str, Box<Converter> >= {
+//         let mut m = HashMap::new();
+
+//         m
+//     };
+// }
 
 fn create(xml: String) -> Result<FictionBook, fb::SerdeError> {
     return helper::try_fast(xml).
@@ -48,34 +58,11 @@ fn replace_encoding(encoding: &str, xml: &str) -> String {
     String::from(xml.replace(&from, "encoding=\"utf-8\""))
 }
 
-
-fn try_create_converter(src: &str, dst: &str) -> Fb2Result<Converter> {
-    match Converter::new(src, dst) {
-        Ok(converter) => Ok(converter),
-        Err(msg) => Err(Fb2Error::Custom(msg))
-    }
-}
-
-fn try_convert(converter: &Converter, src: &Vec<u8>) -> Fb2Result<Vec<u8>> {
-    let expected_len = 4 * src.len();
-    let mut dst = Vec::with_capacity(expected_len);
-    dst.resize(expected_len, 0u8);
-    let (_, length, ret) = converter.convert(&src, &mut dst);
-    if 0 != ret {
-        return Err(Fb2Error::Custom(String::from("Unable to convert input buffer")))
-    }
-    if length == dst.len() {
-        return Err(Fb2Error::Custom(String::from("Unable to convert input buffer. Not enough destination buffer length")))
-    }
-    dst.resize(length, 0u8);
-    return Ok(dst);
-}
-
 pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
     if let Some(encoding) = get_encoding(&header) {
         if encoding != String::from("utf-8") {
-            let converter = try_create_converter(&encoding.to_lowercase(), "utf-8")?;
-            let buffer = try_convert(&converter, &header)?;
+            let converter = Converter::new(&encoding.to_lowercase(), "utf-8")?;
+            let buffer = converter.utf8(&header)?;
             let header = String::from_utf8_lossy(&buffer);
             return Ok(replace_encoding(&encoding, &header));
         }
