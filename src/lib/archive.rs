@@ -3,6 +3,7 @@ extern crate zip;
 
 
 use tools;
+use helper;
 use regex::Regex;
 use std::io::Read;
 use result::Fb2Result;
@@ -38,7 +39,7 @@ fn load_buffer(file: &mut ZipFile, result: &mut Vec<u8>) -> Fb2Result<usize> {
 pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
     while let Some(_) = load_buffer(file, &mut header).ok() {
-        if let Some(position) = tools::find(&header, DESC_CLOSE_TAG.as_bytes()) {
+        if let Some(position) = helper::find(&header, DESC_CLOSE_TAG.as_bytes()) {
             header.resize(position, 0u8);
             header.extend_from_slice(DESC_CLOSE_TAG.as_bytes());
             header.extend_from_slice(FAKE_BODY_TAG.as_bytes());

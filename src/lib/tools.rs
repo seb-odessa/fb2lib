@@ -5,23 +5,13 @@ use fb::XmlError;
 use helper;
 use fb::FictionBook;
 
-// use std::collections::HashMap;
-// use std::sync::Mutex;
-
-// lazy_static! {
-//     static ref HASHMAP: HashMap<&'static str, Box<Converter> >= {
-//         let mut m = HashMap::new();
-
-//         m
-//     };
-// }
-
 fn create(xml: String) -> Result<FictionBook, XmlError> {
     return helper::try_fast(xml).
         or_else(helper::try_escaped).
-        or_else(helper::try_fix_lang).
-        or_else(helper::try_fix_title_info_double_last_name).
-        or_else(helper::try_fix_doc_info_double_nickname).
+        or_else(helper::try_skip_leading).
+        or_else(helper::try_fix_double_lang).
+        or_else(helper::try_fix_double_last_name).
+        or_else(helper::try_fix_double_doc_info_nickname).
         or_else(helper::try_fix_double_doc_info).
         or_else(helper::done);
 }
@@ -30,18 +20,11 @@ pub fn create_fb2(xml: String) -> Fb2Result<FictionBook> {
     create(xml).map_err(|e| { Fb2Error::Custom(format!("Unable to deserialize XML: {}", e)) })
 }
 
-
-pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
-    haystack.windows(needle.len()).position(
-        |window| window == needle,
-    )
-}
-
 fn get_encoding(header: &Vec<u8>) -> Option<String> {
     const BEGIN: &str = "encoding=\"";
     const END: &str = "\"?>";
-    if let Some(pos) = find(&header, BEGIN.as_bytes()) {
-        if let Some(end) = find(&header, END.as_bytes()) {
+    if let Some(pos) = helper::find(&header, BEGIN.as_bytes()) {
+        if let Some(end) = helper::find(&header, END.as_bytes()) {
             let start = pos + BEGIN.len();
             let encoding = String::from_utf8_lossy(&header[start..end]);
             return Some(encoding.into_owned());
@@ -70,56 +53,22 @@ pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
 #[cfg(test)]
 mod tests {
 
-    const FB2_HEADER: &str =
-        "<?xml version=\"1.0\" encoding=\"Utf-8\"?>
-            <FictionBook xmlns=\"http://www.gribuser.ru/xml/fictionbook/2.0\" xmlns:l=\"http://www.w3.org/1999/xlink\">
-            <description>
-                <title-info>
-                    <genre>жанр</genre>
-                    <author>
-                        <first-name>Имя</first-name>
-                        <middle-name>Отчество</middle-name>
-                        <last-name>Фамилия</last-name>
-                    </author>
-                    <book-title>Название с невалидным XML символом & (амперсанд)</book-title>
-                    <lang>ru</lang>
-                </title-info>
-                <document-info>
-                </document-info>
-            </description>
-        </FictionBook>";
-
-    #[test]
-    fn find_in_buffer() {
-        let buffer = FB2_HEADER.as_bytes();
-        assert_eq!(Some(20), super::find(&buffer, "encoding=".as_bytes()));
-        assert_eq!(None, super::find(&buffer, "&&&&".as_bytes()));
-    }
-
     #[test]
     fn get_encoding() {
         let mut buffer = Vec::new();
-        buffer.extend_from_slice(FB2_HEADER.as_bytes());
+        buffer.extend_from_slice("<?xml version=\"1.0\" encoding=\"Utf-8\"?>".as_bytes());
         assert_eq!(Some(String::from("Utf-8")), super::get_encoding(&buffer));
     }
 
     #[test]
     fn replace_encoding() {
-        let result = super::replace_encoding("Utf-8", FB2_HEADER);
+        let result = super::replace_encoding("Utf-8", "<?xml version=\"1.0\" encoding=\"Utf-8\"?>");
         assert_eq!(Some(20), result.find("encoding=\"utf-8\"") );
         assert_eq!(None, result.find("encoding=\"Utf-8\"") );
     }
 
 
 /*
-    #[test]
-    fn parse_double_last_name_tag() {
-        let xml = load_xml("test_data/double_last_name.xml");
-        assert!(xml.is_ok());
-        let obj = self::create(xml.unwrap());
-        assert!(obj.is_ok());
-    }
-
     #[test]
     fn parse_description_xml() {
         let xml = load_xml("test_data/description.xml");
