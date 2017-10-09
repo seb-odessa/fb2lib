@@ -54,7 +54,7 @@ fn get_encoding(header: &Vec<u8>) -> Option<String> {
 }
 
 fn replace_encoding(encoding: &str, xml: &str) -> String {
-    let from = String::from("encoding=\"") + encoding + "\"";
+    let from = format!("encoding=\"{}\"",encoding);
     String::from(xml.replace(&from, "encoding=\"utf-8\""))
 }
 
