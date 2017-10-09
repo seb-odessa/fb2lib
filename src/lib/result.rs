@@ -88,8 +88,8 @@ impl convert::From<std::string::FromUtf8Error> for Fb2Error {
     }
 }
 
-impl convert::From<fb::SerdeError> for Fb2Error {
-    fn from(err: fb::SerdeError) -> Fb2Error {
+impl convert::From<fb::XmlError> for Fb2Error {
+    fn from(err: fb::XmlError) -> Fb2Error {
         match err {
             serde_xml_rs::Error::UnsupportedOperation(msg) |
             serde_xml_rs::Error::Custom(msg) => Fb2Error::UnableDeserializeXML(msg),

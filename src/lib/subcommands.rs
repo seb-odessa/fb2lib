@@ -54,7 +54,7 @@ pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 
 fn print_info(mut file: ZipFile) -> Fb2Result<()> {
     match archive::load_fb2(&mut file) {
-        Ok(fb) => println!("{:20}: {}", file.name(), tools::fmt_info(&fb.description)),
+        Ok(fb) => println!("{:20}: {}", file.name(), fb),
         Err(err) => {
             println!(
                 "Can't parse {} with error {} ",
@@ -83,7 +83,7 @@ pub fn do_parse(file_name: &str) -> Fb2Result<()> {
         Ok(xml) => tools::as_utf8(xml).and_then(tools::create_fb2),
         Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name))),
     }?;
-    tools::fmt_book(&fb);
+    println!("{}",fb);
     Ok(())
 }
 

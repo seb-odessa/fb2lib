@@ -1,7 +1,9 @@
+use std::fmt;
+
 pub use serde_xml_rs::deserialize;
 pub use serde_xml_rs::Error;
 
-pub type SerdeError = Error;
+pub type XmlError = Error;
 
 //  Элемент <sequence>
 // Атрибуты
@@ -156,3 +158,44 @@ pub struct FictionBook {
 //         println!("destroing {:?}", &self.description.title_info.author);
 //     }
 // }
+
+impl fmt::Display for Author {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        let has_first = !&self.first_name.is_empty();
+        let has_middle = !&self.middle_name.is_empty();
+        let has_last = !&self.last_name.is_empty();
+
+        if has_first {
+            write!(fmt, "{}", &self.first_name)?;
+        }
+        if has_middle {
+            if has_first {
+                write!(fmt, " ")?;
+            }
+            write!(fmt, "{}", &self.middle_name)?;
+        }
+        if has_last {
+            if has_first || has_middle {
+                write!(fmt, " ")?;
+            }
+            write!(fmt, "{}", &self.last_name)?;
+        }
+        write!(fmt, "")
+    }
+}
+
+impl fmt::Display for Description {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(fmt, "'{}' - ", &self.title_info.book_title)?;
+        for author in &self.title_info.author {
+            write!(fmt, "{}", author)?;
+        }
+        write!(fmt, "")
+    }
+}
+
+impl fmt::Display for FictionBook {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(fmt, "{}", &self.description)
+    }
+}

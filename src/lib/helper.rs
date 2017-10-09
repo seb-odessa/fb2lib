@@ -53,32 +53,32 @@ pub fn try_fast(xml: String) -> Result<fb::FictionBook, String> {
         xml
     };
 
-    fb::deserialize(fixed.as_bytes()).map_err(|_| { return fixed; })
+    fb::deserialize(fixed.as_bytes()).map_err(|_| { fixed })
 }
 
 pub fn try_escaped(xml: String) -> Result<fb::FictionBook, String> {    
     let fixed = escape(xml);
-    fb::deserialize(fixed.as_bytes()).map_err(|_| { return fixed; })
+    fb::deserialize(fixed.as_bytes()).map_err(|_| { fixed })
 }
 
 pub fn try_fix_lang(xml: String) -> Result<fb::FictionBook, String> {
     let fixed = deduplicate_tags(xml, "title-info", "lang");
-    fb::deserialize(fixed.as_bytes()).map_err(|_| { return fixed; })
+    fb::deserialize(fixed.as_bytes()).map_err(|_| { fixed })
 }
 
 pub fn try_fix_title_info_double_last_name(xml: String) -> Result<fb::FictionBook, String> {
     let fixed = deduplicate_tags(xml, "title-info", "last-name");
-    fb::deserialize(fixed.as_bytes()).map_err(|_| { return fixed; })
+    fb::deserialize(fixed.as_bytes()).map_err(|_| { fixed })
 }
 
 pub fn try_fix_doc_info_double_nickname(xml: String) -> Result<fb::FictionBook, String> {
     let fixed = remove_first_tag(xml, "document-info", "nickname");
-    fb::deserialize(fixed.as_bytes()).map_err(|_| { return fixed; })
+    fb::deserialize(fixed.as_bytes()).map_err(|_| { fixed })
 }
 
 pub fn try_fix_double_doc_info(xml: String) -> Result<fb::FictionBook, String> {
     let fixed = remove_first_tag(xml, "description", "document-info");
-    fb::deserialize(fixed.as_bytes()).map_err(|_| { return fixed; })
+    fb::deserialize(fixed.as_bytes()).map_err(|_| { fixed })
 }
 
 pub fn done(xml: String) -> Result<fb::FictionBook, fb::Error> {

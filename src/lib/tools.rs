@@ -1,10 +1,10 @@
 use result::Fb2Result;
 use result::Fb2Error;
 use iconv::Converter;
-use fb;
+use fb::XmlError;
 use helper;
-use fb::{FictionBook, Description, Author};
-use std::error::Error;
+use fb::FictionBook;
+
 // use std::collections::HashMap;
 // use std::sync::Mutex;
 
@@ -16,7 +16,7 @@ use std::error::Error;
 //     };
 // }
 
-fn create(xml: String) -> Result<FictionBook, fb::SerdeError> {
+fn create(xml: String) -> Result<FictionBook, XmlError> {
     return helper::try_fast(xml).
         or_else(helper::try_escaped).
         or_else(helper::try_fix_lang).
@@ -27,10 +27,7 @@ fn create(xml: String) -> Result<FictionBook, fb::SerdeError> {
 }
 
 pub fn create_fb2(xml: String) -> Fb2Result<FictionBook> {
-    match create(xml) {
-        Ok(fb) => Ok(fb),
-        Err(e) => Err(Fb2Error::Custom(String::from("Unable to deserializeXML") + e.description()))
-    }
+    create(xml).map_err(|e| { Fb2Error::Custom(format!("Unable to deserialize XML: {}", e)) })
 }
 
 
@@ -68,28 +65,6 @@ pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
         }
     }
     Ok(String::from_utf8_lossy(&header).to_string())
-}
-
-fn fmt_author(authors: &Vec<Author>) -> String{
-    let mut result = String::new();
-    for author in authors {
-        if !result.is_empty() {
-            result += ", ";
-        }
-        result += &format!("{} {} {}", &author.first_name, &author.middle_name, &author.last_name);
-    }
-    return result;
-}
-
-pub fn fmt_info(description: &Description) -> String {
-    format!("'{}' - {}",
-        &description.title_info.book_title,
-        fmt_author(&description.title_info.author)
-        )
-}
-
-pub fn fmt_book(fb: &FictionBook) -> String {
-    fmt_info(&fb.description)
 }
 
 #[cfg(test)]
