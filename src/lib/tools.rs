@@ -43,13 +43,6 @@ fn get_encoding(header: &Vec<u8>) -> Option<String> {
     None
 }
 
-fn convert_to_utf8(src: Vec<u8>) -> Fb2Result<String> {
-    match String::from_utf8(src) {
-        Ok(utf8) => Ok(utf8),
-        Err(e) => Err(Fb2Error::Custom(String::from("Unable to apply 'std::string::String::from_utf8' to ") + e.description()))
-    }
-}
-
 fn replace_encoding(encoding: &str, xml: &str) -> String {
     let from = String::from("encoding=\"") + encoding + "\"";
     String::from(xml.replace(&from, "encoding=\"utf-8\""))
@@ -83,11 +76,11 @@ pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
         if encoding != String::from("utf-8") {
             let converter = try_create_converter(&encoding.to_lowercase(), "utf-8")?;
             let buffer = try_convert(&converter, &header)?;
-            let header = convert_to_utf8(buffer)?;
+            let header = String::from_utf8_lossy(&buffer);
             return Ok(replace_encoding(&encoding, &header));
         }
     }
-    convert_to_utf8(header)
+    Ok(String::from_utf8_lossy(&header).to_string())
 }
 
 fn fmt_author(authors: &Vec<Author>) -> String{
