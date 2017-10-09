@@ -12,9 +12,8 @@ extern crate regex;
 extern crate serde_derive;
 extern crate serde_xml_rs;
 
-#[macro_use]
-extern crate lazy_static;
-
+// #[macro_use]
+// extern crate lazy_static;
 
 pub mod tools;
 pub mod iconv;

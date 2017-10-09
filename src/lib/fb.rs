@@ -151,3 +151,8 @@ pub struct FictionBook {
     pub description: Description,
 }
 
+// impl Drop for FictionBook {
+//     fn drop(&mut self) {
+//         println!("destroing {:?}", &self.description.title_info.author);
+//     }
+// }
