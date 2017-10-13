@@ -90,7 +90,17 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
         let mut file = zip.by_index(i)?;
         match load_fb2(&mut file) {
             Ok(_) => succ += 1,
-            Err(_) => println!("\n{}", file.name()),
+            Err(_) => {
+                if !quiet {
+                    println!();
+                }
+                println!(
+                    "./fb2lib {} show xml {} > {}",
+                    archive_name,
+                    file.name(),
+                    file.name()
+                )
+            }
         }
         if !quiet {
             print!("\r");
@@ -98,12 +108,14 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
         }
         io::stdout().flush()?;
     }
-    println!(
-        "\nSucceeded {}/{} ({}%)",
-        succ,
-        book_count,
-        100 * succ / book_count
-    );
+    if !quiet {
+        println!(
+            "\nSucceeded {}/{} ({}%)",
+            succ,
+            book_count,
+            100 * succ / book_count
+        );
+    }
     Ok(())
 }
 
