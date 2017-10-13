@@ -1,12 +1,12 @@
 use tools;
-use archive;
+use archive::{apply, open, load_raw, load_xml, load_fb2};
 use result::Fb2Result;
 use result::Fb2Error;
 use zip::read::ZipFile;
 use std::error::Error;
 
 use tools::as_utf8;
-use tools::create_fb2;
+use tools::as_fb2;
 
 use std::fs::File;
 use std::io::Read;
@@ -24,51 +24,43 @@ fn print_file_info(file: ZipFile) -> Fb2Result<()> {
 }
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    archive::apply(zip, "*", print_file_info)
+    let zip = open(archive_name)?;
+    apply(zip, "*", print_file_info)
 }
 
-fn print_desc(mut file: ZipFile) -> Fb2Result<()> {
-    let xml = archive::load_xml(&mut file)?;
+fn print_xml(mut file: ZipFile) -> Fb2Result<()> {
+    let xml = load_xml(&mut file)?;
     println!("{}", xml);
     Ok(())
 }
 
 pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    archive::apply(zip, file_name, print_desc)
+    let zip = open(archive_name)?;
+    apply(zip, file_name, print_xml)
 }
 
 fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
-    let fb = archive::load_header(&mut file).and_then(as_utf8).and_then(
-        create_fb2,
-    )?;
+    let fb = load_raw(&mut file).and_then(as_utf8).and_then(as_fb2)?;
     println!("{:#?}", fb);
     Ok(())
 }
 
 pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    archive::apply(zip, file_name, print_fb)
+    let zip = open(archive_name)?;
+    apply(zip, file_name, print_fb)
 }
 
 fn print_info(mut file: ZipFile) -> Fb2Result<()> {
-    match archive::load_fb2(&mut file) {
+    match load_fb2(&mut file) {
         Ok(fb) => println!("{:20}: {}", file.name(), fb),
-        Err(err) => {
-            println!(
-                "Can't parse {} with error {} ",
-                file.name(),
-                err.description()
-            )
-        }
+        Err(err) => println!("{:20}: {}!!!", file.name(), err.description()),
     }
     Ok(())
 }
 
 pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    archive::apply(zip, file_name, print_info)
+    let zip = open(archive_name)?;
+    apply(zip, file_name, print_info)
 }
 
 fn read_file(file_name: &str) -> io::Result<Vec<u8>> {
@@ -80,15 +72,15 @@ fn read_file(file_name: &str) -> io::Result<Vec<u8>> {
 
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {
     let fb = match read_file(file_name) {
-        Ok(xml) => tools::as_utf8(xml).and_then(tools::create_fb2),
+        Ok(xml) => tools::as_utf8(xml).and_then(tools::as_fb2),
         Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name))),
     }?;
-    println!("{}",fb);
+    println!("{}", fb);
     Ok(())
 }
 
 pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
-    let mut zip = archive::open(archive_name)?;
+    let mut zip = open(archive_name)?;
     let book_count = zip.len();
     let mut succ = 0;
     if !quiet {
@@ -96,7 +88,7 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
     }
     for i in 0..book_count {
         let mut file = zip.by_index(i)?;
-        match archive::load_fb2(&mut file) {
+        match load_fb2(&mut file) {
             Ok(_) => succ += 1,
             Err(_) => println!("\n{}", file.name()),
         }
@@ -137,14 +129,14 @@ mod tests {
     }
 
     #[bench]
-    fn bench_each_book_load_header(bencher: &mut Bencher) {
+    fn bench_each_book_load(bencher: &mut Bencher) {
         let mut result = Ok(());
 
         bencher.iter(|| {
             let zip = archive::open(ARCHIVE_NAME);
             assert!(zip.is_ok());
             result = archive::apply_all(zip.unwrap(), |mut book| {
-                assert!(archive::load_header(&mut book).is_ok());
+                assert!(archive::load(&mut book).is_ok());
                 Ok(())
             });
         });

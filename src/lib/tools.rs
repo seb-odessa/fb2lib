@@ -1,23 +1,18 @@
 use result::Fb2Result;
 use result::Fb2Error;
 use iconv::Converter;
-use fb::XmlError;
-use helper;
 use fb::FictionBook;
+use helper;
 
-fn create(xml: String) -> Result<FictionBook, XmlError> {
-    return helper::try_fast(xml).
-        or_else(helper::try_escaped).
-        or_else(helper::try_skip_leading).
-        or_else(helper::try_fix_double_lang).
-        or_else(helper::try_fix_double_last_name).
-        or_else(helper::try_fix_double_doc_info_nickname).
-        or_else(helper::try_fix_double_doc_info).
-        or_else(helper::done);
-}
-
-pub fn create_fb2(xml: String) -> Fb2Result<FictionBook> {
-    create(xml).map_err(|e| { Fb2Error::Custom(format!("Unable to deserialize XML: {}", e)) })
+pub fn as_fb2(xml: String) -> Fb2Result<FictionBook> {
+    helper::try_create(xml)
+        .or_else(helper::try_create_with_first_error_fixing) // Fix first error
+        .or_else(helper::try_create_with_first_error_fixing) // Fix second error
+        // .or_else(helper::try_create_with_first_error_fixing) // Fix third error
+        // .or_else(helper::try_create_with_first_error_fixing) // Fix fourth error
+        .map_err(|e| {
+            Fb2Error::Custom(format!("Unable to deserialize XML: {}", e))
+        })
 }
 
 fn get_encoding(header: &Vec<u8>) -> Option<String> {
@@ -34,7 +29,7 @@ fn get_encoding(header: &Vec<u8>) -> Option<String> {
 }
 
 fn replace_encoding(encoding: &str, xml: &str) -> String {
-    let from = format!("encoding=\"{}\"",encoding);
+    let from = format!("encoding=\"{}\"", encoding);
     String::from(xml.replace(&from, "encoding=\"utf-8\""))
 }
 
@@ -62,55 +57,9 @@ mod tests {
 
     #[test]
     fn replace_encoding() {
-        let result = super::replace_encoding("Utf-8", "<?xml version=\"1.0\" encoding=\"Utf-8\"?>");
-        assert_eq!(Some(20), result.find("encoding=\"utf-8\"") );
-        assert_eq!(None, result.find("encoding=\"Utf-8\"") );
+        let result =
+            super::replace_encoding("koi8-r", "<?xml version=\"1.0\" encoding=\"koi8-r\"?>");
+        assert_eq!(Some(20), result.find("encoding=\"utf-8\""));
+        assert_eq!(None, result.find("encoding=\"koi8-r\""));
     }
-
-
-/*
-    #[test]
-    fn parse_description_xml() {
-        let xml = load_xml("test_data/description.xml");
-        assert!(xml.is_ok());
-        let obj = self::create(xml.unwrap());
-        assert!(obj.is_ok());
-        let fb: FictionBook = obj.unwrap();
-        assert_eq!(
-            fb,
-            FictionBook {
-                description: Description {
-                    title_info: TitleInfo {
-                        genre: vec![
-                            "sf".to_owned(),
-                            "sf_history".to_owned()
-                            ],
-                        author: vec![
-                            Author {
-                                first_name: "Константин".to_owned(),
-                                middle_name: "Георгиевич".to_owned(),
-                                last_name: "Калбанов".to_owned(),
-                                nick_name: "".to_owned(),
-                                home_page: "http://samlib.ru/k/kalbazow_k_g/".to_owned(),
-                                email: "mahoni928@yandex.ru".to_owned(),
-                            },
-                        ],
-                        book_title: "Робинзоны".to_owned(),
-                        date: "".to_owned(),
-                        lang: "ru".to_owned(),
-                        src_lang: "".to_owned(),
-                        translator: vec![],
-                        sequence: vec![
-                            Sequence {
-                                name: "Робинзоны".to_owned(),
-                                number: "1".to_owned(),
-                                lang: "".to_owned(),
-                            },
-                        ],
-                    },
-                },
-            }
-        );
-    }
-*/
 }

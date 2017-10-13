@@ -36,7 +36,7 @@ fn load_buffer(file: &mut ZipFile, result: &mut Vec<u8>) -> Fb2Result<usize> {
     }
 }
 
-pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
+pub fn load_raw(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
     while let Some(_) = load_buffer(file, &mut header).ok() {
         if let Some(position) = helper::find(&header, DESC_CLOSE_TAG.as_bytes()) {
@@ -62,18 +62,19 @@ where
                     visitor(file)?;
                 }
             }
-            return Ok(());
+            Ok(())
         }
         Err(e) => Err(Fb2Error::Custom(String::from(e.description()))),
     }
 }
 
+
 pub fn load_xml(file: &mut ZipFile) -> Fb2Result<String> {
-    load_header(file).and_then(tools::as_utf8)
+    load_raw(file).and_then(tools::as_utf8)
 }
 
 pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {
-    load_xml(file).and_then(tools::create_fb2)
+    load_xml(file).and_then(tools::as_fb2)
 }
 
 #[allow(dead_code)]

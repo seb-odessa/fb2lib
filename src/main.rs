@@ -6,11 +6,11 @@ use std::error::Error;
 use lib::result::Fb2Error;
 use lib::subcommands::*;
 
-const VERSION: &'static str = "v0.4.2";
+const VERSION: &'static str = "v0.4.3";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
-const ARCHIVE: &'static str = "fb_archive.zip";
-const FILE: &'static str = "fictionbook.fb2";
-const XML: &'static str = "fictionbook.xml";
+const ARCHIVE: &'static str = "FictionBook.zip";
+const FILE: &'static str = "FictionBook.fb2";
+const XML: &'static str = "FictionBook.xml";
 const QUIET: &'static str = "QUIET";
 
 const CMD_LS: &'static str = "ls";
