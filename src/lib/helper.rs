@@ -7,7 +7,7 @@ pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
 }
 
 pub fn try_create(xml: String) -> Result<fb::FictionBook, String> {
-    println!("pub fn try_create(xml: String) -> Result<fb::FictionBook, String>");
+    // println!("pub fn try_create(xml: String) -> Result<fb::FictionBook, String>");
     fb::deserialize(xml.as_bytes()).map_err(|_| xml)
 }
 
@@ -22,7 +22,7 @@ pub fn try_create_with_first_error_fixing(xml: String) -> Result<fb::FictionBook
 }
 
 pub fn try_fix_escape(xml: String) -> Result<String, String> {
-    println!("pub fn try_fix_escape(xml: String) -> Result<String, String>");
+    // println!("pub fn try_fix_escape(xml: String) -> Result<String, String>");
     if let Some(pos) = xml.find("&") {
         if Some("&amp;") != xml.get(pos..pos + 5) {
             return Ok(xml.replace("&amp;", "\0").replace("&", "&amp;").replace(
@@ -35,7 +35,7 @@ pub fn try_fix_escape(xml: String) -> Result<String, String> {
 }
 
 pub fn try_fix_leading(xml: String) -> Result<String, String> {
-    println!("pub fn try_fix_leading(xml: String) -> Result<String, String>");
+    // println!("pub fn try_fix_leading(xml: String) -> Result<String, String>");
     if xml.chars().next() != Some('<') {
         Ok(xml.chars().skip_while(|c| *c != '<').collect())
     } else {
@@ -44,22 +44,22 @@ pub fn try_fix_leading(xml: String) -> Result<String, String> {
 }
 
 pub fn try_fix_double_lang(xml: String) -> Result<String, String> {
-    println!("pub fn try_fix_double_lang(xml: String) -> Result<String, String>");
+    // println!("pub fn try_fix_double_lang(xml: String) -> Result<String, String>");
     remove_first_tag(xml, "title-info", "lang")
 }
 
 pub fn try_fix_double_last_name(xml: String) -> Result<String, String> {
-    println!("pub fn try_fix_double_last_name(xml: String) -> Result<String, String>");
+    // println!("pub fn try_fix_double_last_name(xml: String) -> Result<String, String>");
     remove_first_tag(xml, "title-info", "last-name")
 }
 
 pub fn try_fix_double_doc_info_nickname(xml: String) -> Result<String, String> {
-    println!("pub fn try_fix_double_doc_info_nickname(xml: String) -> Result<String, String>");
+    // println!("pub fn try_fix_double_doc_info_nickname(xml: String) -> Result<String, String>");
     remove_first_tag(xml, "document-info", "nickname")
 }
 
 pub fn try_fix_double_doc_info(xml: String) -> Result<String, String> {
-    println!("pub fn try_fix_double_doc_info(xml: String) -> Result<String, String>");
+    // println!("pub fn try_fix_double_doc_info(xml: String) -> Result<String, String>");
     remove_first_tag(xml, "description", "document-info")
 }
 
