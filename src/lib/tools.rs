@@ -1,8 +1,9 @@
+
+use iconv;
+use helper;
+use fb::FictionBook;
 use result::Fb2Result;
 use result::Fb2Error;
-use iconv::Converter;
-use fb::FictionBook;
-use helper;
 
 pub fn as_fb2(xml: String) -> Fb2Result<FictionBook> {
     helper::try_create(xml)
@@ -36,10 +37,8 @@ fn replace_encoding(encoding: &str, xml: &str) -> String {
 pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
     if let Some(encoding) = get_encoding(&header) {
         if encoding != String::from("utf-8") {
-            let converter = Converter::new(&encoding.to_lowercase(), "utf-8")?;
-            let buffer = converter.utf8(&header)?;
-            let header = String::from_utf8_lossy(&buffer);
-            return Ok(replace_encoding(&encoding, &header));
+            let utf8 = iconv::to_utf8(&encoding, &header)?;
+            return Ok(replace_encoding(&encoding, &utf8));
         }
     }
     Ok(String::from_utf8_lossy(&header).to_string())

@@ -6,6 +6,30 @@ use std::ffi::CString;
 use libc::{c_char, size_t, c_int, c_void};
 use result::Fb2Result;
 use result::Fb2Error;
+use std::collections::HashMap;
+
+type Hash = HashMap<String, Converter>;
+static mut CONV: Option<Hash> = None;
+
+
+pub fn to_utf8(encoding: &str, data: &Vec<u8>) -> Fb2Result<String> {
+    let enc = encoding.to_lowercase();
+    unsafe {
+        let conv: &mut Hash = CONV.get_or_insert(Hash::new());
+        if !conv.contains_key(&enc) {
+            let converter = Converter::new(&enc, "utf-8")?;
+            conv.insert(enc.clone(), converter);
+        }
+        if let Some(converter) = conv.get_mut(&enc) {
+            let buffer = converter.utf8(&data)?;
+            return Ok(String::from(String::from_utf8_lossy(&buffer)))
+        }
+    }
+    Err(Fb2Error::UnableToMakeUtf8)
+
+}
+
+
 
 #[allow(non_camel_case_types)]
 type iconv_t = *mut c_void;
@@ -42,7 +66,7 @@ impl Converter {
 
     /// Convert from input into UTF-8.
     /// Returns Fb2Result<Vec<u8>>l.
-    pub fn utf8(self, src: &Vec<u8>) -> Fb2Result<Vec<u8>> {
+    pub fn utf8(&self, src: &Vec<u8>) -> Fb2Result<Vec<u8>> {
         let expected_len = 4 * src.len();
         let mut dst = Vec::with_capacity(expected_len);
         dst.resize(expected_len, 0u8);

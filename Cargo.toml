@@ -16,6 +16,6 @@ path = "src/lib/lib.rs"
     serde_derive = "1.0.15"
     serde-xml-rs = "0.2.1"
     regex = "0.2.2"
-#    lazy_static = "0.2"
+
 
 
