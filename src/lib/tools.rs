@@ -19,10 +19,11 @@ pub fn as_fb2(xml: String) -> Fb2Result<FictionBook> {
 fn get_encoding(header: &Vec<u8>) -> Option<String> {
     const BEGIN: &str = "encoding=\"";
     const END: &str = "\"?>";
-    if let Some(pos) = helper::find(&header, BEGIN.as_bytes()) {
-        if let Some(end) = helper::find(&header, END.as_bytes()) {
+    let target: Vec<u8> = header.clone().into_iter().filter(|c| *c != 0).collect();
+    if let Some(pos) = helper::find(&target, BEGIN.as_bytes()) {
+        if let Some(end) = helper::find(&target, END.as_bytes()) {
             let start = pos + BEGIN.len();
-            let encoding = String::from_utf8_lossy(&header[start..end]);
+            let encoding = String::from_utf8_lossy(&target[start..end]);
             return Some(encoding.into_owned());
         }
     }
@@ -35,6 +36,7 @@ fn replace_encoding(encoding: &str, xml: &str) -> String {
 }
 
 pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
+    println!("archive::as_utf8(Vec<u8, {}>)", &header.len());
     if let Some(encoding) = get_encoding(&header) {
         if encoding != String::from("utf-8") {
             let utf8 = iconv::to_utf8(&encoding, &header)?;

@@ -1,7 +1,6 @@
 extern crate std;
 extern crate zip;
 
-
 use tools;
 use helper;
 use regex::Regex;
@@ -12,10 +11,11 @@ use zip::read::ZipFile;
 use std::error::Error;
 use fb::FictionBook;
 
-const BUFFER_LENGTH: usize = 1024;
+const CHUNCK_LENGTH: usize = 1024;
 const DESC_CLOSE_TAG: &'static str = "</description>";
-const FAKE_BODY_TAG: &'static str = "<body> ... WAS SKIPPED ... </body>";
 const FB_CLOSE_TAG: &'static str = "\n</FictionBook>";
+const DESC_CLOSE_UTF16: &'static str = "<\0/\0d\0e\0s\0c\0r\0i\0p\0t\0i\0o\0n\0>\0";
+const FB_CLOSE_UTF16: &'static str = "\n\0<\0/\0F\0i\0c\0t\0i\0o\0n\0B\0o\0o\0k\0>\0";
 
 pub type ZipArchive = zip::ZipArchive<std::fs::File>;
 
@@ -25,29 +25,37 @@ pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     Ok(archive)
 }
 
-fn load_buffer(file: &mut ZipFile, result: &mut Vec<u8>) -> Fb2Result<usize> {
-    let mut buffer: [u8; BUFFER_LENGTH] = [0; BUFFER_LENGTH];
-    match file.read(&mut buffer) {
-        Ok(size) => {
-            result.extend_from_slice(&buffer);
-            Ok(size)
+fn load_buffer(file: &mut ZipFile, content: &mut Vec<u8>) -> bool {
+    let mut ok = false;
+    content.reserve(CHUNCK_LENGTH);
+    for record in file.bytes().take(CHUNCK_LENGTH) {
+        if let Some(byte) = record.ok() {
+            content.push(byte);
+            if !ok {
+                ok = true;
+            }
         }
-        Err(err) => Err(Fb2Error::Io(err)),
     }
+    return ok;
 }
 
 pub fn load_raw(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
-    while let Some(_) = load_buffer(file, &mut header).ok() {
+    while load_buffer(file, &mut header) {
         if let Some(position) = helper::find(&header, DESC_CLOSE_TAG.as_bytes()) {
             header.resize(position, 0u8);
             header.extend_from_slice(DESC_CLOSE_TAG.as_bytes());
-            header.extend_from_slice(FAKE_BODY_TAG.as_bytes());
             header.extend_from_slice(FB_CLOSE_TAG.as_bytes());
             return Ok(header);
         }
+        if let Some(position) = helper::find(&header, DESC_CLOSE_UTF16.as_bytes()) {
+            header.resize(position, 0u8);
+            header.extend_from_slice(DESC_CLOSE_UTF16.as_bytes());
+            header.extend_from_slice(FB_CLOSE_UTF16.as_bytes());
+            return Ok(header);
+        }
     }
-    Err(Fb2Error::UnableToLoadFb2Header)
+    Ok(header)
 }
 
 pub fn apply<F>(mut archive: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>

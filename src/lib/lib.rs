@@ -2,6 +2,7 @@
 #![feature(test)]
 #![feature(const_fn)]
 #![feature(drop_types_in_const)]
+
 #[allow(unused_extern_crates)]
 extern crate test;
 
