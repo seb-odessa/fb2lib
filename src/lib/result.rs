@@ -104,7 +104,9 @@ impl convert::From<zip::result::ZipError> for Fb2Error {
             zip::result::ZipError::Io(io_err) => Fb2Error::Io(io_err),
             zip::result::ZipError::InvalidArchive(msg) => Fb2Error::InvalidArchive(msg),
             zip::result::ZipError::UnsupportedArchive(msg) => Fb2Error::UnsupportedArchive(msg),
-            zip::result::ZipError::FileNotFound => Fb2Error::FileNotFound(String::from("File not found")),
+            zip::result::ZipError::FileNotFound => Fb2Error::FileNotFound(
+                String::from("File not found"),
+            ),
         }
     }
 }

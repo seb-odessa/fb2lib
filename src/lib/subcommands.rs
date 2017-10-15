@@ -80,14 +80,14 @@ pub fn do_parse(file_name: &str) -> Fb2Result<()> {
 }
 
 pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
-    let mut zip = open(archive_name)?;
-    let book_count = zip.len();
+    let zip = open(archive_name)?;
+    let count = zip.len();
     let mut succ = 0;
+    let mut curr = 0;
     if !quiet {
         print!("Progress:   %");
     }
-    for i in 0..book_count {
-        let mut file = zip.by_index(i)?;
+    apply(zip, "*", |mut file| {
         match load_fb2(&mut file) {
             Ok(_) => succ += 1,
             Err(_) => {
@@ -103,18 +103,14 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
             }
         }
         if !quiet {
-            print!("\r");
-            print!("Progress: {:3}%", 100 * (1 + i) / book_count);
+            curr += 1;
+            print!("\rProgress: {:3}%", 100 * (1 + curr) / count);
+            io::stdout().flush()?;
         }
-        io::stdout().flush()?;
-    }
+        Ok(())
+    })?;
     if !quiet {
-        println!(
-            "\nSucceeded {}/{} ({}%)",
-            succ,
-            book_count,
-            100 * succ / book_count
-        );
+        println!("\nSucceeded {}/{} ({}%)", succ, count, 100 * succ / count);
     }
     Ok(())
 }

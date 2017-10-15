@@ -176,8 +176,14 @@ mod tests {
     fn try_remove_first_tag() {
         let xml = "<title-info><lang>ru</lang><book-title>title</book-title><lang>ru</lang></title-info>";
         let exp = "<title-info><book-title>title</book-title><lang>ru</lang></title-info>";
-        assert_eq!(Ok(String::from(exp)), remove_first_tag(String::from(xml), "title-info", "lang"));
-        assert_eq!(Err(String::from(exp)), remove_first_tag(String::from(exp), "title-info", "lang"));
+        assert_eq!(
+            Ok(String::from(exp)),
+            remove_first_tag(String::from(xml), "title-info", "lang")
+        );
+        assert_eq!(
+            Err(String::from(exp)),
+            remove_first_tag(String::from(exp), "title-info", "lang")
+        );
     }
 
 
