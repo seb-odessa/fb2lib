@@ -16,17 +16,35 @@ pub fn as_fb2(xml: String) -> Fb2Result<FictionBook> {
         })
 }
 
-fn get_encoding(header: &Vec<u8>) -> Option<String> {
-    const BEGIN: &str = "encoding=\"";
-    const END: &str = "\"";
-    let target: Vec<u8> = header.clone().into_iter().filter(|c| *c != 0).collect();
-    if let Some(pos) = helper::find(&target, BEGIN.as_bytes()) {
-        let spos = pos + BEGIN.len();
-        if let Some(end) = helper::find(&target[spos..], END.as_bytes()) {
-            let epos = spos + end;
-            let encoding = String::from_utf8_lossy(&target[spos..epos]);
-            return Some(encoding.into_owned());
+fn find_positions(header: &Vec<u8>, beg: &str, end: &str) -> Option<(usize, usize)> {
+    if let Some(pos) = helper::find(&header, beg.as_bytes()) {
+        let spos = pos + beg.len();
+        if let Some(epos) = helper::find(&header[spos..], end.as_bytes()) {
+            return Some((spos, spos + epos));
         }
+    }
+    None
+}
+
+fn extract_xml_prolog(header: &Vec<u8>) -> Vec<u8> {
+    if let Some((spos, epos)) = find_positions(header, "<", ">") {
+        let mut target = Vec::new();
+        target.extend_from_slice(&header[spos..epos]);
+        if header.len() > 2 {
+            if header[0..1] == [0xFF, 0xFE] || header[0..1] == [0xFE, 0xFF] {
+                return target.into_iter().filter(|c| *c != 0).collect();
+            }
+        }
+        return target;
+    }
+    header.clone()
+}
+
+fn get_encoding(header: &Vec<u8>) -> Option<String> {
+    let target = extract_xml_prolog(header);
+    if let Some((spos, epos)) = find_positions(&target, "encoding=\"", "\"") {
+        let encoding = String::from_utf8_lossy(&target[spos..epos]);
+        return Some(encoding.into_owned());
     }
     None
 }
@@ -38,7 +56,7 @@ fn replace_encoding(encoding: &str, xml: &str) -> String {
 
 pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
     if let Some(encoding) = get_encoding(&header) {
-        if encoding != String::from("utf-8") {
+        if encoding.to_lowercase() != String::from("utf-8") {
             let utf8 = iconv::to_utf8(&encoding, &header)?;
             return Ok(replace_encoding(&encoding, &utf8));
         }

@@ -1,5 +1,5 @@
 use tools;
-use archive::{apply, open, load_raw, load_xml, load_fb2};
+use archive::{apply, open, load_header, load_xml, load_fb2};
 use result::Fb2Result;
 use result::Fb2Error;
 use zip::read::ZipFile;
@@ -40,7 +40,7 @@ pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 }
 
 fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
-    let fb = load_raw(&mut file).and_then(as_utf8).and_then(as_fb2)?;
+    let fb = load_header(&mut file).and_then(as_utf8).and_then(as_fb2)?;
     println!("{:#?}", fb);
     Ok(())
 }

@@ -12,9 +12,7 @@ use std::error::Error;
 use fb::FictionBook;
 
 const CHUNCK_LENGTH: usize = 2048;
-const DESC_CLOSE_TAG: &'static str = "</description>";
 const FB_CLOSE_TAG: &'static str = "\n</FictionBook>";
-const DESC_CLOSE_UTF16: &'static str = "<\0/\0d\0e\0s\0c\0r\0i\0p\0t\0i\0o\0n\0>\0";
 const FB_CLOSE_UTF16: &'static str = "\n\0<\0/\0F\0i\0c\0t\0i\0o\0n\0B\0o\0o\0k\0>\0";
 
 pub type ZipArchive = zip::ZipArchive<std::fs::File>;
@@ -29,28 +27,42 @@ fn load_buffer(file: &mut ZipFile, content: &mut Vec<u8>) -> bool {
     //println!("content.len(): {}", content.len());
     content.reserve(CHUNCK_LENGTH);
     let mut buffer = [0u8; CHUNCK_LENGTH];
-    let result = file.read(&mut buffer).is_ok();
-    if result {
-        content.extend_from_slice(&buffer);
+    if let Some(size) = file.read(&mut buffer).ok() {
+        if size > 0 {
+            content.extend_from_slice(&buffer);
+            return true;
+        }
     }
-    return result;
+    return false;
 }
 
-pub fn load_raw(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
+pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
     while load_buffer(file, &mut header) {
+        const DESC_CLOSE_TAG: &'static str = "</description>";
         if let Some(position) = helper::find(&header, DESC_CLOSE_TAG.as_bytes()) {
             header.resize(position, 0u8);
             header.extend_from_slice(DESC_CLOSE_TAG.as_bytes());
             header.extend_from_slice(FB_CLOSE_TAG.as_bytes());
             return Ok(header);
         }
+        // Support of the UTF-16 files
+        const DESC_CLOSE_UTF16: &'static str = "<\0/\0d\0e\0s\0c\0r\0i\0p\0t\0i\0o\0n\0>\0";
         if let Some(position) = helper::find(&header, DESC_CLOSE_UTF16.as_bytes()) {
             header.resize(position, 0u8);
             header.extend_from_slice(DESC_CLOSE_UTF16.as_bytes());
             header.extend_from_slice(FB_CLOSE_UTF16.as_bytes());
             return Ok(header);
         }
+        // Support of the broken tags
+        const DESC_CLOSE_WRONG: &'static str = "&lt;/description&gt";
+        if let Some(position) = helper::find(&header, DESC_CLOSE_WRONG.as_bytes()) {
+            header.resize(position, 0u8);
+            header.extend_from_slice(DESC_CLOSE_TAG.as_bytes());
+            header.extend_from_slice(FB_CLOSE_TAG.as_bytes());
+            return Ok(header);
+        }
+
     }
     Ok(header)
 }
@@ -75,7 +87,7 @@ where
 
 
 pub fn load_xml(file: &mut ZipFile) -> Fb2Result<String> {
-    load_raw(file).and_then(tools::as_utf8)
+    load_header(file).and_then(tools::as_utf8)
 }
 
 pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {
