@@ -11,7 +11,7 @@ use zip::read::ZipFile;
 use std::error::Error;
 use fb::FictionBook;
 
-const CHUNCK_LENGTH: usize = 1024;
+const CHUNCK_LENGTH: usize = 2048;
 const DESC_CLOSE_TAG: &'static str = "</description>";
 const FB_CLOSE_TAG: &'static str = "\n</FictionBook>";
 const DESC_CLOSE_UTF16: &'static str = "<\0/\0d\0e\0s\0c\0r\0i\0p\0t\0i\0o\0n\0>\0";
@@ -26,17 +26,14 @@ pub fn open(name: &str) -> Fb2Result<ZipArchive> {
 }
 
 fn load_buffer(file: &mut ZipFile, content: &mut Vec<u8>) -> bool {
-    let mut ok = false;
+    //println!("content.len(): {}", content.len());
     content.reserve(CHUNCK_LENGTH);
-    for record in file.bytes().take(CHUNCK_LENGTH) {
-        if let Some(byte) = record.ok() {
-            content.push(byte);
-            if !ok {
-                ok = true;
-            }
-        }
+    let mut buffer = [0u8; CHUNCK_LENGTH];
+    let result = file.read(&mut buffer).is_ok();
+    if result {
+        content.extend_from_slice(&buffer);
     }
-    return ok;
+    return result;
 }
 
 pub fn load_raw(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {

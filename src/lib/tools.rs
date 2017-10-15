@@ -18,12 +18,13 @@ pub fn as_fb2(xml: String) -> Fb2Result<FictionBook> {
 
 fn get_encoding(header: &Vec<u8>) -> Option<String> {
     const BEGIN: &str = "encoding=\"";
-    const END: &str = "\"?>";
+    const END: &str = "\"";
     let target: Vec<u8> = header.clone().into_iter().filter(|c| *c != 0).collect();
     if let Some(pos) = helper::find(&target, BEGIN.as_bytes()) {
-        if let Some(end) = helper::find(&target, END.as_bytes()) {
-            let start = pos + BEGIN.len();
-            let encoding = String::from_utf8_lossy(&target[start..end]);
+        let spos = pos + BEGIN.len();
+        if let Some(end) = helper::find(&target[spos..], END.as_bytes()) {
+            let epos = spos + end;
+            let encoding = String::from_utf8_lossy(&target[spos..epos]);
             return Some(encoding.into_owned());
         }
     }
