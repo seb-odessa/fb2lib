@@ -1,7 +1,6 @@
 #![feature(libc)]
 #![feature(test)]
 #![feature(const_fn)]
-#![feature(drop_types_in_const)]
 
 #[allow(unused_extern_crates)]
 extern crate test;
@@ -14,12 +13,12 @@ extern crate regex;
 extern crate serde_derive;
 extern crate serde_xml_rs;
 
-pub mod tools;
-pub mod iconv;
 pub mod result;
-pub mod archive;
 pub mod subcommands;
-pub mod fb;
-mod helper;
 
+mod fb;
+mod tools;
+mod iconv;
+mod helper;
+mod archive;
 

@@ -36,7 +36,6 @@ fn replace_encoding(encoding: &str, xml: &str) -> String {
 }
 
 pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
-    println!("archive::as_utf8(Vec<u8, {}>)", &header.len());
     if let Some(encoding) = get_encoding(&header) {
         if encoding != String::from("utf-8") {
             let utf8 = iconv::to_utf8(&encoding, &header)?;
