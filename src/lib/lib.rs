@@ -2,7 +2,7 @@
 #![feature(test)]
 #![feature(const_fn)]
 
-#[allow(unused_extern_crates)]
+#[cfg(bench)]
 extern crate test;
 
 extern crate zip;
@@ -21,3 +21,4 @@ mod tools;
 mod iconv;
 mod helper;
 mod archive;
+mod data;

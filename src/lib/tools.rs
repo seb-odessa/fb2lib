@@ -82,3 +82,50 @@ mod tests {
         assert_eq!(None, result.find("encoding=\"koi8-r\""));
     }
 }
+
+#[cfg(test)]
+mod bench {
+    extern crate test;
+    use self::test::Bencher;
+
+    use data::bench::XML;
+
+    #[bench]
+    fn bench_as_fb2(bencher: &mut Bencher) {
+        let xml = String::from(XML);
+        bencher.iter(|| { super::as_fb2(xml.clone()).unwrap(); });
+    }
+
+    #[bench]
+    fn bench_find_positions(bencher: &mut Bencher) {
+        let mut header = Vec::new();
+        header.extend_from_slice(XML.as_bytes());
+        bencher.iter(|| { super::find_positions(&header, "encoding=\"", "\""); });
+    }
+
+    #[bench]
+    fn bench_extract_xml_prolog(bencher: &mut Bencher) {
+        let mut header = Vec::new();
+        header.extend_from_slice(XML.as_bytes());
+        bencher.iter(|| { super::extract_xml_prolog(&header); });
+    }
+
+    #[bench]
+    fn bench_get_encoding(bencher: &mut Bencher) {
+        let mut header = Vec::new();
+        header.extend_from_slice(XML.as_bytes());
+        bencher.iter(|| { super::get_encoding(&header); });
+    }
+
+    #[bench]
+    fn bench_replace_encoding(bencher: &mut Bencher) {
+        bencher.iter(|| { super::replace_encoding("utf-8", XML); });
+    }
+
+    #[bench]
+    fn bench_as_utf8(bencher: &mut Bencher) {
+        let mut header = Vec::new();
+        header.extend_from_slice(XML.as_bytes());
+        bencher.iter(|| { super::as_utf8(header.clone()).unwrap(); });
+    }
+}
