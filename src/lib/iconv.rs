@@ -12,7 +12,7 @@ type Hash = HashMap<String, Converter>;
 static mut CONV: Option<Hash> = None;
 
 
-pub fn to_utf8(encoding: &str, data: &Vec<u8>) -> Fb2Result<String> {
+pub fn to_utf8(encoding: &str, data: &[u8]) -> Fb2Result<String> {
     let enc = encoding.to_lowercase();
     unsafe {
         let conv: &mut Hash = CONV.get_or_insert(Hash::new());
@@ -26,7 +26,6 @@ pub fn to_utf8(encoding: &str, data: &Vec<u8>) -> Fb2Result<String> {
         }
     }
     Err(Fb2Error::UnableToMakeUtf8)
-
 }
 
 
@@ -66,7 +65,7 @@ impl Converter {
 
     /// Convert from input into UTF-8.
     /// Returns Fb2Result<Vec<u8>>l.
-    pub fn utf8(&self, src: &Vec<u8>) -> Fb2Result<Vec<u8>> {
+    pub fn utf8(&self, src: &[u8]) -> Fb2Result<Vec<u8>> {
         let expected_len = 4 * src.len();
         let mut dst = Vec::with_capacity(expected_len);
         dst.resize(expected_len, 0u8);

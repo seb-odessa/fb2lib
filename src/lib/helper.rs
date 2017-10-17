@@ -1,9 +1,8 @@
 use fb;
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
-    haystack.windows(needle.len()).position(
-        |window| window == needle,
-    )
+    let sz = needle.len();
+    haystack.windows(sz).position(|window| window == needle)
 }
 
 pub fn try_create(xml: String) -> Result<fb::FictionBook, String> {
