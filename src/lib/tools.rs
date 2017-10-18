@@ -51,9 +51,9 @@ fn replace_encoding(encoding: &str, xml: &str) -> String {
 
 pub fn as_utf8(header: Vec<u8>) -> Fb2Result<String> {
     if let Some(encoding) = get_encoding(&header) {
-        let encoding = encoding.to_lowercase(); 
-        if &encoding != "utf-8" {
-            let utf8 = iconv::to_utf8(&encoding, &header)?;
+        let enc = encoding.to_lowercase();
+        if &enc != "utf-8" {
+            let utf8 = iconv::to_utf8(&enc, &header)?;
             return Ok(replace_encoding(&encoding, &utf8));
         }
     }

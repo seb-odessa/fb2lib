@@ -22,7 +22,7 @@ pub fn to_utf8(encoding: &str, data: &[u8]) -> Fb2Result<String> {
         }
         if let Some(converter) = conv.get_mut(&enc) {
             let buffer = converter.utf8(&data)?;
-            return Ok(String::from(String::from_utf8_lossy(&buffer)));
+            return Ok(String::from_utf8_lossy(&buffer).to_string());
         }
     }
     Err(Fb2Error::UnableToMakeUtf8)
