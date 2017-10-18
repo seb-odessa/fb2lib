@@ -7,15 +7,20 @@ use regex::Regex;
 use std::io::Read;
 use result::Fb2Result;
 use result::Fb2Error;
-use zip::read::ZipFile;
 use std::error::Error;
 use fb::FictionBook;
+use std::sync::Mutex;
+//use std::thread;
+// use std::sync::mpsc::channel;
+
+
 
 const CHUNCK_LENGTH: usize = 2048;
 const FB_CLOSE_TAG: &'static str = "\n</FictionBook>";
 const FB_CLOSE_UTF16: &'static str = "\n\0<\0/\0F\0i\0c\0t\0i\0o\0n\0B\0o\0o\0k\0>\0";
 
 pub type ZipArchive = zip::ZipArchive<std::fs::File>;
+pub type ZipFile<'a> = Mutex<zip::read::ZipFile<'a>>;
 
 pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     let file = std::fs::File::open(&std::path::Path::new(name))?;
@@ -23,7 +28,7 @@ pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     Ok(archive)
 }
 
-fn load_buffer(file: &mut ZipFile, content: &mut Vec<u8>) -> bool {
+fn load_buffer(file: &mut zip::read::ZipFile, content: &mut Vec<u8>) -> bool {
     //println!("content.len(): {}", content.len());
     content.reserve(CHUNCK_LENGTH);
     let mut buffer = [0u8; CHUNCK_LENGTH];
@@ -36,9 +41,16 @@ fn load_buffer(file: &mut ZipFile, content: &mut Vec<u8>) -> bool {
     return false;
 }
 
+pub fn lock_and_load(file: &mut ZipFile, content: &mut Vec<u8>) -> bool {
+    match file.lock() {
+        Ok(ref mut file) => load_buffer(file, content),
+        Err(_) => false,
+    }
+}
+
 pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
-    while load_buffer(file, &mut header) {
+    while lock_and_load(file, &mut header) {
         const DESC_CLOSE_TAG: &'static str = "</description>";
         if let Some(position) = helper::find(&header, DESC_CLOSE_TAG.as_bytes()) {
             header.resize(position, 0u8);
@@ -69,14 +81,14 @@ pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
 
 pub fn apply<F>(mut archive: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
 where
-    F: FnMut(ZipFile) -> Fb2Result<()>,
+    F: FnMut(&mut ZipFile) -> Fb2Result<()>,
 {
     match Regex::new(&wildcards_to_regex(file_name)) {
         Ok(re) => {
             for i in 0..archive.len() {
-                let file: ZipFile = archive.by_index(i)?;
+                let file: zip::read::ZipFile = archive.by_index(i)?;
                 if re.is_match(file.name()) {
-                    visitor(file)?;
+                    visitor(&mut Mutex::new(file))?;
                 }
             }
             Ok(())

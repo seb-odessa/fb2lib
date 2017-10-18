@@ -1,8 +1,10 @@
+use zip;
 use tools;
 use archive::{apply, open, load_header, load_xml, load_fb2};
+use archive::ZipFile;
+
 use result::Fb2Result;
 use result::Fb2Error;
-use zip::read::ZipFile;
 use std::error::Error;
 
 use tools::into_utf8;
@@ -13,7 +15,7 @@ use std::io::Read;
 use std::io::Write;
 use std::io;
 
-fn print_file_info(file: ZipFile) -> Fb2Result<()> {
+fn zip_file_info(file: &zip::read::ZipFile) -> Fb2Result<()> {
     println!(
         "{:16}{:10}{:10}",
         file.name(),
@@ -23,13 +25,27 @@ fn print_file_info(file: ZipFile) -> Fb2Result<()> {
     Ok(())
 }
 
+fn print_file_info(file: &mut ZipFile) -> Fb2Result<()> {
+    match file.lock() {
+        Ok(ref file) => zip_file_info(file),
+        Err(_) => Err(Fb2Error::Custom(String::from("Can't acquire mutex"))),
+    }
+}
+
+fn get_file_name(file: &ZipFile) -> Fb2Result<String> {
+    match file.lock() {
+        Ok(ref file) => Ok(String::from(file.name())),
+        Err(_) => Err(Fb2Error::Custom(String::from("Can't acquire mutex"))),
+    }
+}
+
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     let zip = open(archive_name)?;
     apply(zip, "*", print_file_info)
 }
 
-fn print_xml(mut file: ZipFile) -> Fb2Result<()> {
-    let xml = load_xml(&mut file)?;
+fn print_xml(file: &mut ZipFile) -> Fb2Result<()> {
+    let xml = load_xml(file)?;
     println!("{}", xml);
     Ok(())
 }
@@ -39,8 +55,8 @@ pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     apply(zip, file_name, print_xml)
 }
 
-fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
-    let fb = load_header(&mut file).and_then(into_utf8).and_then(into_fb2)?;
+fn print_fb(file: &mut ZipFile) -> Fb2Result<()> {
+    let fb = load_header(file).and_then(into_utf8).and_then(into_fb2)?;
     println!("{:#?}", fb);
     Ok(())
 }
@@ -50,10 +66,11 @@ pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     apply(zip, file_name, print_fb)
 }
 
-fn print_info(mut file: ZipFile) -> Fb2Result<()> {
-    match load_fb2(&mut file) {
-        Ok(fb) => println!("{:20}: {}", file.name(), fb),
-        Err(err) => println!("{:20}: {}!!!", file.name(), err.description()),
+fn print_info(file: &mut ZipFile) -> Fb2Result<()> {
+    let file_name = get_file_name(&file)?;
+    match load_fb2(file) {
+        Ok(fb) => println!("{:20}: {}", file_name, fb),
+        Err(err) => println!("{:20}: {}!!!", file_name, err.description()),
     }
     Ok(())
 }
@@ -88,6 +105,7 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
         print!("Progress:   %");
     }
     apply(zip, "*", |mut file| {
+        let file_name = get_file_name(file)?;
         match load_fb2(&mut file) {
             Ok(_) => succ += 1,
             Err(_) => {
@@ -97,8 +115,8 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
                 println!(
                     "./fb2lib {} show xml {} > {}",
                     archive_name,
-                    file.name(),
-                    file.name()
+                    &file_name,
+                    &file_name
                 )
             }
         }
@@ -114,4 +132,3 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
     }
     Ok(())
 }
-

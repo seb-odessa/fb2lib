@@ -116,7 +116,7 @@ pub struct PublishInfo {
     pub isbn: String,
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Default)]
 pub struct DocumentInfo {
     #[serde(rename = "author", default)]
     pub author: Vec<Author>,
@@ -140,7 +140,7 @@ pub struct Description {
     pub title_info: TitleInfo,
     // #[serde(rename = "document-info")]      src_title_info: OptionalTitleInfo,
     #[cfg(not(test))]
-    #[serde(rename = "document-info")]
+    #[serde(rename = "document-info", default)]
     pub document_info: DocumentInfo,
     // #[cfg(not(test))]
     // #[serde(rename = "publish-info", default)]
