@@ -6,7 +6,7 @@ use std::error::Error;
 use lib::result::Fb2Error;
 use lib::subcommands::*;
 
-const VERSION: &'static str = "v0.4.3";
+const VERSION: &'static str = "v0.4.5";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ARCHIVE: &'static str = "FictionBook.zip";
 const FILE: &'static str = "FictionBook.fb2";

@@ -1,6 +1,7 @@
 #![feature(libc)]
 #![feature(test)]
 #![feature(const_fn)]
+#![feature(type_ascription)]
 
 #[cfg(bench)]
 extern crate test;
@@ -14,6 +15,7 @@ extern crate serde_derive;
 extern crate serde_xml_rs;
 
 pub mod result;
+pub mod algorithm;
 pub mod subcommands;
 
 mod fb;

@@ -3,16 +3,10 @@ extern crate zip;
 
 use tools;
 use helper;
-use regex::Regex;
 use std::io::Read;
-use result::Fb2Result;
-use result::Fb2Error;
-use std::error::Error;
+use result::{Fb2Result, Fb2Error};
 use fb::FictionBook;
 use std::sync::Mutex;
-//use std::thread;
-// use std::sync::mpsc::channel;
-
 
 
 const CHUNCK_LENGTH: usize = 2048;
@@ -41,16 +35,9 @@ fn load_buffer(file: &mut zip::read::ZipFile, content: &mut Vec<u8>) -> bool {
     return false;
 }
 
-pub fn lock_and_load(file: &mut ZipFile, content: &mut Vec<u8>) -> bool {
-    match file.lock() {
-        Ok(ref mut file) => load_buffer(file, content),
-        Err(_) => false,
-    }
-}
-
-pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
+pub fn load_header(file: &mut zip::read::ZipFile) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
-    while lock_and_load(file, &mut header) {
+    while load_buffer(file, &mut header) {
         const DESC_CLOSE_TAG: &'static str = "</description>";
         if let Some(position) = helper::find(&header, DESC_CLOSE_TAG.as_bytes()) {
             header.resize(position, 0u8);
@@ -74,124 +61,17 @@ pub fn load_header(file: &mut ZipFile) -> Fb2Result<Vec<u8>> {
             header.extend_from_slice(FB_CLOSE_TAG.as_bytes());
             return Ok(header);
         }
-
     }
     Ok(header)
 }
 
-pub fn apply<F>(mut archive: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
-where
-    F: FnMut(&mut ZipFile) -> Fb2Result<()>,
-{
-    match Regex::new(&wildcards_to_regex(file_name)) {
-        Ok(re) => {
-            for i in 0..archive.len() {
-                let file: zip::read::ZipFile = archive.by_index(i)?;
-                if re.is_match(file.name()) {
-                    visitor(&mut Mutex::new(file))?;
-                }
-            }
-            Ok(())
-        }
-        Err(e) => Err(Fb2Error::Custom(String::from(e.description()))),
-    }
-}
-
-
 pub fn load_xml(file: &mut ZipFile) -> Fb2Result<String> {
-    load_header(file).and_then(tools::into_utf8)
+    match file.lock() {
+        Ok(ref mut file) => load_header(file).and_then(tools::into_utf8),
+        Err(_) => Err(Fb2Error::Custom(String::from("Can't acquire mutex"))),
+    }
 }
 
 pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {
     load_xml(file).and_then(tools::into_fb2)
-}
-
-#[allow(dead_code)]
-fn wildcards_to_regex(arg: &str) -> String {
-    let reg = String::from("^") + arg + "$";
-    reg.replace(".", "\\.")
-        .replace("\\*", "\0")
-        .replace("*", "(.*)")
-        .replace("\0", "\\*")
-        .replace("\\?", "\0")
-        .replace("?", "(.{1})")
-        .replace("\0", "\\?")
-}
-
-#[cfg(test)]
-mod tests {
-    extern crate regex;
-
-    #[test]
-    fn expand_asterix_to_regexp() {
-        assert_eq!("^file\\.txt$", &super::wildcards_to_regex("file.txt"));
-        assert_eq!("^file(.*)\\.txt$", &super::wildcards_to_regex("file*.txt"));
-        assert_eq!(
-            "^file\\*(.*)\\.txt$",
-            &super::wildcards_to_regex("file\\**.txt")
-        );
-    }
-
-    #[test]
-    fn expand_question_to_regexp() {
-        assert_eq!("^file\\.txt$", &super::wildcards_to_regex("file.txt"));
-        assert_eq!(
-            "^file(.{1})\\.txt$",
-            &super::wildcards_to_regex("file?.txt")
-        );
-        assert_eq!(
-            "^file\\?(.{1})\\.txt$",
-            &super::wildcards_to_regex("file\\??.txt")
-        );
-    }
-
-    #[test]
-    fn regex_asterix() {
-        let re = regex::Regex::new("^file(.*).txt$").unwrap();
-        assert!(re.is_match("file.txt"));
-        assert!(re.is_match("file_long_name.txt"));
-        assert!(re.is_match("file*.txt"));
-        assert!(re.is_match("file..txt"));
-    }
-
-    #[test]
-    fn regex_question() {
-        let re = regex::Regex::new("^file(.{1})txt$").unwrap();
-        assert!(re.is_match("file.txt"));
-        assert!(!re.is_match("filetxt"));
-        assert!(re.is_match("file_txt"));
-        assert!(re.is_match("file*txt"));
-    }
-
-    #[test]
-    fn regex_user_input_asterix() {
-        let re = regex::Regex::new(&super::wildcards_to_regex("fil*.txt")).unwrap();
-        assert!(re.is_match("file.txt"));
-        assert!(re.is_match("file1.txt"));
-        assert!(re.is_match("file_with_long_name.txt"));
-        assert!(re.is_match("filefile.txt"));
-        assert!(re.is_match("file.txt.file.txt"));
-    }
-
-    #[test]
-    fn regex_user_input_question() {
-        let re = regex::Regex::new(&super::wildcards_to_regex("fil??txt")).unwrap();
-        assert!(re.is_match("file.txt"));
-        assert!(re.is_match("fil__txt"));
-        assert!(!re.is_match("file_with_long_name.txt"));
-        assert!(!re.is_match("filefile.txt"));
-        assert!(!re.is_match("file.txt.file.txt"));
-    }
-
-    #[test]
-    fn regex_user_input_wo_wildcards() {
-        let re = regex::Regex::new(&super::wildcards_to_regex("file.txt")).unwrap();
-        assert!(re.is_match("file.txt"));
-        assert!(!re.is_match(".file.txt"));
-        assert!(!re.is_match("file.txt."));
-        assert!(!re.is_match("fil__txt"));
-        assert!(!re.is_match("file_with_long_name.txt"));
-        assert!(!re.is_match("filefile.txt"));
-        assert!(!re.is_match("file.txt.file.txt"));
-    }
 }

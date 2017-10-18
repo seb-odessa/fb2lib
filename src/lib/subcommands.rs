@@ -1,7 +1,8 @@
 use zip;
 use tools;
-use archive::{apply, open, load_header, load_xml, load_fb2};
+use archive::{load_header, load_xml, open, load_fb2};
 use archive::ZipFile;
+use algorithm::apply;
 
 use result::Fb2Result;
 use result::Fb2Error;
@@ -56,9 +57,15 @@ pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 }
 
 fn print_fb(file: &mut ZipFile) -> Fb2Result<()> {
-    let fb = load_header(file).and_then(into_utf8).and_then(into_fb2)?;
-    println!("{:#?}", fb);
-    Ok(())
+    match file.lock() {
+        Ok(ref mut file) => {
+            let fb = load_header(file).and_then(into_utf8).and_then(into_fb2)?;
+            println!("{:#?}", fb);
+            Ok(())
+        }
+        Err(_) => Err(Fb2Error::Custom(String::from("Can't acquire mutex"))),
+    }
+
 }
 
 pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
@@ -77,7 +84,7 @@ fn print_info(file: &mut ZipFile) -> Fb2Result<()> {
 
 pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = open(archive_name)?;
-    apply(zip, file_name, print_info)
+    apply(zip, file_name, &print_info)
 }
 
 fn read_file(file_name: &str) -> io::Result<Vec<u8>> {
@@ -96,6 +103,8 @@ pub fn do_parse(file_name: &str) -> Fb2Result<()> {
     Ok(())
 }
 
+
+
 pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
     let zip = open(archive_name)?;
     let count = zip.len();
@@ -104,9 +113,9 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
     if !quiet {
         print!("Progress:   %");
     }
-    apply(zip, "*", |mut file| {
+    apply(zip, "*", |file: &mut ZipFile| {
         let file_name = get_file_name(file)?;
-        match load_fb2(&mut file) {
+        match load_fb2(file) {
             Ok(_) => succ += 1,
             Err(_) => {
                 if !quiet {
