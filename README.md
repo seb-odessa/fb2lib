@@ -132,14 +132,17 @@ $ fb2lib data/arch.zip show info book5.fb2
 
 ```
 
-### Performance report
+### Performance tests
 ```
-test tools::bench::bench_as_fb2             ... bench:     100,876 ns/iter (+/- 8,275)
-test tools::bench::bench_as_utf8            ... bench:       1,510 ns/iter (+/- 131)
-test tools::bench::bench_extract_xml_prolog ... bench:          58 ns/iter (+/- 3)
-test tools::bench::bench_find_positions     ... bench:         109 ns/iter (+/- 11)
-test tools::bench::bench_get_encoding       ... bench:         220 ns/iter (+/- 188)
-test tools::bench::bench_replace_encoding   ... bench:         437 ns/iter (+/- 39)
+test fb::bench::deserialize_author       ... bench:      10,836 ns/iter (+/- 865)
+test fb::bench::deserialize_description  ... bench:      34,267 ns/iter (+/- 5,313)
+test fb::bench::deserialize_fiction_book ... bench:      80,209 ns/iter (+/- 7,791)
+test fb::bench::deserialize_title_info   ... bench:      29,837 ns/iter (+/- 2,241)
+test tools::bench::extract_xml_prolog    ... bench:          64 ns/iter (+/- 5)
+test tools::bench::find_positions        ... bench:           2 ns/iter (+/- 0)
+test tools::bench::get_encoding          ... bench:         200 ns/iter (+/- 19)
+test tools::bench::into_utf8             ... bench:       1,136 ns/iter (+/- 100)
+
 ```
 
 

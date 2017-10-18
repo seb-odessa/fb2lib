@@ -5,8 +5,8 @@ use result::Fb2Error;
 use zip::read::ZipFile;
 use std::error::Error;
 
-use tools::as_utf8;
-use tools::as_fb2;
+use tools::into_utf8;
+use tools::into_fb2;
 
 use std::fs::File;
 use std::io::Read;
@@ -40,7 +40,7 @@ pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 }
 
 fn print_fb(mut file: ZipFile) -> Fb2Result<()> {
-    let fb = load_header(&mut file).and_then(as_utf8).and_then(as_fb2)?;
+    let fb = load_header(&mut file).and_then(into_utf8).and_then(into_fb2)?;
     println!("{:#?}", fb);
     Ok(())
 }
@@ -72,7 +72,7 @@ fn read_file(file_name: &str) -> io::Result<Vec<u8>> {
 
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {
     let fb = match read_file(file_name) {
-        Ok(xml) => tools::as_utf8(xml).and_then(tools::as_fb2),
+        Ok(xml) => tools::into_utf8(xml).and_then(tools::into_fb2),
         Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name))),
     }?;
     println!("{}", fb);

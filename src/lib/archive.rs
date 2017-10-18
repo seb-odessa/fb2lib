@@ -87,11 +87,11 @@ where
 
 
 pub fn load_xml(file: &mut ZipFile) -> Fb2Result<String> {
-    load_header(file).and_then(tools::as_utf8)
+    load_header(file).and_then(tools::into_utf8)
 }
 
 pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {
-    load_xml(file).and_then(tools::as_fb2)
+    load_xml(file).and_then(tools::into_fb2)
 }
 
 #[allow(dead_code)]

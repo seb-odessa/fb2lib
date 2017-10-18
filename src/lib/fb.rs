@@ -199,3 +199,45 @@ impl fmt::Display for FictionBook {
         write!(fmt, "{}", &self.description)
     }
 }
+
+
+#[cfg(test)]
+mod bench {
+    extern crate test;
+    use self::test::Bencher;
+    use data::bench::*;
+    use serde_xml_rs::deserialize;
+    use serde_xml_rs::Error;
+
+    #[bench]
+    fn deserialize_fiction_book(bencher: &mut Bencher) {
+        let xml = XML.as_bytes();
+        bencher.iter(|| {
+            let _: Result<super::FictionBook, Error> = deserialize(xml);
+        });
+    }
+
+    #[bench]
+    fn deserialize_description(bencher: &mut Bencher) {
+        let xml = DESCRIPTION.as_bytes();
+        bencher.iter(|| {
+            let _: Result<super::Description, Error> = deserialize(xml);
+        });
+    }
+
+    #[bench]
+    fn deserialize_title_info(bencher: &mut Bencher) {
+        let xml = TITLE_INFO.as_bytes();
+        bencher.iter(|| {
+            let _: Result<super::TitleInfo, Error> = deserialize(xml);
+        });
+    }
+
+    #[bench]
+    fn deserialize_author(bencher: &mut Bencher) {
+        let xml = AUTHOR.as_bytes();
+        bencher.iter(|| {
+            let _: Result<super::Author, Error> = deserialize(xml);
+        });
+    }
+}
