@@ -14,6 +14,7 @@ pub fn try_create_with_first_error_fixing(xml: String) -> Result<fb::FictionBook
     try_fix_escape(xml)
         .or_else(try_fix_leading)
         .or_else(try_fix_double_lang)
+        .or_else(try_fix_double_date)
         .or_else(try_fix_double_last_name)
         .or_else(try_fix_double_doc_info_nickname)
         .or_else(try_fix_double_doc_info)
@@ -45,6 +46,11 @@ pub fn try_fix_leading(xml: String) -> Result<String, String> {
 pub fn try_fix_double_lang(xml: String) -> Result<String, String> {
     // println!("pub fn try_fix_double_lang(xml: String) -> Result<String, String>");
     remove_first_tag(xml, "title-info", "lang")
+}
+
+pub fn try_fix_double_date(xml: String) -> Result<String, String> {
+    // println!("pub fn try_fix_double_date(xml: String) -> Result<String, String>");
+    remove_first_tag(xml, "title-info", "date")
 }
 
 pub fn try_fix_double_last_name(xml: String) -> Result<String, String> {
