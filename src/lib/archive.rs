@@ -1,12 +1,8 @@
 extern crate std;
 extern crate zip;
 
-use tools;
 use helper;
 use std::io::Read;
-
-use fb::FictionBook;
-use zip::read::ZipFile;
 use result::Fb2Result;
 
 const CHUNCK_LENGTH: usize = 2048;
@@ -21,8 +17,7 @@ pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     Ok(archive)
 }
 
-fn load_buffer(file: &mut zip::read::ZipFile, content: &mut Vec<u8>) -> bool {
-    //println!("content.len(): {}", content.len());
+fn load_buffer<F: Read>(file: &mut F, content: &mut Vec<u8>) -> bool {
     content.reserve(CHUNCK_LENGTH);
     let mut buffer = [0u8; CHUNCK_LENGTH];
     if let Some(size) = file.read(&mut buffer).ok() {
@@ -34,7 +29,7 @@ fn load_buffer(file: &mut zip::read::ZipFile, content: &mut Vec<u8>) -> bool {
     return false;
 }
 
-pub fn load_header(file: &mut zip::read::ZipFile) -> Fb2Result<Vec<u8>> {
+pub fn load_header<F: Read>(file: &mut F) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
     while load_buffer(file, &mut header) {
         const DESC_CLOSE_TAG: &'static str = "</description>";
@@ -62,12 +57,4 @@ pub fn load_header(file: &mut zip::read::ZipFile) -> Fb2Result<Vec<u8>> {
         }
     }
     Ok(header)
-}
-
-pub fn load_xml(file: &mut ZipFile) -> Fb2Result<String> {
-    load_header(file).and_then(tools::into_utf8)
-}
-
-pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {
-    load_xml(file).and_then(tools::into_fb2)
 }

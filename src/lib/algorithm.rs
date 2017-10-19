@@ -1,8 +1,10 @@
-use zip::read::ZipFile;
-use archive::{ZipArchive, load_header};
+
+use tools;
+use archive;
+use archive::ZipArchive;
 use regex::Regex;
 use result::{Fb2Result, Fb2Error};
-//use std::fmt::Debug;
+
 use std::error::Error;
 use std::sync::Mutex;
 use std::collections::VecDeque;
@@ -30,41 +32,37 @@ where
     F: FnMut(BoxedBytes) -> Fb2Result<O> + Copy + 'a,
 {
     let mut deq: VecDeque<Message<O>> = VecDeque::new();
-    match Regex::new(&wildcards_to_regex(file_name)) {
-        Ok(re) => {
-            for i in 0..zip.len() {
-                let mut file = zip.by_index(i)?;
-                if re.is_match(file.name()) {
-                    let header = load_header(&mut file)?;
-                    let arg = Mutex::new(Box::new(header));
-                    deq.push_back(Message::Task((Box::new(worker), arg)));
-                }
-            }
+    let re = make_regex(file_name)?;
+    for i in 0..zip.len() {
+        let mut file = zip.by_index(i)?;
+        if re.is_match(file.name()) {
+            let header = archive::load_header(&mut file)?;
+            let arg = Mutex::new(Box::new(header));
+            deq.push_back(Message::Task((Box::new(worker), arg)));
         }
-        Err(e) => return Err(Fb2Error::Custom(String::from(e.description()))),
-    };
-
-
-
+    }
     Ok(())
 }
 
 pub fn apply<F>(mut zip: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
 where
-    F: FnMut(&mut ZipFile) -> Fb2Result<()>,
+    F: FnMut(&str, String) -> Fb2Result<()>,
 {
-    match Regex::new(&wildcards_to_regex(file_name)) {
-        Ok(re) => {
-            for i in 0..zip.len() {
-                let mut file = zip.by_index(i)?;
-                if re.is_match(file.name()) {
-                    visitor(&mut file)?;
-                }
-            }
-            Ok(())
+    let re = make_regex(file_name)?;
+    for i in 0..zip.len() {
+        let mut file = zip.by_index(i)?;
+        if re.is_match(file.name()) {
+            let xml = archive::load_header(&mut file).and_then(tools::into_utf8)?;
+            visitor(file.name(), xml)?;
         }
-        Err(e) => Err(Fb2Error::Custom(String::from(e.description()))),
     }
+    Ok(())
+}
+
+fn make_regex(file_name: &str) -> Fb2Result<Regex> {
+    Regex::new(&wildcards_to_regex(file_name)).map_err(|e| {
+        Fb2Error::Custom(String::from(e.description()))
+    })
 }
 
 fn wildcards_to_regex(arg: &str) -> String {

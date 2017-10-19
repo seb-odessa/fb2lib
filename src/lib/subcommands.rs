@@ -1,66 +1,59 @@
 use out;
 use tools;
-use archive::{open, load_fb2};
-use zip::read::ZipFile;
+use archive;
 use algorithm::apply;
-
 use result::Fb2Result;
 use result::Fb2Error;
 
 
 use std::fs::File;
-use std::io::Read;
-use std::io::Write;
-use std::io;
+
+
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
-    let zip = open(archive_name)?;
-    apply(zip, "*", out::file_info)
+    let mut zip = archive::open(archive_name)?;
+    for i in 0..zip.len() {
+        let file = zip.by_index(i)?;
+        out::file_info(&file);
+    }
+    Ok(())
 }
 
 pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = open(archive_name)?;
+    let zip = archive::open(archive_name)?;
     apply(zip, file_name, out::xml)
 }
 
 pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = open(archive_name)?;
+    let zip = archive::open(archive_name)?;
     apply(zip, file_name, out::fb2)
 }
 
 pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = open(archive_name)?;
+    let zip = archive::open(archive_name)?;
     apply(zip, file_name, out::info)
 }
 
-fn read_file(file_name: &str) -> io::Result<Vec<u8>> {
-    let mut buffer = Vec::new();
-    let mut file = File::open(file_name)?;
-    file.read_to_end(&mut buffer)?;
-    Ok(buffer)
-}
-
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {
-    let fb = match read_file(file_name) {
-        Ok(xml) => tools::into_utf8(xml).and_then(tools::into_fb2),
-        Err(_) => Err(Fb2Error::FileNotFound(String::from(file_name))),
-    }?;
-    println!("{}", fb);
+    let mut file = File::open(file_name).map_err(|io| Fb2Error::Io(io))?;
+    let xml = archive::load_header(&mut file)?;
+    let fb2 = tools::into_utf8(xml).and_then(tools::into_fb2)?;
+    println!("{}", fb2);
     Ok(())
 }
 
-
-
 pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
-    let zip = open(archive_name)?;
+    use std::io;
+    use std::io::Write;
+    let zip = archive::open(archive_name)?;
     let count = zip.len();
     let mut succ = 0;
     let mut curr = 0;
     if !quiet {
         print!("Progress:   %");
     }
-    apply(zip, "*", |file: &mut ZipFile| {
-        match load_fb2(file) {
+    apply(zip, "*", |file_name, xml| {
+        match tools::into_fb2(xml) {
             Ok(_) => succ += 1,
             Err(_) => {
                 if !quiet {
@@ -69,8 +62,8 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
                 println!(
                     "./fb2lib {} show xml {} > {}",
                     archive_name,
-                    &file.name(),
-                    &file.name()
+                    &file_name,
+                    &file_name
                 )
             }
         }
