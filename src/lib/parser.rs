@@ -1,3 +1,4 @@
+extern crate xmltree;
 
 #[derive(Debug, PartialEq, Default)]
 pub struct FictionBook {
@@ -74,11 +75,73 @@ pub struct Sequence {
     pub lang: String, // attr xml:lang
 }
 
-
 #[cfg(test)]
 mod tests {
+    use data::bench::XML;
+    use super::xmltree::Element;
+
     #[test]
-    fn get_encoding() {
-        assert_eq!(true);
+    fn get_description() {
+        let mut xmltree = Element::parse(XML.as_bytes()).unwrap();
+        let description = xmltree.get_mut_child("description");
+        assert!(description.is_some());
     }
+
+    #[test]
+    fn get_title_info() {
+        let mut xmltree = Element::parse(XML.as_bytes()).unwrap();
+        let description = xmltree.get_mut_child("description").unwrap();
+        let title_info = description.get_mut_child("title-info");
+        assert!(title_info.is_some());
+    }
+
+    #[test]
+    fn get_genre() {
+        let mut xmltree = Element::parse(XML.as_bytes()).unwrap();
+        let description = xmltree.get_mut_child("description").unwrap();
+        let title_info = description.get_mut_child("title-info").unwrap();
+        let genre = title_info.get_mut_child("genre");
+        assert!(genre.is_some());
+        assert_eq!(Some(String::from("sf_space")), genre.unwrap().text);
+    }
+}
+
+#[cfg(test)]
+mod bench {
+    extern crate test;
+    use self::test::Bencher;
+    use data::bench::*;
+    use super::xmltree::{Element, ParseError};
+
+    #[bench]
+    fn parse_fiction_book(bencher: &mut Bencher) {
+        let xml = XML.as_bytes();
+        bencher.iter(|| {
+            let _: Result<Element, ParseError> = Element::parse(xml);
+        });
+    }
+    #[bench]
+    fn parse_description(bencher: &mut Bencher) {
+        let xml = DESCRIPTION.as_bytes();
+        bencher.iter(|| {
+            let _: Result<Element, ParseError> = Element::parse(xml);
+        });
+    }
+
+    #[bench]
+    fn parse_title_info(bencher: &mut Bencher) {
+        let xml = TITLE_INFO.as_bytes();
+        bencher.iter(|| {
+            let _: Result<Element, ParseError> = Element::parse(xml);
+        });
+    }
+
+    #[bench]
+    fn parse_author(bencher: &mut Bencher) {
+        let xml = AUTHOR.as_bytes();
+        bencher.iter(|| {
+            let _: Result<Element, ParseError> = Element::parse(xml);
+        });
+    }
+
 }
