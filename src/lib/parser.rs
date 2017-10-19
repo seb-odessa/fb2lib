@@ -15,7 +15,8 @@ impl FictionBook {
         }
     }
 
-    pub fn find_element(&self, path: &str) -> Option<&Element> {
+    #[allow(dead_code)]
+    pub fn find_element(&self, _: &str) -> Option<&Element> {
         None
     }
 }

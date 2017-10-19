@@ -26,7 +26,7 @@ enum Message<'a, T> {
     Task((Box<FnMut(BoxedBytes) -> Fb2Result<T> + 'a>, BoxedBytes)),
 }
 
-
+#[allow(dead_code)]
 pub fn run<'a, F, O>(mut zip: ZipArchive, file_name: &str, worker: F) -> Fb2Result<()>
 where
     F: FnMut(BoxedBytes) -> Fb2Result<O> + Copy + 'a,

@@ -1,10 +1,13 @@
 
 use iconv;
-use helper;
-use parser;
 use parser::FictionBook;
 use result::Fb2Result;
-use result::Fb2Error;
+
+pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
+    let sz = needle.len();
+    haystack.windows(sz).position(|window| window == needle)
+}
+
 
 pub fn into_fb2(xml: String) -> Fb2Result<FictionBook> {
     if let Some(fb2) = FictionBook::new(xml.as_bytes()).ok() {
@@ -26,21 +29,10 @@ pub fn into_fb2(xml: String) -> Fb2Result<FictionBook> {
     FictionBook::new(xml.as_bytes())
 }
 
-// pub fn into_fb2(xml: String) -> Fb2Result<FictionBook> {
-//     helper::try_create(xml)
-//         .or_else(helper::try_create_with_first_error_fixing) // Fix first error
-//         .or_else(helper::try_create_with_first_error_fixing) // Fix second error
-//         // .or_else(helper::try_create_with_first_error_fixing) // Fix third error
-//         // .or_else(helper::try_create_with_first_error_fixing) // Fix fourth error
-//         .map_err(|e| {
-//             Fb2Error::Custom(format!("Unable to deserialize XML: {}", e))
-//         })
-// }
-
 fn find_positions(header: &[u8], beg: &str, end: &str) -> Option<(usize, usize)> {
-    if let Some(pos) = helper::find(header, beg.as_bytes()) {
+    if let Some(pos) = find(header, beg.as_bytes()) {
         let spos = pos + beg.len();
-        if let Some(epos) = helper::find(&header[spos..], end.as_bytes()) {
+        if let Some(epos) = find(&header[spos..], end.as_bytes()) {
             return Some((spos, spos + epos));
         }
     }
@@ -50,7 +42,7 @@ fn find_positions(header: &[u8], beg: &str, end: &str) -> Option<(usize, usize)>
 fn extract_xml_prolog(header: &[u8]) -> Vec<u8> {
     if let Some((spos, epos)) = find_positions(header, "<", ">") {
         let prolog: Vec<u8> = header[spos..epos].to_vec();
-        if header[0..1] == [0xFF, 0xFE] || header[0..1] == [0xFE, 0xFF] {
+        if header[0] == 0xFE || header[0] == 0xFF {
             return prolog.into_iter().filter(|c| *c != 0).collect();
         }
         return prolog;

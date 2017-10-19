@@ -2,7 +2,6 @@ extern crate lib;
 extern crate clap;
 
 use clap::{Arg, App, SubCommand, AppSettings};
-use std::error::Error;
 use lib::result::Fb2Error;
 use lib::subcommands::*;
 
@@ -102,6 +101,6 @@ fn main() {
 
     match result {
         Ok(_) => {}
-        Err(e) => println!("{}", e.description()),
+        Err(e) => println!("{}", e),
     }
 }

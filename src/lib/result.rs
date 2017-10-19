@@ -1,13 +1,11 @@
 //! Error types that can be emitted from this library
 extern crate std;
 extern crate zip;
-extern crate serde_xml_rs;
 
 use std::convert;
 use std::error;
 use std::fmt;
 use std::io;
-use fb;
 
 
 /// Generic result type with Fb2Error as its error variant
@@ -30,9 +28,6 @@ pub enum Fb2Error {
 
     /// This file has unknown character symbols
     UnableToMakeUtf8,
-
-    /// Unable to deserialize xml
-    UnableDeserializeXML(String),
 
     /// The requested file could not be found in the archive
     FileNotFound(String),
@@ -58,10 +53,7 @@ impl Fb2Error {
             }
 
             Fb2Error::Custom(ref msg) |
-            Fb2Error::FileNotFound(ref msg) |
-            Fb2Error::UnableDeserializeXML(ref msg) => {
-                (self.description().to_string() + ": " + msg).into()
-            }
+            Fb2Error::FileNotFound(ref msg) => (self.description().to_string() + ": " + msg).into(),
 
             Fb2Error::UnableToMakeUtf8 |
             Fb2Error::UnableToLoadFb2Header |
@@ -85,16 +77,6 @@ impl convert::From<std::str::Utf8Error> for Fb2Error {
 impl convert::From<std::string::FromUtf8Error> for Fb2Error {
     fn from(_: std::string::FromUtf8Error) -> Fb2Error {
         Fb2Error::UnableToMakeUtf8
-    }
-}
-
-impl convert::From<fb::XmlError> for Fb2Error {
-    fn from(err: fb::XmlError) -> Fb2Error {
-        match err {
-            serde_xml_rs::Error::UnsupportedOperation(msg) |
-            serde_xml_rs::Error::Custom(msg) => Fb2Error::UnableDeserializeXML(msg),
-            _ => Fb2Error::UnableDeserializeXML("Unable to deserialize XML ".to_owned()),
-        }
     }
 }
 
@@ -131,7 +113,6 @@ impl error::Error for Fb2Error {
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
             Fb2Error::Custom(ref msg) => msg,
             Fb2Error::UnableToMakeUtf8 => "Unable to convert content into UTF8",
-            Fb2Error::UnableDeserializeXML(ref msg) => msg,
             Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",
             Fb2Error::UnsupportedSubCommand => "Unsupported sub command",
             Fb2Error::FileNotFound(..) => "Specified file was not found in archive",
