@@ -27,11 +27,43 @@ fn escape_amp(xml: String) -> Result<String, String> {
     Ok(xml)
 }
 
+fn find_tag_content(xml: &String, tag: &str) -> Option<(usize, usize)> {
+    let s_tag = format!("<{}>", tag);
+    let e_tag = format!("</{}>", tag);
+    if let Some(spos) = xml.find(&s_tag) {
+        if let Some(pos) = xml.find(&e_tag) {
+            return Some((spos, pos + e_tag.len()));
+        }
+    }
+    None
+}
+
+fn drop_annotation(xml: String) -> Result<String, String> {
+    if let Some((spos, epos)) = find_tag_content(&xml, "annotation") {
+        let xml = format!("{}{}", &xml[..spos], &xml[epos..]);
+        return Ok(xml);
+    }
+    Ok(xml)
+}
+
+fn drop_coverpage(xml: String) -> Result<String, String> {
+    if let Some((spos, epos)) = find_tag_content(&xml, "coverpage") {
+        let xml = format!("{}{}", &xml[..spos], &xml[epos..]);
+        return Ok(xml);
+    }
+    Ok(xml)
+}
+
+
 pub fn into_fb2(xml: String) -> Fb2Result<FictionBook> {
     if let Some(fb2) = FictionBook::new(xml.as_bytes()).ok() {
         return Ok(fb2);
     }
-    let xml = drop_leading_bytes(xml).and_then(escape_amp).unwrap();
+    let xml = drop_leading_bytes(xml)
+        .and_then(escape_amp)
+        .and_then(drop_annotation)
+        .and_then(drop_coverpage)
+        .unwrap();
     FictionBook::new(xml.as_bytes())
 }
 
