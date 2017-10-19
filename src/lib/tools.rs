@@ -8,24 +8,30 @@ pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     haystack.windows(sz).position(|window| window == needle)
 }
 
+fn drop_leading_bytes(xml: String) -> Result<String, String> {
+    if xml.chars().next() != Some('<') {
+        return Ok(xml.chars().skip_while(|c| *c != '<').collect());
+    }
+    Ok(xml)
+}
+
+fn escape_amp(xml: String) -> Result<String, String> {
+    if let Some(pos) = xml.find("&") {
+        if Some("&amp;") != xml.get(pos..pos + 5) {
+            return Ok(xml.replace("&amp;", "\0").replace("&", "&amp;").replace(
+                "\0",
+                "&amp;",
+            ));
+        }
+    }
+    Ok(xml)
+}
 
 pub fn into_fb2(xml: String) -> Fb2Result<FictionBook> {
     if let Some(fb2) = FictionBook::new(xml.as_bytes()).ok() {
         return Ok(fb2);
     }
-    let mut xml = if xml.chars().next() != Some('<') {
-        xml.chars().skip_while(|c| *c != '<').collect()
-    } else {
-        xml
-    };
-    if let Some(pos) = xml.find("&") {
-        if Some("&amp;") != xml.get(pos..pos + 5) {
-            xml = xml.replace("&amp;", "\0").replace("&", "&amp;").replace(
-                "\0",
-                "&amp;",
-            );
-        }
-    }
+    let xml = drop_leading_bytes(xml).and_then(escape_amp).unwrap();
     FictionBook::new(xml.as_bytes())
 }
 
