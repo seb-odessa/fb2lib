@@ -4,17 +4,16 @@ extern crate zip;
 use tools;
 use helper;
 use std::io::Read;
-use result::{Fb2Result, Fb2Error};
-use fb::FictionBook;
-use std::sync::Mutex;
 
+use fb::FictionBook;
+use zip::read::ZipFile;
+use result::Fb2Result;
 
 const CHUNCK_LENGTH: usize = 2048;
 const FB_CLOSE_TAG: &'static str = "\n</FictionBook>";
 const FB_CLOSE_UTF16: &'static str = "\n\0<\0/\0F\0i\0c\0t\0i\0o\0n\0B\0o\0o\0k\0>\0";
 
 pub type ZipArchive = zip::ZipArchive<std::fs::File>;
-pub type ZipFile<'a> = Mutex<zip::read::ZipFile<'a>>;
 
 pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     let file = std::fs::File::open(&std::path::Path::new(name))?;
@@ -66,10 +65,7 @@ pub fn load_header(file: &mut zip::read::ZipFile) -> Fb2Result<Vec<u8>> {
 }
 
 pub fn load_xml(file: &mut ZipFile) -> Fb2Result<String> {
-    match file.lock() {
-        Ok(ref mut file) => load_header(file).and_then(tools::into_utf8),
-        Err(_) => Err(Fb2Error::Custom(String::from("Can't acquire mutex"))),
-    }
+    load_header(file).and_then(tools::into_utf8)
 }
 
 pub fn load_fb2(file: &mut ZipFile) -> Fb2Result<FictionBook> {

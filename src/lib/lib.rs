@@ -19,6 +19,7 @@ pub mod algorithm;
 pub mod subcommands;
 
 mod fb;
+mod out;
 mod tools;
 mod iconv;
 mod helper;
