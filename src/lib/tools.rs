@@ -1,20 +1,41 @@
 
 use iconv;
 use helper;
-use fb::FictionBook;
+use parser;
+use parser::FictionBook;
 use result::Fb2Result;
 use result::Fb2Error;
 
 pub fn into_fb2(xml: String) -> Fb2Result<FictionBook> {
-    helper::try_create(xml)
-        .or_else(helper::try_create_with_first_error_fixing) // Fix first error
-        .or_else(helper::try_create_with_first_error_fixing) // Fix second error
-        // .or_else(helper::try_create_with_first_error_fixing) // Fix third error
-        // .or_else(helper::try_create_with_first_error_fixing) // Fix fourth error
-        .map_err(|e| {
-            Fb2Error::Custom(format!("Unable to deserialize XML: {}", e))
-        })
+    if let Some(fb2) = FictionBook::new(xml.as_bytes()).ok() {
+        return Ok(fb2);
+    }
+    let mut xml = if xml.chars().next() != Some('<') {
+        xml.chars().skip_while(|c| *c != '<').collect()
+    } else {
+        xml
+    };
+    if let Some(pos) = xml.find("&") {
+        if Some("&amp;") != xml.get(pos..pos + 5) {
+            xml = xml.replace("&amp;", "\0").replace("&", "&amp;").replace(
+                "\0",
+                "&amp;",
+            );
+        }
+    }
+    FictionBook::new(xml.as_bytes())
 }
+
+// pub fn into_fb2(xml: String) -> Fb2Result<FictionBook> {
+//     helper::try_create(xml)
+//         .or_else(helper::try_create_with_first_error_fixing) // Fix first error
+//         .or_else(helper::try_create_with_first_error_fixing) // Fix second error
+//         // .or_else(helper::try_create_with_first_error_fixing) // Fix third error
+//         // .or_else(helper::try_create_with_first_error_fixing) // Fix fourth error
+//         .map_err(|e| {
+//             Fb2Error::Custom(format!("Unable to deserialize XML: {}", e))
+//         })
+// }
 
 fn find_positions(header: &[u8], beg: &str, end: &str) -> Option<(usize, usize)> {
     if let Some(pos) = helper::find(header, beg.as_bytes()) {

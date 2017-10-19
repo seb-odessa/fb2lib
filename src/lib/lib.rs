@@ -9,6 +9,7 @@ extern crate test;
 extern crate zip;
 extern crate libc;
 extern crate regex;
+extern crate xmltree;
 
 #[macro_use]
 extern crate serde_derive;
