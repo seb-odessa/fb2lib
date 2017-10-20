@@ -1,6 +1,6 @@
 
 use iconv;
-use parser::FictionBook;
+use fb::FictionBook;
 use result::Fb2Result;
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {

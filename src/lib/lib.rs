@@ -16,9 +16,9 @@ pub mod result;
 pub mod algorithm;
 pub mod subcommands;
 
+mod fb;
 mod out;
 mod tools;
 mod iconv;
 mod archive;
-mod parser;
 mod data;
