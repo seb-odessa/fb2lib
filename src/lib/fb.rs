@@ -5,29 +5,51 @@ use result::{Fb2Error, Fb2Result};
 
 #[derive(Debug, PartialEq)]
 pub struct FictionBook {
-    pub fb: Box<Element>,
+    pub root: Box<Element>,
 }
 impl FictionBook {
     pub fn new(xml: &[u8]) -> Fb2Result<Self> {
         match Element::parse(xml) {
-            Ok(fb) => Ok(FictionBook { fb: Box::new(fb) }),
+            Ok(fb) => Ok(FictionBook { root: Box::new(fb) }),
             Err(e) => Err(Fb2Error::Custom(format!("{}", e))),
         }
     }
 
-    #[allow(dead_code)]
-    pub fn find_element(&self, _: &str) -> Option<&Element> {
+    pub fn get_book_title(&self) -> Option<String> {
+        self.query("description/title-info/book-title").map_or(
+            None,
+            |ref e| {
+                e.text.clone()
+            },
+        )
+    }
+
+    pub fn query_path<'a>(root: &Option<&'a Element>, path: &[&str]) -> Option<&'a Element> {
+        if let &Some(node) = root {
+            let len = path.len();
+            if len == 0 {
+                return None;
+            } else if len == 1 {
+                return node.get_child(path[0]);
+            } else {
+                return FictionBook::query_path(&node.get_child(path[0]), &path[1..]);
+            }
+        }
         None
+    }
+
+    #[allow(dead_code)]
+    pub fn query(&self, path: &str) -> Option<&Element> {
+        let nodes: Vec<&str> = path.split('/').collect::<Vec<_>>();
+        FictionBook::query_path(&Some(&self.root), &nodes)
     }
 }
 
 impl fmt::Display for FictionBook {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        write!(fmt, "{}", "FictionBook")
+        write!(fmt, "{}", self.get_book_title().unwrap_or_default())
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -35,29 +57,39 @@ mod tests {
     use xmltree::Element;
 
     #[test]
-    fn get_description() {
-        let mut xmltree = Element::parse(XML.as_bytes()).unwrap();
-        let description = xmltree.get_mut_child("description");
+    fn description() {
+        let xmltree = Element::parse(XML.as_bytes()).unwrap();
+        let description = xmltree.get_child("description");
         assert!(description.is_some());
     }
 
     #[test]
-    fn get_title_info() {
-        let mut xmltree = Element::parse(XML.as_bytes()).unwrap();
-        let description = xmltree.get_mut_child("description").unwrap();
-        let title_info = description.get_mut_child("title-info");
+    fn title_info() {
+        let xmltree = Element::parse(XML.as_bytes()).unwrap();
+        let description = xmltree.get_child("description").unwrap();
+        let title_info = description.get_child("title-info");
         assert!(title_info.is_some());
     }
 
     #[test]
-    fn get_genre() {
-        let mut xmltree = Element::parse(XML.as_bytes()).unwrap();
-        let description = xmltree.get_mut_child("description").unwrap();
-        let title_info = description.get_mut_child("title-info").unwrap();
-        let genre = title_info.get_mut_child("genre");
+    fn genre() {
+        let xmltree = Element::parse(XML.as_bytes()).unwrap();
+        let description = xmltree.get_child("description").unwrap();
+        let title_info = description.get_child("title-info").unwrap();
+        let genre = title_info.get_child("genre");
         assert!(genre.is_some());
         assert_eq!(Some(String::from("sf_space")), genre.unwrap().text);
     }
+
+    #[test]
+    fn fb_query() {
+        use super::FictionBook;
+        let fb = FictionBook::new(XML.as_bytes()).unwrap();
+        assert!(fb.query("description").is_some());
+        assert!(fb.query("description/title-info").is_some());
+        assert!(fb.query("description/title-info/author").is_some());
+    }
+
 }
 
 #[cfg(test)]
