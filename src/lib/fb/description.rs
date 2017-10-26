@@ -34,6 +34,7 @@
 
     <FictionBook> - 1 (один, обязателен)
 *********************************************************************************************/
+use xmltree::Element;
 use fb::TitleInfo;
 use fb::DocumentInfo;
 use fb::PublishInfo;
@@ -43,4 +44,17 @@ pub struct Description{
     pub title_info: Option<TitleInfo>,
     pub document_info: Option<DocumentInfo>,
     pub publish_info: Option<PublishInfo>,
+}
+impl Description {
+    #[allow(dead_code)]
+    pub fn from(e: &Element) -> Option<Self> {
+        if e.name == "description" {
+            return Some(Description {
+                title_info: None,
+                document_info: None,
+                publish_info: None
+            });
+        }
+        None
+    }
 }

@@ -35,8 +35,77 @@
     <src-title-info> 1..n (любое число, один обязателен) с версии 2.1;
     <document-info> 1..n (любое число, один обязателен);
 *********************************************************************************************/
+use std::fmt;
+use xmltree::Element;
+use fb::{FirstName, MiddleName, LastName, Nickname};
+
 
 #[derive(Debug, PartialEq)]
 pub struct Author {
+    pub first_name: Option<FirstName>,
+    pub middle_name: Option<MiddleName>,
+    pub last_name: Option<LastName>,
+    pub nickname: Option<Nickname>,
+}
 
- }
+impl Author {
+    pub fn new() -> Self {
+        Author{
+            first_name: None,
+            middle_name: None,
+            last_name: None,
+            nickname: None
+        }
+    }
+    #[allow(dead_code)]
+    pub fn from(e: &Element) -> Option<Self>{
+        if &e.name == "author" {
+            let mut author = Author::new();
+            for child in &e.children {
+                match child.name.as_str() {
+                    "first-name" => {author.first_name = FirstName::from(&child)},
+                    "middle-name" => {author.middle_name = MiddleName::from(&child)},
+                    "last-name" => {author.last_name = LastName::from(&child)},
+                    "nickname" => {author.nickname = Nickname::from(&child)},
+                    _ => {},
+                }
+            }
+            return Some(author);
+        }
+        None
+    }
+}
+
+impl fmt::Display for Author {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        let mut first = false;
+        if let Some(ref value) = self.first_name {
+            write!(fmt, "{}", value)?;
+            first = true;
+        }
+
+        let mut middle = false;
+        if let Some(ref value) = self.middle_name {
+            if first {
+                write!(fmt, " ")?;
+            }
+            write!(fmt, "{}", value)?;
+            middle = true;
+        }
+        let mut last = false;
+        if let Some(ref value) = self.last_name {
+            if middle || first {
+                write!(fmt, " ")?;
+            }
+            write!(fmt, "{}", value)?;
+            last = true;
+        }
+        if let Some(ref value) = self.nickname {
+            if last || first || middle {
+                write!(fmt, " ")?;
+            }
+            write!(fmt, "{}", value)?;
+        }
+        write!(fmt, "")
+    }
+}

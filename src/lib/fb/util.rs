@@ -1,3 +1,4 @@
+
 use xmltree::Element;
 
 pub fn query_path<'a>(root: &Option<&'a Element>, path: &[&str]) -> Option<&'a Element> {
@@ -20,6 +21,7 @@ pub fn query<'a>(root: &'a Element, path: &str) -> Option<&'a Element> {
     let nodes: Vec<&str> = path.split('/').collect::<Vec<_>>();
     query_path(&Some(root), &nodes)
 }
+
 
 #[cfg(test)]
 mod tests {

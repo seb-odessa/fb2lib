@@ -37,12 +37,27 @@
 
     <description> - 1 (один, обязателен)
 **********************************************************************************************/
+use xmltree::Element;
 use fb::Genre;
 use fb::Author;
-
+use fb::Booktitle;
 
 #[derive(Debug, PartialEq)]
 pub struct TitleInfo{
     pub genres: Option<Vec<Genre>>,
     pub authors: Option<Vec<Author>>,
+    pub book_title: Option<Booktitle>,
+}
+impl TitleInfo {
+    #[allow(dead_code)]
+    pub fn from(e: &Element) -> Option<Self> {
+        if e.name == "title-info" {
+            return Some(TitleInfo {
+                genres: None,
+                authors: None,
+                book_title: None
+            });
+        }
+        None
+    }
 }
