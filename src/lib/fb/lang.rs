@@ -23,16 +23,21 @@ TODO: где поддерживается?
     <src-title-info> 1 (один, обязателен) с версии 2.1.
 *********************************************************************************************/
 use std::fmt;
-use fb::util::HasNew;
+use xmltree::Element;
+use fb::util::HasFrom;
 
 
 #[derive(Debug, PartialEq)]
 pub struct Lang {
     pub text: String,
 }
-impl HasNew<Lang> for Lang {
-    fn new(value: &str) -> Lang {
-        Lang { text: String::from(value) }
+impl HasFrom<Lang> for Lang {
+    fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(Lang { text: node.text.clone().unwrap_or_default() })
+        } else {
+            None
+        }
     }
 }
 impl fmt::Display for Lang {
@@ -45,7 +50,7 @@ impl fmt::Display for Lang {
 mod tests {
     use super::*;
     use xmltree::Element;
-    use fb::util::load;
+    use fb::util::from;
     const TEST_DATA: &'static str = r##"<root><lang>ru</lang></root>"##;
 
     #[test]
@@ -58,8 +63,8 @@ mod tests {
     }
 
     #[test]
-    fn from() {
+    fn from_trait_impl() {
         let root = Element::parse(TEST_DATA.as_bytes()).unwrap();
-        assert_eq!(Lang::new("ru"), load(&root, "lang").unwrap());
+        assert_eq!(Lang { text: "ru".to_owned() }, from(&root, "lang").unwrap());
     }
 }

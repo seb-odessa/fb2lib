@@ -1,15 +1,4 @@
-
 use xmltree::Element;
-
-pub trait HasNew<T> {
-    fn new(value: &str) -> T;
-}
-pub fn load<T: HasNew<T>>(root: &Element, tag: &str) -> Option<T> {
-    if let Some(node) = root.get_child(tag) {
-        return Some(T::new(&node.text.clone().unwrap_or_default()));
-    }
-    None
-}
 
 pub trait HasFrom<T> {
     fn from(element: &Option<&Element>) -> Option<T>;
@@ -17,13 +6,12 @@ pub trait HasFrom<T> {
 pub fn from<T: HasFrom<T>>(root: &Element, tag: &str) -> Option<T> {
     return T::from(&root.get_child(tag));
 }
-
-pub fn load_all<T: HasFrom<T>>(node: &Element, tag: &str) -> Vec<T> {
+pub fn all_from<T: HasFrom<T>>(node: &Element, tag: &str) -> Vec<T> {
     let mut items = Vec::new();
     for element in &node.children {
         if element.name.to_lowercase() == tag {
-            if let Some(author) = from(&node, tag) {
-                items.push(author);
+            if let Some(item) = from(&node, tag) {
+                items.push(item);
             }
         }
     }

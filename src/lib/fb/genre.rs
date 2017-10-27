@@ -29,16 +29,21 @@
     <src-title-info> с версии 2.1
  *********************************************************************************************/
 use std::fmt;
-use fb::util::HasNew;
+use xmltree::Element;
+use fb::util::HasFrom;
 
 
 #[derive(Debug, PartialEq)]
 pub struct Genre {
     pub text: String,
 }
-impl HasNew<Genre> for Genre {
-    fn new(value: &str) -> Genre {
-        Genre { text: String::from(value) }
+impl HasFrom<Genre> for Genre {
+    fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(Genre { text: node.text.clone().unwrap_or_default() })
+        } else {
+            None
+        }
     }
 }
 impl fmt::Display for Genre {

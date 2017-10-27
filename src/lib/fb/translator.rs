@@ -1,8 +1,10 @@
 /*********************************************************************************************
- Элемент <author>
+ Элемент <translator>
 Описание
 
-Информация об авторе книги, если элемент используется в <title-info> или <src-title-info>; или об авторе документа, если в <document-info>.
+Информация об переводчике книги.
+
+Полностью идентичен <Translator>.
 Версия FB
 
 2.0 и выше
@@ -10,7 +12,7 @@
 
     Всеми (обеими) библиотеками, ориентироваными на FB2.
     Библиотечным софтом.
-    "Читалками" обеспечивающими поддержку стандарта на уровне выше, чем "выкусывание тэгов".
+    "Читалками" обеспечивающими поддержку стандарта на уровне выше, чем "выкусывание тэгов". 
 
 Атрибуты
 
@@ -25,7 +27,7 @@
     <nickname> - 0..1 (один, обязателен при отсутствии <first-name> и <last-name>, иначе опционально);
     <home-page> - 0..n (любое число, опционально);
     <email> - 0..n (любое число, опционально);
-    <id> - 0..1 (один, опционально) с версии 2.2 - идентификатор автора, присваивается библиотекой.
+    <id> - 0..1 (один, опционально) с версии 2.2 - идентификатор автора, присваивается библиотекой. 
 
 Подчинен
 
@@ -33,7 +35,9 @@
 
     <title-info> 1..n (любое число, один обязателен);
     <src-title-info> 1..n (любое число, один обязателен) с версии 2.1;
-    <document-info> 1..n (любое число, один обязателен);
+    <document-info> 1..n (любое число, один обязателен); 
+
+
 *********************************************************************************************/
 use std::fmt;
 use xmltree::Element;
@@ -41,17 +45,17 @@ use fb::{FirstName, MiddleName, LastName, Nickname};
 use fb::util::{HasFrom, from};
 
 #[derive(Debug, PartialEq)]
-pub struct Author {
+pub struct Translator {
     pub first_name: Option<FirstName>,
     pub middle_name: Option<MiddleName>,
     pub last_name: Option<LastName>,
     pub nickname: Option<Nickname>,
 }
 
-impl HasFrom<Author> for Author {
+impl HasFrom<Translator> for Translator {
     fn from(element: &Option<&Element>) -> Option<Self> {
         if let Some(node) = *element {
-            Some(Author {
+            Some(Translator {
                 first_name: from(node, "first-name"),
                 middle_name: from(node, "middle-name"),
                 last_name: from(node, "last-name"),
@@ -63,7 +67,7 @@ impl HasFrom<Author> for Author {
     }
 }
 
-impl fmt::Display for Author {
+impl fmt::Display for Translator {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         let mut first = false;
         if let Some(ref value) = self.first_name {

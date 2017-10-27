@@ -25,16 +25,21 @@ TODO: где поддерживается?
     <publisher> с версии 2.2.
 *********************************************************************************************/
 use std::fmt;
-use fb::util::HasNew;
+use xmltree::Element;
+use fb::util::HasFrom;
 
 
 #[derive(Debug, PartialEq)]
 pub struct MiddleName {
     pub text: String,
 }
-impl HasNew<MiddleName> for MiddleName {
-    fn new(value: &str) -> MiddleName {
-        MiddleName { text: String::from(value) }
+impl HasFrom<MiddleName> for MiddleName {
+    fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(MiddleName { text: node.text.clone().unwrap_or_default() })
+        } else {
+            None
+        }
     }
 }
 impl fmt::Display for MiddleName {
@@ -47,15 +52,15 @@ impl fmt::Display for MiddleName {
 mod tests {
     use super::*;
     use xmltree::Element;
-    use fb::util::load;
+    use fb::util::from;
     const TEST_DATA: &'static str = "<root><middle-name>value</middle-name></root>";
 
     #[test]
-    fn from() {
+    fn from_trait_impl() {
         let root = Element::parse(TEST_DATA.as_bytes()).unwrap();
         assert_eq!(
-            MiddleName::new("value"),
-            load(&root, "middle-name").unwrap()
+            MiddleName { text: "value".to_owned() },
+            from(&root, "middle-name").unwrap()
         );
     }
 }

@@ -27,15 +27,20 @@
     <src-title-info> 1 (один, обязателен)
 *********************************************************************************************/
 use std::fmt;
-use fb::util::HasNew;
+use xmltree::Element;
+use fb::util::HasFrom;
 
 #[derive(Debug, PartialEq)]
 pub struct BookTitle {
     pub text: String,
 }
-impl HasNew<BookTitle> for BookTitle {
-    fn new(value: &str) -> BookTitle {
-        BookTitle { text: String::from(value) }
+impl HasFrom<BookTitle> for BookTitle {
+    fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(BookTitle { text: node.text.clone().unwrap_or_default() })
+        } else {
+            None
+        }
     }
 }
 impl fmt::Display for BookTitle {
@@ -48,12 +53,15 @@ impl fmt::Display for BookTitle {
 mod tests {
     use super::*;
     use xmltree::Element;
-    use fb::util::load;
+    use fb::util::from;
     const TEST_DATA: &'static str = "<root><book-title>value</book-title></root>";
 
     #[test]
-    fn from() {
+    fn from_trait_impl() {
         let root = Element::parse(TEST_DATA.as_bytes()).unwrap();
-        assert_eq!(BookTitle::new("value"), load(&root, "book-title").unwrap());
+        assert_eq!(
+            BookTitle { text: "value".to_owned() },
+            from(&root, "book-title").unwrap()
+        );
     }
 }

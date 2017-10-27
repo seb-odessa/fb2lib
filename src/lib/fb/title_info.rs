@@ -41,22 +41,31 @@ use std::fmt;
 use xmltree::Element;
 use fb::Genre;
 use fb::Author;
+use fb::Translator;
 use fb::BookTitle;
-use fb::util::{HasFrom, load_all, load};
+use fb::Lang;
+use fb::SrcLang;
+use fb::util::{HasFrom, all_from, from};
 
 #[derive(Debug, PartialEq)]
 pub struct TitleInfo {
     pub genres: Vec<Genre>,
     pub authors: Vec<Author>,
+    pub translators: Vec<Translator>,
     pub book_title: Option<BookTitle>,
+    pub lang: Option<Lang>,
+    pub src_lang: Option<SrcLang>,
 }
 impl HasFrom<TitleInfo> for TitleInfo {
     fn from(element: &Option<&Element>) -> Option<Self> {
         if let Some(ref node) = *element {
             Some(TitleInfo {
-                genres: Vec::new(),
-                authors: load_all(node, "author"),
-                book_title: load(node, "book-title"),
+                genres: all_from(node, "genre"),
+                authors: all_from(node, "author"),
+                translators: all_from(node, "translator"),
+                book_title: from(node, "book-title"),
+                lang: from(node, "lang"),
+                src_lang: from(node, "src-lang"),
             })
         } else {
             None
