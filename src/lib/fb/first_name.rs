@@ -47,13 +47,12 @@ impl fmt::Display for FirstName {
 mod tests {
     use super::*;
     use xmltree::Element;
+    use fb::util::load;
     const TEST_DATA: &'static str = "<root><first-name>value</first-name></root>";
 
     #[test]
     fn from() {
         let root = Element::parse(TEST_DATA.as_bytes()).unwrap();
-        let optional = FirstName::from(&root.children[0]);
-        assert!(optional.is_some());
-        assert_eq!("value", optional.unwrap().text);
+        assert_eq!(FirstName::new("value"), load(&root, "first-name").unwrap());
     }
 }

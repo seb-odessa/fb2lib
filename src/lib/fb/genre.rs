@@ -28,8 +28,21 @@
     <title-info>
     <src-title-info> с версии 2.1
  *********************************************************************************************/
+use std::fmt;
+use fb::util::HasNew;
+
 
 #[derive(Debug, PartialEq)]
 pub struct Genre {
-
- }
+    pub text: String,
+}
+impl HasNew<Genre> for Genre {
+    fn new(value: &str) -> Genre {
+        Genre { text: String::from(value) }
+    }
+}
+impl fmt::Display for Genre {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(fmt, "{}", self.text)
+    }
+}

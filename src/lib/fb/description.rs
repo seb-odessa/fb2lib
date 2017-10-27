@@ -39,6 +39,7 @@ use xmltree::Element;
 use fb::TitleInfo;
 use fb::DocumentInfo;
 use fb::PublishInfo;
+use fb::util::{HasFrom, from};
 
 #[derive(Debug, PartialEq)]
 pub struct Description {
@@ -46,11 +47,11 @@ pub struct Description {
     pub document_info: Option<DocumentInfo>,
     pub publish_info: Option<PublishInfo>,
 }
-impl Description {
-    pub fn from(element: &Option<&Element>) -> Option<Self> {
+impl HasFrom<Description> for Description {
+    fn from(element: &Option<&Element>) -> Option<Self> {
         if let Some(ref node) = *element {
             Some(Description {
-                title_info: TitleInfo::from(&node.get_child("title-info")),
+                title_info: from(&node, "title-info"),
                 document_info: None,
                 publish_info: None,
             })

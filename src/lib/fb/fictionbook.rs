@@ -32,7 +32,7 @@ use std::fmt;
 use xmltree::Element;
 use result::{Fb2Error, Fb2Result};
 use fb::Description;
-
+use fb::util::from;
 
 #[derive(Debug, PartialEq)]
 pub struct FictionBook {
@@ -41,11 +41,7 @@ pub struct FictionBook {
 impl FictionBook {
     pub fn new(xml: &[u8]) -> Fb2Result<Self> {
         match Element::parse(xml) {
-            Ok(node) => {
-                Ok(FictionBook {
-                    description: Description::from(&node.get_child("description")),
-                })
-            }
+            Ok(node) => Ok(FictionBook { description: from(&node, "description") }),
             Err(e) => Err(Fb2Error::Custom(format!("{}", e))),
         }
     }
@@ -77,6 +73,12 @@ impl fmt::Display for FictionBook {
 mod tests {
     use data::bench::XML;
     use fb::FictionBook;
+
+    #[test]
+    fn new() {
+        let fb = FictionBook::new(XML.as_bytes()).unwrap();
+        assert!(fb.description.is_some());
+    }
 
     #[test]
     fn get_book_title() {

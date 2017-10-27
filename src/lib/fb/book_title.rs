@@ -30,16 +30,30 @@ use std::fmt;
 use fb::util::HasNew;
 
 #[derive(Debug, PartialEq)]
-pub struct Booktitle {
+pub struct BookTitle {
     pub text: String,
 }
-impl HasNew<Booktitle> for Booktitle {
-    fn new(value: &str) -> Booktitle {
-        Booktitle { text: String::from(value) }
+impl HasNew<BookTitle> for BookTitle {
+    fn new(value: &str) -> BookTitle {
+        BookTitle { text: String::from(value) }
     }
 }
-impl fmt::Display for Booktitle {
+impl fmt::Display for BookTitle {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(fmt, "{}", self.text)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use xmltree::Element;
+    use fb::util::load;
+    const TEST_DATA: &'static str = "<root><book-title>value</book-title></root>";
+
+    #[test]
+    fn from() {
+        let root = Element::parse(TEST_DATA.as_bytes()).unwrap();
+        assert_eq!(BookTitle::new("value"), load(&root, "book-title").unwrap());
     }
 }

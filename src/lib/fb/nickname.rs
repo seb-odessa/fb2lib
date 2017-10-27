@@ -46,13 +46,12 @@ impl fmt::Display for Nickname {
 mod tests {
     use super::*;
     use xmltree::Element;
+    use fb::util::load;
     const TEST_DATA: &'static str = "<root><nickname>value</nickname></root>";
 
     #[test]
     fn from() {
         let root = Element::parse(TEST_DATA.as_bytes()).unwrap();
-        let optional = Nickname::from(&root.children[0]);
-        assert!(optional.is_some());
-        assert_eq!("value", optional.unwrap().text);
+        assert_eq!(Nickname::new("value"), load(&root, "nickname").unwrap());
     }
 }

@@ -47,13 +47,15 @@ impl fmt::Display for MiddleName {
 mod tests {
     use super::*;
     use xmltree::Element;
+    use fb::util::load;
     const TEST_DATA: &'static str = "<root><middle-name>value</middle-name></root>";
 
     #[test]
     fn from() {
         let root = Element::parse(TEST_DATA.as_bytes()).unwrap();
-        let optional = MiddleName::from(&root.children[0]);
-        assert!(optional.is_some());
-        assert_eq!("value", optional.unwrap().text);
+        assert_eq!(
+            MiddleName::new("value"),
+            load(&root, "middle-name").unwrap()
+        );
     }
 }

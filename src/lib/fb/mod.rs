@@ -20,7 +20,7 @@ pub use fb::document_info::DocumentInfo;
 pub use fb::publish_info::PublishInfo;
 pub use fb::genre::Genre;
 pub use fb::author::Author;
-pub use fb::book_title::Booktitle;
+pub use fb::book_title::BookTitle;
 pub use fb::lang::Lang;
 pub use fb::first_name::FirstName;
 pub use fb::middle_name::MiddleName;

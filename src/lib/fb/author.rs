@@ -38,7 +38,7 @@
 use std::fmt;
 use xmltree::Element;
 use fb::{FirstName, MiddleName, LastName, Nickname};
-use fb::util::load;
+use fb::util::{HasFrom, load};
 
 #[derive(Debug, PartialEq)]
 pub struct Author {
@@ -48,9 +48,8 @@ pub struct Author {
     pub nickname: Option<Nickname>,
 }
 
-impl Author {
-    #[allow(dead_code)]
-    pub fn from(element: &Option<&Element>) -> Option<Self> {
+impl HasFrom<Author> for Author {
+    fn from(element: &Option<&Element>) -> Option<Self> {
         if let Some(node) = *element {
             Some(Author {
                 first_name: load(node, "first-name"),
