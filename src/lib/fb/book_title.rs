@@ -26,7 +26,20 @@
     <title-info> 1 (один, обязателен);
     <src-title-info> 1 (один, обязателен)
 *********************************************************************************************/
+use std::fmt;
+use fb::util::HasNew;
+
 #[derive(Debug, PartialEq)]
 pub struct Booktitle {
-    pub text: String
- }
+    pub text: String,
+}
+impl HasNew<Booktitle> for Booktitle {
+    fn new(value: &str) -> Booktitle {
+        Booktitle { text: String::from(value) }
+    }
+}
+impl fmt::Display for Booktitle {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        write!(fmt, "{}", self.text)
+    }
+}

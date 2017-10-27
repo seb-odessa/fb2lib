@@ -25,19 +25,15 @@ TODO: где поддерживается?
     <publisher> с версии 2.2.
 *********************************************************************************************/
 use std::fmt;
-use xmltree::Element;
+use fb::util::HasNew;
 
 #[derive(Debug, PartialEq)]
 pub struct LastName {
     pub text: String,
 }
-impl LastName {
-    #[allow(dead_code)]
-    pub fn from(e: &Element) -> Option<Self> {
-        if e.name == "last-name" {
-            return Some(LastName { text: e.text.clone().unwrap_or_default() })
-        }
-        None
+impl HasNew<LastName> for LastName {
+    fn new(value: &str) -> LastName {
+        LastName { text: String::from(value) }
     }
 }
 impl fmt::Display for LastName {

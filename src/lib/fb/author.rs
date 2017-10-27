@@ -38,7 +38,7 @@
 use std::fmt;
 use xmltree::Element;
 use fb::{FirstName, MiddleName, LastName, Nickname};
-
+use fb::util::load;
 
 #[derive(Debug, PartialEq)]
 pub struct Author {
@@ -49,30 +49,18 @@ pub struct Author {
 }
 
 impl Author {
-    pub fn new() -> Self {
-        Author{
-            first_name: None,
-            middle_name: None,
-            last_name: None,
-            nickname: None
-        }
-    }
     #[allow(dead_code)]
-    pub fn from(e: &Element) -> Option<Self>{
-        if &e.name == "author" {
-            let mut author = Author::new();
-            for child in &e.children {
-                match child.name.as_str() {
-                    "first-name" => {author.first_name = FirstName::from(&child)},
-                    "middle-name" => {author.middle_name = MiddleName::from(&child)},
-                    "last-name" => {author.last_name = LastName::from(&child)},
-                    "nickname" => {author.nickname = Nickname::from(&child)},
-                    _ => {},
-                }
-            }
-            return Some(author);
+    pub fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(node) = *element {
+            Some(Author {
+                first_name: load(node, "first-name"),
+                middle_name: load(node, "middle-name"),
+                last_name: load(node, "last-name"),
+                nickname: load(node, "nickname"),
+            })
+        } else {
+            None
         }
-        None
     }
 }
 

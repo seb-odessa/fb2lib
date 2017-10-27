@@ -31,50 +31,44 @@
 use std::fmt;
 use xmltree::Element;
 use result::{Fb2Error, Fb2Result};
-use fb::util::query;
-use fb::util::query_path;
 use fb::Description;
 
 
 #[derive(Debug, PartialEq)]
 pub struct FictionBook {
-    pub root: Box<Element>,
     pub description: Option<Description>,
 }
 impl FictionBook {
     pub fn new(xml: &[u8]) -> Fb2Result<Self> {
         match Element::parse(xml) {
-            Ok(fb) => Ok(FictionBook { root: Box::new(fb), description: None }),
+            Ok(node) => {
+                Ok(FictionBook {
+                    description: Description::from(&node.get_child("description")),
+                })
+            }
             Err(e) => Err(Fb2Error::Custom(format!("{}", e))),
         }
     }
 
-    pub fn get_book_title(&self) -> String {
-        query(&self.root, "description/title-info/book-title")
-            .map_or(None, |ref e| e.text.clone())
-            .unwrap_or_default()
-    }
-
-    pub fn get_book_authors(&self) -> Vec<String> {
-        let mut authors = Vec::new();
-        if let Some(ref titile_info) = query(&self.root,"description/title-info") {
-            for child in &titile_info.children {
-                let fitst_name = query_path(&Some(&child), &["first-name"])
-                    .map_or(None, |ref e| e.text.clone())
-                    .unwrap_or_default();
-
-                let name = format!("!!{}!!", fitst_name);
-                authors.push(name);
+    #[allow(dead_code)]
+    pub fn get_book_title(&self) -> Option<String> {
+        if let Some(ref description) = self.description {
+            if let Some(ref title_info) = description.title_info {
+                if let Some(ref book_title) = title_info.book_title {
+                    return Some(book_title.text.clone());
+                }
             }
         }
-        return authors;
+        None
     }
 }
-
 impl fmt::Display for FictionBook {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        write!(fmt, "{}", self.get_book_title())?;
-        write!(fmt, "{}", self.get_book_authors()[0])
+        if let Some(ref description) = self.description {
+            write!(fmt, "{}", description)
+        } else {
+            Ok(())
+        }
     }
 }
 
@@ -87,7 +81,9 @@ mod tests {
     #[test]
     fn get_book_title() {
         let fb = FictionBook::new(XML.as_bytes()).unwrap();
-        assert_eq!("Тень его мыслей", &fb.get_book_title());
+        assert_eq!(
+            "Тень его мыслей",
+            &fb.get_book_title().unwrap()
+        );
     }
 }
-

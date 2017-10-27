@@ -1,6 +1,18 @@
 
 use xmltree::Element;
 
+pub trait HasNew<T> {
+    fn new(value: &str) -> T;
+}
+
+pub fn load<T: HasNew<T>>(root: &Element, tag: &str) -> Option<T> {
+    if let Some(node) = root.get_child(tag) {
+        return Some(T::new(&node.text.clone().unwrap_or_default()));
+    }
+    None
+}
+
+#[allow(dead_code)]
 pub fn query_path<'a>(root: &Option<&'a Element>, path: &[&str]) -> Option<&'a Element> {
     if let &Some(node) = root {
         let len = path.len();
@@ -17,6 +29,7 @@ pub fn query_path<'a>(root: &Option<&'a Element>, path: &[&str]) -> Option<&'a E
     None
 }
 
+#[allow(dead_code)]
 pub fn query<'a>(root: &'a Element, path: &str) -> Option<&'a Element> {
     let nodes: Vec<&str> = path.split('/').collect::<Vec<_>>();
     query_path(&Some(root), &nodes)

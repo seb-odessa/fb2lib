@@ -37,27 +37,61 @@
 
     <description> - 1 (один, обязателен)
 **********************************************************************************************/
+use std::fmt;
 use xmltree::Element;
 use fb::Genre;
 use fb::Author;
 use fb::Booktitle;
+use fb::util::load;
 
 #[derive(Debug, PartialEq)]
-pub struct TitleInfo{
+pub struct TitleInfo {
     pub genres: Option<Vec<Genre>>,
     pub authors: Option<Vec<Author>>,
     pub book_title: Option<Booktitle>,
 }
 impl TitleInfo {
-    #[allow(dead_code)]
-    pub fn from(e: &Element) -> Option<Self> {
-        if e.name == "title-info" {
-            return Some(TitleInfo {
+    pub fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(TitleInfo {
                 genres: None,
-                authors: None,
-                book_title: None
-            });
+                authors: TitleInfo::authors(&node),
+                book_title: load(node, "book-title"),
+            })
+        } else {
+            None
         }
-        None
+    }
+    fn authors(node: &Element) -> Option<Vec<Author>> {
+        let mut authors = Vec::new();
+        authors.push(Author::from(&node.get_child("author")).unwrap());
+        // if &e.name == "author" {
+        //     let mut author = Author::new();
+        //     for child in &e.children {
+        //         match child.name.as_str() {
+        //             "first-name" => author.first_name = FirstName::from(&child),
+        //             "middle-name" => author.middle_name = MiddleName::from(&child),
+        //             "last-name" => author.last_name = LastName::from(&child),
+        //             "nickname" => author.nickname = Nickname::from(&child),
+        //             _ => {}
+        //         }
+        //     }
+        //     return Some(author);
+        // }
+
+        Some(authors)
+    }
+}
+impl fmt::Display for TitleInfo {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        if let Some(ref book_title) = self.book_title {
+            write!(fmt, "{}", book_title)?;
+        }
+        if let Some(ref authors) = self.authors {
+            for author in authors {
+                write!(fmt, " - {}", author)?;
+            }
+        }
+        Ok(())
     }
 }

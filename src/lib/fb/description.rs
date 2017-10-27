@@ -34,27 +34,37 @@
 
     <FictionBook> - 1 (один, обязателен)
 *********************************************************************************************/
+use std::fmt;
 use xmltree::Element;
 use fb::TitleInfo;
 use fb::DocumentInfo;
 use fb::PublishInfo;
 
 #[derive(Debug, PartialEq)]
-pub struct Description{
+pub struct Description {
     pub title_info: Option<TitleInfo>,
     pub document_info: Option<DocumentInfo>,
     pub publish_info: Option<PublishInfo>,
 }
 impl Description {
-    #[allow(dead_code)]
-    pub fn from(e: &Element) -> Option<Self> {
-        if e.name == "description" {
-            return Some(Description {
-                title_info: None,
+    pub fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(Description {
+                title_info: TitleInfo::from(&node.get_child("title-info")),
                 document_info: None,
-                publish_info: None
-            });
+                publish_info: None,
+            })
+        } else {
+            None
         }
-        None
+    }
+}
+impl fmt::Display for Description {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        if let Some(ref title_info) = self.title_info {
+            write!(fmt, "{}", title_info)
+        } else {
+            Ok(())
+        }
     }
 }
