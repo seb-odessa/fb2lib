@@ -34,6 +34,27 @@
 
     <description> - 1 (один, обязателен)
 *********************************************************************************************/
+use xmltree::Element;
+use fb::{Author};
+use fb::{ProgramUsed, Date};
+use fb::util::{HasFrom, all_from, from};
 
 #[derive(Debug, PartialEq)]
-pub struct DocumentInfo{}
+pub struct DocumentInfo{
+    pub authors: Vec<Author>,
+    pub program_used: Option<ProgramUsed>,
+    pub date: Option<Date>
+}
+impl HasFrom<DocumentInfo> for DocumentInfo {
+    fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(DocumentInfo {
+                authors: all_from(node, "author"),
+                program_used: from(node, "program-used"),
+                date: from(node, "date"),
+            })
+        } else {
+            None
+        }
+    }
+}

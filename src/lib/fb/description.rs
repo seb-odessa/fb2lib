@@ -52,7 +52,7 @@ impl HasFrom<Description> for Description {
         if let Some(ref node) = *element {
             Some(Description {
                 title_info: from(&node, "title-info"),
-                document_info: None,
+                document_info: from(&node, "document-info"),
                 publish_info: None,
             })
         } else {

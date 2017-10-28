@@ -42,7 +42,6 @@ pub struct Sequence {
 }
 impl HasFrom<Sequence> for Sequence {
     fn from(element: &Option<&Element>) -> Option<Self> {
-        println!("parse seq");
         if let Some(ref node) = *element {
             Some(Sequence {
                 name: node.attributes.get("name").unwrap_or(&String::new()).clone(),
