@@ -39,12 +39,8 @@
 **********************************************************************************************/
 use std::fmt;
 use xmltree::Element;
-use fb::Genre;
-use fb::Author;
-use fb::Translator;
-use fb::BookTitle;
-use fb::Lang;
-use fb::SrcLang;
+use fb::{Genre, Author, Translator, Sequence};
+use fb::{BookTitle, Lang, SrcLang};
 use fb::util::{HasFrom, all_from, from};
 
 #[derive(Debug, PartialEq)]
@@ -52,6 +48,7 @@ pub struct TitleInfo {
     pub genres: Vec<Genre>,
     pub authors: Vec<Author>,
     pub translators: Vec<Translator>,
+    pub sequence: Vec<Sequence>,
     pub book_title: Option<BookTitle>,
     pub lang: Option<Lang>,
     pub src_lang: Option<SrcLang>,
@@ -63,6 +60,7 @@ impl HasFrom<TitleInfo> for TitleInfo {
                 genres: all_from(node, "genre"),
                 authors: all_from(node, "author"),
                 translators: all_from(node, "translator"),
+                sequence: all_from(node, "sequence"),
                 book_title: from(node, "book-title"),
                 lang: from(node, "lang"),
                 src_lang: from(node, "src-lang"),

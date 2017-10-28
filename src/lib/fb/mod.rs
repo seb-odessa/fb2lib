@@ -14,6 +14,7 @@ pub mod first_name;
 pub mod last_name;
 pub mod middle_name;
 pub mod nickname;
+pub mod sequence;
 
 pub use fb::fictionbook::FictionBook;
 pub use fb::description::Description;
@@ -30,6 +31,7 @@ pub use fb::first_name::FirstName;
 pub use fb::middle_name::MiddleName;
 pub use fb::last_name::LastName;
 pub use fb::nickname::Nickname;
+pub use fb::sequence::Sequence;
 
 #[cfg(test)]
 mod bench {
