@@ -53,7 +53,7 @@ impl HasFrom<Description> for Description {
             Some(Description {
                 title_info: from(&node, "title-info"),
                 document_info: from(&node, "document-info"),
-                publish_info: None,
+                publish_info: from(&node, "publish-info"),
             })
         } else {
             None

@@ -31,8 +31,32 @@
 
     <description> 0..1 (один, опционально)
 *********************************************************************************************/
+use xmltree::Element;
+use fb::{BookName, Publisher, City, Year, Isbn, Sequence};
+use fb::util::{HasFrom, from};
 
 #[derive(Debug, PartialEq)]
 pub struct PublishInfo {
-
+    pub book_name: Option<BookName>,
+    pub publisher: Option<Publisher>,
+    pub city: Option<City>,
+    pub year: Option<Year>,
+    pub isbn: Option<Isbn>,
+    pub sequence: Option<Sequence>,
+}
+impl HasFrom<PublishInfo> for PublishInfo {
+    fn from(element: &Option<&Element>) -> Option<Self> {
+        if let Some(ref node) = *element {
+            Some(PublishInfo {
+                book_name: from(node, "book-name"),
+                publisher: from(node, "publisher"),
+                city: from(node, "city"),
+                year: from(node, "year"),
+                isbn: from(node, "isbn"),
+                sequence: from(node, "sequence")
+            })
+        } else {
+            None
+        }
+    }
 }
