@@ -75,8 +75,14 @@ impl fmt::Display for TitleInfo {
         if let Some(ref book_title) = self.book_title {
             write!(fmt, "{} - ", book_title)?;
         }
+        let mut first_author = true;
         for author in &self.authors {
-            write!(fmt, "{}", author)?;
+            if first_author {
+                first_author = false;
+                write!(fmt, "{}", author)?;
+            } else {
+                write!(fmt, ", {}", author)?;
+            }
         }
         Ok(())
     }
