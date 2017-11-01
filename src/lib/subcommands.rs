@@ -1,14 +1,12 @@
 use out;
 use tools;
 use archive;
-use algorithm::apply_to_xml;
+use algorithm::{apply_to_xml, apply_to_file};
 use result::Fb2Result;
 use result::Fb2Error;
 
 
 use std::fs::File;
-
-
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     let mut zip = archive::open(archive_name)?;
@@ -33,6 +31,12 @@ pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
     apply_to_xml(zip, file_name, out::info)
 }
+
+pub fn show_zip(archive_name: &str, file_name: &str) -> Fb2Result<()> {
+    let zip = archive::open(archive_name)?;
+    apply_to_file(zip, file_name, out::zip_info)
+}
+
 
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {
     let mut file = File::open(file_name).map_err(|io| Fb2Error::Io(io))?;

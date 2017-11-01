@@ -17,6 +17,7 @@ const CMD_SHOW: &'static str = "show";
 const CMD_XML: &'static str = "xml";
 const CMD_FB2: &'static str = "fb2";
 const CMD_INF: &'static str = "info";
+const CMD_ZIP: &'static str = "zip";
 const CMD_PARSE: &'static str = "parse";
 const CMD_CHECK: &'static str = "check";
 
@@ -63,8 +64,10 @@ fn main() {
         .arg(book.clone());
     let cmd_show_inf = SubCommand::with_name(CMD_INF)
         .about("Print human readable info for the fb2 file")
-        .arg(book.required(false).clone());
-
+        .arg(book.clone().required(false).clone());
+    let cmd_show_zip = SubCommand::with_name(CMD_ZIP)
+        .about("Print human readable info for the file in zip archive")
+        .arg(book.clone().required(false).clone());
     let app = App::new(program)
         .version(VERSION)
         .author(AUTHOR)
@@ -78,7 +81,8 @@ fn main() {
             cmd_show
                 .subcommand(cmd_show_xml)
                 .subcommand(cmd_show_fb2)
-                .subcommand(cmd_show_inf),
+                .subcommand(cmd_show_inf)
+                .subcommand(cmd_show_zip),
         )
         .get_matches();
 
@@ -92,6 +96,7 @@ fn main() {
                 (CMD_XML, Some(cmd)) => show_xml(&archive, &cmd.value_of(FILE).unwrap_or("*")),
                 (CMD_FB2, Some(cmd)) => show_fb2(&archive, &cmd.value_of(FILE).unwrap_or("*")),
                 (CMD_INF, Some(cmd)) => show_inf(&archive, &cmd.value_of(FILE).unwrap_or("*")),
+                (CMD_ZIP, Some(cmd)) => show_zip(&archive, &cmd.value_of(FILE).unwrap_or("*")),
                 (_, _) => Err(Fb2Error::UnsupportedSubCommand),
             }
         }

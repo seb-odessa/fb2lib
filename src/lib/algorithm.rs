@@ -1,21 +1,14 @@
-
 use tools;
 use archive;
-use archive::ZipArchive;
+use archive::{ZipArchive, ZipFile};
 use regex::Regex;
 use result::{Fb2Result, Fb2Error};
 
 use std::error::Error;
 use std::sync::Mutex;
 use std::collections::VecDeque;
-//use std::sync::mpsc::Receiver;
-//use std::sync::mpsc::SyncSender;
-//use std::sync::mpsc::sync_channel;
-//use std::thread;
-//use std::sync::mpsc::channel;
 
 
-//pub type ZipFile<'a> = Mutex<zip::read::ZipFile<'a>>;
 pub type BoxedBytes = Mutex<Box<Vec<u8>>>;
 
 #[allow(dead_code)]
@@ -58,6 +51,21 @@ where
     }
     Ok(())
 }
+
+pub fn apply_to_file<F>(mut zip: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
+where
+    F: FnMut(&ZipFile) -> Fb2Result<()>,
+{
+    let re = make_regex(file_name)?;
+    for i in 0..zip.len() {
+        let mut file = zip.by_index(i)?;
+        if re.is_match(file.name()) {
+            visitor(&file)?;
+        }
+    }
+    Ok(())
+}
+
 
 fn make_regex(file_name: &str) -> Fb2Result<Regex> {
     Regex::new(&wildcards_to_regex(file_name)).map_err(|e| {

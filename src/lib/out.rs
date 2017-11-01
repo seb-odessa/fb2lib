@@ -31,3 +31,17 @@ pub fn info(file_name: &str, xml: String) -> Fb2Result<()> {
     }
     Ok(())
 }
+
+pub fn zip_info(file: &ZipFile) -> Fb2Result<()> {
+    println!(
+        "{:10} ({:10}) : {:8}/{:8} crc32: {:12}, offset: {}",
+        &file.name(),
+        &file.compression(),
+        &file.compressed_size(),
+        &file.size(),
+
+        &file.crc32(),
+        &file.data_start()
+    );
+    Ok(())
+}
