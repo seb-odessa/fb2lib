@@ -44,7 +44,7 @@ where
     Ok(())
 }
 
-pub fn apply<F>(mut zip: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
+pub fn apply_to_xml<F>(mut zip: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
 where
     F: FnMut(&str, String) -> Fb2Result<()>,
 {

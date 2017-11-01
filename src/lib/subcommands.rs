@@ -1,7 +1,7 @@
 use out;
 use tools;
 use archive;
-use algorithm::apply;
+use algorithm::apply_to_xml;
 use result::Fb2Result;
 use result::Fb2Error;
 
@@ -21,17 +21,17 @@ pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
 
 pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    apply(zip, file_name, out::xml)
+    apply_to_xml(zip, file_name, out::xml)
 }
 
 pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    apply(zip, file_name, out::fb2)
+    apply_to_xml(zip, file_name, out::fb2)
 }
 
 pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    apply(zip, file_name, out::info)
+    apply_to_xml(zip, file_name, out::info)
 }
 
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {
@@ -52,7 +52,7 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
     if !quiet {
         print!("Progress:   %");
     }
-    apply(zip, "*", |file_name, xml| {
+    apply_to_xml(zip, "*", |file_name, xml| {
         match tools::into_fb2(xml) {
             Ok(_) => succ += 1,
             Err(_) => {
