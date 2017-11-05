@@ -58,7 +58,7 @@ where
 {
     let re = make_regex(file_name)?;
     for i in 0..zip.len() {
-        let mut file = zip.by_index(i)?;
+        let file = zip.by_index(i)?;
         if re.is_match(file.name()) {
             visitor(&file)?;
         }

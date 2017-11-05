@@ -8,7 +8,7 @@ name = "lib"
 path = "src/lib/lib.rs"
 
 [dependencies]
-    zip = "*"
+    zip = { git = "https://github.com/seb-odessa/zip-rs.git" }
     rusqlite = "*"
     time = "0.1.38"
     clap = "2.26.2"

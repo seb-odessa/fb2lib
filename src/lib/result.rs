@@ -23,6 +23,9 @@ pub enum Fb2Error {
     /// This archive is not supported
     UnsupportedArchive(&'static str),
 
+    /// Zip file section not found
+    SectionNotFound(&'static str),
+
     /// This file does not contains description tag
     UnableToLoadFb2Header,
 
@@ -48,13 +51,13 @@ impl Fb2Error {
                 ("Io Error: ".to_string() + (io_err as &error::Error).description()).into()
             }
             Fb2Error::InvalidArchive(msg) |
+            Fb2Error::SectionNotFound(msg) |
             Fb2Error::UnsupportedArchive(msg) => {
                 (self.description().to_string() + ": " + msg).into()
             }
-
-            Fb2Error::Custom(ref msg) |
-            Fb2Error::FileNotFound(ref msg) => (self.description().to_string() + ": " + msg).into(),
-
+            Fb2Error::Custom(ref msg) | Fb2Error::FileNotFound(ref msg) => {
+                (self.description().to_string() + ": " + msg).into()
+            }
             Fb2Error::UnableToMakeUtf8 |
             Fb2Error::UnableToLoadFb2Header |
             Fb2Error::UnsupportedSubCommand => self.description().into(),
@@ -85,10 +88,11 @@ impl convert::From<zip::result::ZipError> for Fb2Error {
         match err {
             zip::result::ZipError::Io(io_err) => Fb2Error::Io(io_err),
             zip::result::ZipError::InvalidArchive(msg) => Fb2Error::InvalidArchive(msg),
+            zip::result::ZipError::SectionNotFound(msg) => Fb2Error::SectionNotFound(msg),
             zip::result::ZipError::UnsupportedArchive(msg) => Fb2Error::UnsupportedArchive(msg),
-            zip::result::ZipError::FileNotFound => Fb2Error::FileNotFound(
-                String::from("File not found"),
-            ),
+            zip::result::ZipError::FileNotFound => {
+                Fb2Error::FileNotFound(String::from("File not found"))
+            }
         }
     }
 }
@@ -111,6 +115,7 @@ impl error::Error for Fb2Error {
             Fb2Error::Io(ref io_err) => (io_err as &error::Error).description(),
             Fb2Error::InvalidArchive(..) => "Invalid Zip archive",
             Fb2Error::UnsupportedArchive(..) => "Unsupported Zip archive",
+            Fb2Error::SectionNotFound(..) => "Unsupported Zip archive format",
             Fb2Error::Custom(ref msg) => msg,
             Fb2Error::UnableToMakeUtf8 => "Unable to convert content into UTF8",
             Fb2Error::UnableToLoadFb2Header => "Unable to load FB2 description data",

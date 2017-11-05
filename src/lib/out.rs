@@ -41,7 +41,7 @@ pub fn zip_info(file: &ZipFile) -> Fb2Result<()> {
         &file.size(),
 
         &file.crc32(),
-        &file.data_start()
+        &file.offset()
     );
     Ok(())
 }
