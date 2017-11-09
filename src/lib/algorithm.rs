@@ -3,50 +3,41 @@ use archive;
 use archive::{ZipArchive, ZipFile};
 use regex::Regex;
 use result::{Fb2Result, Fb2Error};
-
 use std::error::Error;
-use std::sync::Mutex;
-use std::collections::VecDeque;
+use crossbeam;
 
-
-pub type BoxedBytes = Mutex<Box<Vec<u8>>>;
-
-#[allow(dead_code)]
-enum Message<'a, T> {
-    Quit,
-    Skip(Fb2Error),
-    Work(Fb2Result<T>),
-    Task((Box<FnMut(BoxedBytes) -> Fb2Result<T> + 'a>, BoxedBytes)),
-}
-
-#[allow(dead_code)]
-pub fn run<'a, F, O>(mut zip: ZipArchive, file_name: &str, worker: F) -> Fb2Result<()>
+pub fn apply<F>(mut zip: ZipArchive, file_name: &str, visitor: F) -> Fb2Result<()>
 where
-    F: FnMut(BoxedBytes) -> Fb2Result<O> + Copy + 'a,
+    F: Fn(String, String) -> () + Send + Copy,
 {
-    let mut deq: VecDeque<Message<O>> = VecDeque::new();
     let re = make_regex(file_name)?;
-    for i in 0..zip.len() {
-        let mut file = zip.by_index(i)?;
-        if re.is_match(file.name()) {
-            let header = archive::load_header(&mut file)?;
-            let arg = Mutex::new(Box::new(header));
-            deq.push_back(Message::Task((Box::new(worker), arg)));
+    crossbeam::scope(|scope| for i in 0..zip.len() {
+        if let Some(mut file) = zip.by_index(i).ok() {
+            if re.is_match(file.name()) {
+                if let Some(xml) = archive::load_header(&mut file)
+                    .and_then(tools::into_utf8)
+                    .ok()
+                {
+                    let name = String::from(file.name());
+                    scope.spawn(move || visitor(name, xml));
+                }
+            }
         }
-    }
+    });
     Ok(())
 }
 
 pub fn apply_to_xml<F>(mut zip: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
 where
-    F: FnMut(&str, String) -> Fb2Result<()>,
+    F: FnMut(String, String) -> (),
 {
     let re = make_regex(file_name)?;
     for i in 0..zip.len() {
         let mut file = zip.by_index(i)?;
         if re.is_match(file.name()) {
+            let name = String::from(file.name());
             let xml = archive::load_header(&mut file).and_then(tools::into_utf8)?;
-            visitor(file.name(), xml)?;
+            visitor(name, xml);
         }
     }
     Ok(())

@@ -10,7 +10,7 @@ extern crate zip;
 extern crate libc;
 extern crate regex;
 extern crate fb2parser;
-
+extern crate crossbeam;
 
 pub mod result;
 pub mod algorithm;

@@ -1,7 +1,7 @@
 use out;
 use tools;
 use archive;
-use algorithm::{apply_to_xml, apply_to_file};
+use algorithm::{apply_to_xml, apply_to_file, apply};
 use result::Fb2Result;
 use result::Fb2Error;
 
@@ -19,17 +19,17 @@ pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
 
 pub fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    apply_to_xml(zip, file_name, out::xml)
+    apply(zip, file_name, out::xml)
 }
 
 pub fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    apply_to_xml(zip, file_name, out::fb2)
+    apply(zip, file_name, out::fb2)
 }
 
 pub fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
-    apply_to_xml(zip, file_name, out::info)
+    apply(zip, file_name, out::info)
 }
 
 pub fn show_zip(archive_name: &str, file_name: &str) -> Fb2Result<()> {
@@ -74,9 +74,8 @@ pub fn do_check(archive_name: &str, quiet: bool) -> Fb2Result<()> {
         if !quiet {
             curr += 1;
             print!("\rProgress: {:3}%", 100 * (1 + curr) / count);
-            io::stdout().flush()?;
+            io::stdout().flush().unwrap();
         }
-        Ok(())
     })?;
     if !quiet {
         println!("\nSucceeded {}/{} ({}%)", succ, count, 100 * succ / count);

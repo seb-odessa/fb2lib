@@ -11,25 +11,22 @@ pub fn file_info(file: &ZipFile) {
     );
 }
 
-pub fn xml(_: &str, xml: String) -> Fb2Result<()> {
+pub fn xml(_: String, xml: String) {
     println!("{}", xml);
-    Ok(())
 }
 
-pub fn fb2(file_name: &str, xml: String) -> Fb2Result<()> {
+pub fn fb2(file_name: String, xml: String) {
     match into_fb2(xml) {
         Ok(fb2) => println!("{:#?}", fb2),
         Err(err) => println!("{}: {}", file_name, err),
     }
-    Ok(())
 }
 
-pub fn info(file_name: &str, xml: String) -> Fb2Result<()> {
+pub fn info(file_name: String, xml: String) {
     match into_fb2(xml) {
         Ok(fb2) => println!("{:20}: {}", file_name, fb2),
         Err(err) => println!("{:20}: {}", file_name, err),
     }
-    Ok(())
 }
 
 pub fn zip_info(file: &ZipFile) -> Fb2Result<()> {

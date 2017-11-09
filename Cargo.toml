@@ -11,10 +11,10 @@ path = "src/lib/lib.rs"
     zip = { git = "https://github.com/seb-odessa/zip-rs.git" }
     fb2parser = { git = "https://github.com/seb-odessa/fb2parser.git" }
     rusqlite = "*"
-    time = "0.1.38"
-    clap = "2.26.2"
-    regex = "0.2.2"
-
+    time = "*"
+    clap = "*"
+    regex = "*"
+    crossbeam = "*"
 
 
 
