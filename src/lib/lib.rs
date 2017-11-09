@@ -9,16 +9,14 @@ extern crate test;
 extern crate zip;
 extern crate libc;
 extern crate regex;
-extern crate xmltree;
+extern crate fb2parser;
 
 
 pub mod result;
 pub mod algorithm;
 pub mod subcommands;
 
-mod fb;
 mod out;
 mod tools;
 mod iconv;
 mod archive;
-mod data;
