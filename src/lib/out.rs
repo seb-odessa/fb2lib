@@ -1,4 +1,4 @@
-use zip::read::ZipFile;
+use zip::ZipFile;
 use result::Fb2Result;
 use tools::into_fb2;
 
