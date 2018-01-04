@@ -1,7 +1,7 @@
 use sal;
 use result::Fb2Result;
 use result::Fb2Error;
-use crypto;
+use crypto::sha1::Sha1;
 use crypto::digest::Digest;
 use rustc_serialize::hex::ToHex;
 
@@ -11,7 +11,7 @@ use std::path::Path;
 use std::collections::HashMap;
 
 pub fn sha1(input: &[u8]) -> Vec<u8> {
-    let mut hasher = crypto::sha1::Sha1::new();
+    let mut hasher = Sha1::new();
     hasher.input(input);
     let mut hash: Vec<u8> = vec![0; hasher.output_bytes()];
     hasher.result(&mut hash);
@@ -22,6 +22,11 @@ pub fn sha1_string(input: &[u8]) -> String {
     sha1(input).to_hex().to_uppercase()
 }
 
+
+pub fn to_hex_string(bytes: &[u8]) -> String {
+    let strs: Vec<String> = bytes.iter().map(|b| format!("{:02X}", b)).collect();
+    strs.connect("")
+}
 
 fn get_file_name(file_name: &str) -> Result<String, Fb2Error> {
     let path = Path::new(file_name);
@@ -45,6 +50,7 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         let mut bytes = 0;
         let mut desc = HashMap::with_capacity(arch.pieces_count);
         print!("Calculating hashes.");
+        let mut hasher = Sha1::new();
         loop {
             let size = file.read(&mut buffer)?;
             if 0 == size {
@@ -53,10 +59,11 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
             if size < arch.piece_length {
                 buffer.resize(size, 0u8);
             }
-            let hash = sha1_string(&buffer);
-            println!(". {} -> {}", idx, &hash);
 
-            desc.insert(idx, hash);
+            println!(".");
+            hasher.input(&buffer);
+            desc.insert(idx, hasher.result_str().to_uppercase());
+            hasher.reset();
             bytes += size;
             idx += 1;
         }
@@ -80,7 +87,7 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         let last_good_index = sal::validate_pieces(&conn, arch.id, &desc)?;
         if last_good_index != 0 {
             let err = Fb2Error::Custom(format!(
-                "The hash of piece {} in archive {} is not valid: {}",
+                "The hash of piece {} in archive {} is not valid: {:?}",
                 last_good_index,
                 &arch.id,
                 desc[&last_good_index]

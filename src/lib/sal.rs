@@ -83,7 +83,6 @@ pub fn validate_pieces(
     let rows = stmt.query_map(&[&id], |row| (row.get(0), row.get(1)))?;
     for row in rows {
         let (index, hash): (i64, String) = row?;
-        println!("{} -> {}", index, hash);
         if hash != desc[&index] {
             return Ok(index);
         }
