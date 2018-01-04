@@ -30,9 +30,8 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         buffer.resize(arch.piece_length, 0u8);
         let mut bytes = 0;
         let mut desc = HashMap::with_capacity(arch.pieces_count);
-        print!("Calculating hashes.");
+        print!("Calculating hashes: ");
         let mut hasher = Sha1::new();
-
         let mut jobs = Vec::with_capacity(arch.pieces_count);
         crossbeam::scope(|scope| for index in 0..arch.pieces_count {
             if let Some(size) = file.read(&mut buffer).ok() {
@@ -46,9 +45,6 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
                     hasher.input(&arg);
                     return (index as i64, hasher.result_str().to_uppercase());
                 });
-                if 0 == index % 100 {
-                    print!(".");
-                }
                 jobs.push(job);
             }
         });
@@ -62,12 +58,8 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         }
         while let Some(job) = jobs.pop() {
             let (index, hash) = job.join();
-            if 0 == index % 100 {
-                print!(".");
-            }
             desc.insert(index, hash);
         }
-        println!(". Done.");
         let last_good_index = sal::validate_pieces(&conn, arch.id, &desc)?;
         if last_good_index != 0 {
             let err = Fb2Error::Custom(format!(
@@ -78,7 +70,7 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
             ));
             return Err(err);
         }
-
+        println!(" Ok");
         return Ok(());
     }
     //
