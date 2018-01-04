@@ -3,30 +3,12 @@ use result::Fb2Result;
 use result::Fb2Error;
 use crypto::sha1::Sha1;
 use crypto::digest::Digest;
-use rustc_serialize::hex::ToHex;
+use crossbeam;
 
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::collections::HashMap;
-
-pub fn sha1(input: &[u8]) -> Vec<u8> {
-    let mut hasher = Sha1::new();
-    hasher.input(input);
-    let mut hash: Vec<u8> = vec![0; hasher.output_bytes()];
-    hasher.result(&mut hash);
-    return hash;
-}
-
-pub fn sha1_string(input: &[u8]) -> String {
-    sha1(input).to_hex().to_uppercase()
-}
-
-
-pub fn to_hex_string(bytes: &[u8]) -> String {
-    let strs: Vec<String> = bytes.iter().map(|b| format!("{:02X}", b)).collect();
-    strs.connect("")
-}
 
 fn get_file_name(file_name: &str) -> Result<String, Fb2Error> {
     let path = Path::new(file_name);
@@ -46,28 +28,30 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         let mut file = File::open(&archive_name)?;
         let mut buffer = Vec::with_capacity(arch.piece_length);
         buffer.resize(arch.piece_length, 0u8);
-        let mut idx = 0;
         let mut bytes = 0;
         let mut desc = HashMap::with_capacity(arch.pieces_count);
         print!("Calculating hashes.");
         let mut hasher = Sha1::new();
-        loop {
-            let size = file.read(&mut buffer)?;
-            if 0 == size {
-                break;
-            }
-            if size < arch.piece_length {
-                buffer.resize(size, 0u8);
-            }
 
-            println!(".");
-            hasher.input(&buffer);
-            desc.insert(idx, hasher.result_str().to_uppercase());
-            hasher.reset();
-            bytes += size;
-            idx += 1;
-        }
-        println!(". Done.");
+        let mut jobs = Vec::with_capacity(arch.pieces_count);
+        crossbeam::scope(|scope| for index in 0..arch.pieces_count {
+            if let Some(size) = file.read(&mut buffer).ok() {
+                bytes += size;
+                if size < arch.piece_length {
+                    buffer.resize(size, 0u8);
+                }
+                let arg: Vec<u8> = buffer.clone();
+                let job = scope.spawn(move || {
+                    hasher.reset();
+                    hasher.input(&arg);
+                    return (index as i64, hasher.result_str().to_uppercase());
+                });
+                if 0 == index % 100 {
+                    print!(".");
+                }
+                jobs.push(job);
+            }
+        });
         if bytes != arch.total_length {
             let err = Fb2Error::Custom(format!(
                 "Archive is not complete. Expected {} bytes, but was readed {}",
@@ -76,14 +60,14 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
             ));
             return Err(err);
         }
-        if idx as usize != arch.pieces_count {
-            let err = Fb2Error::Custom(format!(
-                "Archive is not complete. Expected {} pieces, but found {}",
-                arch.pieces_count,
-                idx
-            ));
-            return Err(err);
+        while let Some(job) = jobs.pop() {
+            let (index, hash) = job.join();
+            if 0 == index % 100 {
+                print!(".");
+            }
+            desc.insert(index, hash);
         }
+        println!(". Done.");
         let last_good_index = sal::validate_pieces(&conn, arch.id, &desc)?;
         if last_good_index != 0 {
             let err = Fb2Error::Custom(format!(
