@@ -1,11 +1,14 @@
 use out;
+use sal;
 use tools;
 use archive;
+use filesystem;
 use algorithm::{apply_to_xml, apply_to_file, apply};
+
 use result::Fb2Result;
 use result::Fb2Error;
 
-
+use std::error::Error;
 use std::fs::File;
 
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
@@ -39,7 +42,7 @@ pub fn show_zip(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 
 pub fn db_init(db_file_name: &str) -> Fb2Result<()> {
     println!("db_init({})", db_file_name);
-    Ok(())
+    sal::init_tables(db_file_name).map_err(|e| Fb2Error::Custom(e.description().to_string()))
 }
 
 pub fn db_drop(db_file_name: &str) -> Fb2Result<()> {
@@ -48,10 +51,14 @@ pub fn db_drop(db_file_name: &str) -> Fb2Result<()> {
 }
 
 pub fn db_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("db_load({}, {})", archive_name, db_file_name);
+    println!("db_load({}, {})", db_file_name, archive_name);
     Ok(())
 }
 
+pub fn db_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+    println!("db_check({}, {})", db_file_name, archive_name);
+    filesystem::check_integrity(db_file_name, archive_name)
+}
 
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {
     let mut file = File::open(file_name).map_err(|io| Fb2Error::Io(io))?;

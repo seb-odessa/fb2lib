@@ -1,11 +1,13 @@
 //! Error types that can be emitted from this library
 extern crate std;
 extern crate zip;
+extern crate rusqlite;
 
 use std::convert;
 use std::error;
 use std::fmt;
 use std::io;
+use std::error::Error;
 
 
 /// Generic result type with Fb2Error as its error variant
@@ -55,9 +57,8 @@ impl Fb2Error {
             Fb2Error::UnsupportedArchive(msg) => {
                 (self.description().to_string() + ": " + msg).into()
             }
-            Fb2Error::Custom(ref msg) | Fb2Error::FileNotFound(ref msg) => {
-                (self.description().to_string() + ": " + msg).into()
-            }
+            Fb2Error::Custom(ref msg) |
+            Fb2Error::FileNotFound(ref msg) => (self.description().to_string() + ": " + msg).into(),
             Fb2Error::UnableToMakeUtf8 |
             Fb2Error::UnableToLoadFb2Header |
             Fb2Error::UnsupportedSubCommand => self.description().into(),
@@ -68,6 +69,12 @@ impl Fb2Error {
 impl convert::From<io::Error> for Fb2Error {
     fn from(err: io::Error) -> Fb2Error {
         Fb2Error::Io(err)
+    }
+}
+
+impl convert::From<rusqlite::Error> for Fb2Error {
+    fn from(err: rusqlite::Error) -> Fb2Error {
+        Fb2Error::Custom(err.description().to_string())
     }
 }
 

@@ -1,8 +1,9 @@
-
 use iconv;
 use fb2parser::FictionBook;
 use result::{Fb2Result, Fb2Error};
+
 use std::error::Error;
+
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     let sz = needle.len();

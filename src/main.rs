@@ -27,6 +27,7 @@ const CMD_SHOW_ZIP: &'static str = "zip";
 const CMD_DB: &'static str = "db";
 const CMD_DB_INIT: &'static str = "init";
 const CMD_DB_DROP: &'static str = "drop";
+const CMD_DB_CHECK: &'static str = "check";
 const CMD_DB_LOAD: &'static str = "load";
 
 
@@ -99,6 +100,9 @@ fn main() {
     let cmd_db_load = SubCommand::with_name(CMD_DB_LOAD)
         .about("Load data from archive")
         .arg(archive.clone());
+    let cmd_db_check = SubCommand::with_name(CMD_DB_CHECK)
+        .about("Check integrity of the archive file (sha1 check)")
+        .arg(archive.clone());
     //------------------------------------------------------------------------------------------------------//
 
     let arguments: Vec<String> = std::env::args().collect();
@@ -127,7 +131,8 @@ fn main() {
             cmd_db
                 .subcommand(cmd_db_init)
                 .subcommand(cmd_db_drop)
-                .subcommand(cmd_db_load),
+                .subcommand(cmd_db_load)
+                .subcommand(cmd_db_check),
         )
         .get_matches();
     //------------------------------------------------------------------------------------------------------//
@@ -154,6 +159,7 @@ fn main() {
                 (CMD_DB_INIT, Some(_)) => db_init(&database),
                 (CMD_DB_DROP, Some(_)) => db_drop(&database),
                 (CMD_DB_LOAD, Some(cmd)) => db_load(&database, &get(&cmd, ARCH)),
+                (CMD_DB_CHECK, Some(cmd)) => db_check(&database, &get(&cmd, ARCH)),
                 (_, _) => {
                     app.usage();
                     Ok(())
@@ -167,6 +173,6 @@ fn main() {
     };
     //------------------------------------------------------------------------------------------------------//
     if result.is_err() {
-        println!("{}", result.unwrap_err());
+        println!("Error: {}", result.unwrap_err());
     }
 }
