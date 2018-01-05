@@ -43,7 +43,7 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
                 let job = scope.spawn(move || {
                     hasher.reset();
                     hasher.input(&arg);
-                    return (index as i64, hasher.result_str().to_uppercase());
+                    return (index as i64, hasher.result_str());
                 });
                 jobs.push(job);
             }
@@ -62,12 +62,21 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         }
 
         if let Some(index) = sal::validate(&conn, arch.id, &desc)? {
-            let err = Fb2Error::Custom(format!(
-                "The hash of piece {} in archive {} is not valid: {:?}",
-                index,
-                &arch.id,
-                desc[&index]
-            ));
+            let err = if let Some(expected) = sal::get_hash(&conn, arch.id, index)? {
+                Fb2Error::Custom(format!(
+                    "The hash of piece {} in archive {} is not valid: expected {}, actual {}",
+                    index,
+                    &arch.id,
+                    expected,
+                    desc[&index]
+                ))
+            } else {
+                Fb2Error::Custom(format!(
+                    "The piece {} in archive {} was not found in DB",
+                    index,
+                    &arch.id
+                ))
+            };
             return Err(err);
         }
         println!(" Ok");

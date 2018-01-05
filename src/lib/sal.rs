@@ -49,6 +49,8 @@ const QUERY_INDEX_AND_HASH: &'static str = "SELECT piece_idx, hash FROM pieces W
 
 const QUERY_ARCHIVE_SIZES: &'static str = "SELECT id, total_length, piece_length, pieces_count FROM archives WHERE name = ?1";
 
+const QUERY_HASH_BY_INDEX: &'static str = "SELECT hash FROM pieces WHERE archive_id = ?1 AND piece_idx = ?2";
+
 pub type SalResult<T> = Result<Option<T>, Error>;
 pub type HashesByIdx = HashMap<i64, String>;
 
@@ -95,6 +97,16 @@ pub fn validate(conn: &Connection, id: i64, desc: &HashesByIdx) -> SalResult<i64
         if hash != desc[&index] {
             return Ok(Some(index));
         }
+    }
+    Ok(None)
+}
+
+pub fn get_hash(conn: &Connection, id: i64, index: i64) -> SalResult<String> {
+    let mut stmt = conn.prepare(QUERY_HASH_BY_INDEX)?;
+    let rows = stmt.query_map(&[&id, &index], |row| (row.get(0)))?;
+    for row in rows {
+        let hash: String = row?;
+        return Ok(Some(hash));
     }
     Ok(None)
 }
