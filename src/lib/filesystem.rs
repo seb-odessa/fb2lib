@@ -8,9 +8,8 @@ use crossbeam;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use std::collections::HashMap;
 
-fn get_file_name(file_name: &str) -> Result<String, Fb2Error> {
+fn get_basename(file_name: &str) -> Result<String, Fb2Error> {
     let path = Path::new(file_name);
     if path.is_file() {
         if let Some(name) = path.file_name() {
@@ -24,15 +23,16 @@ fn get_file_name(file_name: &str) -> Result<String, Fb2Error> {
 
 pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     let conn = sal::get_connection(db_file_name)?;
-    if let Some(arch) = sal::get_archive_sizes(&conn, &get_file_name(archive_name)?)? {
-        let mut file = File::open(&archive_name)?;
-        let mut buffer = Vec::with_capacity(arch.piece_length);
-        buffer.resize(arch.piece_length, 0u8);
+    if let Some(arch) = sal::get_archive_sizes(&conn, &get_basename(archive_name)?)? {
         let mut bytes = 0;
-        let mut desc = HashMap::with_capacity(arch.pieces_count);
         print!("Calculating hashes: ");
         let mut hasher = Sha1::new();
+        let mut file = File::open(&archive_name)?;
         let mut jobs = Vec::with_capacity(arch.pieces_count);
+        let mut buffer = Vec::with_capacity(arch.piece_length);
+        let mut desc = sal::HashesByIdx::with_capacity(arch.pieces_count);
+
+        buffer.resize(arch.piece_length, 0u8);
         crossbeam::scope(|scope| for index in 0..arch.pieces_count {
             if let Some(size) = file.read(&mut buffer).ok() {
                 bytes += size;
@@ -60,13 +60,13 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
             let (index, hash) = job.join();
             desc.insert(index, hash);
         }
-        let last_good_index = sal::validate_pieces(&conn, arch.id, &desc)?;
-        if last_good_index != 0 {
+
+        if let Some(index) = sal::validate(&conn, arch.id, &desc)? {
             let err = Fb2Error::Custom(format!(
                 "The hash of piece {} in archive {} is not valid: {:?}",
-                last_good_index,
+                index,
                 &arch.id,
-                desc[&last_good_index]
+                desc[&index]
             ));
             return Err(err);
         }

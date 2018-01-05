@@ -47,7 +47,7 @@ pub fn db_init(db_file_name: &str) -> Fb2Result<()> {
 
 pub fn db_drop(db_file_name: &str) -> Fb2Result<()> {
     println!("db_drop({})", db_file_name);
-    Ok(())
+    sal::drop_tables(db_file_name).map_err(|e| Fb2Error::Custom(e.description().to_string()))
 }
 
 pub fn db_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {

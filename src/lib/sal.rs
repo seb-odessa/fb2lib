@@ -1,13 +1,14 @@
 
 //use time::Timespec;
+
 use rusqlite::Error;
 use rusqlite::Connection;
 
 use std::collections::HashMap;
 
 #[allow(dead_code)]
-const CREATE_TABLES: &'static str =
-"
+const CREATE_TABLES: &'static str = "
+    BEGIN;
     CREATE TABLE archives (
 	    id         	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    name   	        TEXT NOT NULL,
@@ -32,15 +33,24 @@ const CREATE_TABLES: &'static str =
         method          INTEGER,
         packed_size     INTEGER,
         unpacked_size   INTEGER,
-        file_offset     INTEGER,
+        file_offset     INTEGER
     );
+    COMMIT;
 ";
 
-const QUERY_INDEX_AND_HASH: &'static str =
-"SELECT piece_idx, hash FROM pieces WHERE archive_id = ?1";
+const DROP_TABLES: &'static str = "
+    BEGIN;
+    DROP TABLE archives;
+    DROP TABLE pieces;
+    COMMIT;
+";
 
-const QUERY_ARCHIVE_SIZES: &'static str =
-"SELECT id, total_length, piece_length, pieces_count FROM archives WHERE name = ?1";
+const QUERY_INDEX_AND_HASH: &'static str = "SELECT piece_idx, hash FROM pieces WHERE archive_id = ?1";
+
+const QUERY_ARCHIVE_SIZES: &'static str = "SELECT id, total_length, piece_length, pieces_count FROM archives WHERE name = ?1";
+
+pub type SalResult<T> = Result<Option<T>, Error>;
+pub type HashesByIdx = HashMap<i64, String>;
 
 #[derive(Debug)]
 pub struct ArchiveSizes {
@@ -64,7 +74,7 @@ pub fn get_connection(db_file_name: &str) -> Result<Connection, Error> {
     Connection::open(db_file_name)
 }
 
-pub fn get_archive_sizes(conn: &Connection, archive: &str) -> Result<Option<ArchiveSizes>, Error> {
+pub fn get_archive_sizes(conn: &Connection, archive: &str) -> SalResult<ArchiveSizes> {
     let mut stmt = conn.prepare(QUERY_ARCHIVE_SIZES)?;
     let rows = stmt.query_map(&[&archive], |row| {
         ArchiveSizes::new(row.get(0), row.get(1), row.get(2), row.get(3))
@@ -77,37 +87,24 @@ pub fn get_archive_sizes(conn: &Connection, archive: &str) -> Result<Option<Arch
     Ok(None)
 }
 
-
-pub fn validate_pieces(
-    conn: &Connection,
-    id: i64,
-    desc: &HashMap<i64, String>,
-) -> Result<i64, Error> {
-    let mut stmt = conn.prepare_cached(QUERY_INDEX_AND_HASH)?;
+pub fn validate(conn: &Connection, id: i64, desc: &HashesByIdx) -> SalResult<i64> {
+    let mut stmt = conn.prepare(QUERY_INDEX_AND_HASH)?;
     let rows = stmt.query_map(&[&id], |row| (row.get(0), row.get(1)))?;
     for row in rows {
         let (index, hash): (i64, String) = row?;
         if hash != desc[&index] {
-            return Ok(index);
+            return Ok(Some(index));
         }
     }
-    Ok(0)
+    Ok(None)
 }
 
-
-
-
 pub fn init_tables(db_file_name: &str) -> Result<(), Error> {
-    let mut conn = Connection::open(db_file_name)?;
-    let tran = conn.transaction()?;
-    tran.execute(
-        "CREATE TABLE person (
-                  id              INTEGER PRIMARY KEY,
-                  name            TEXT NOT NULL,
-                  time_created    TEXT NOT NULL,
-                  data            BLOB
-                  )",
-        &[],
-    )?;
-    tran.commit()
+    let conn = Connection::open(db_file_name)?;
+    conn.execute_batch(CREATE_TABLES)
+}
+
+pub fn drop_tables(db_file_name: &str) -> Result<(), Error> {
+    let conn = Connection::open(db_file_name)?;
+    conn.execute_batch(DROP_TABLES)
 }
