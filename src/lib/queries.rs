@@ -67,7 +67,7 @@ Current hierarcy of supported/parsed data
 
 #[allow(dead_code)]
 pub const CREATE_ARCHIVES: &'static str = "
-    CREATE TABLE archives (
+    CREATE TABLE IF NOT EXISTS archives (
 	    id         	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    name   	        TEXT NOT NULL,
 	    created    	    TEXT NOT NULL,
@@ -79,7 +79,7 @@ pub const CREATE_ARCHIVES: &'static str = "
 
 #[allow(dead_code)]
 pub const CREATE_PIECES: &'static str = "
-    CREATE TABLE pieces (
+    CREATE TABLE IF NOT EXISTS pieces (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    archive_id  	INTEGER NOT NULL, /* FK to archives.id */
 	    piece_idx       INTEGER NOT NULL,
@@ -213,14 +213,23 @@ pub const CREATE_PUBLICH_INFO: &'static str = "
 
 
 /*********************** Insert or Update Queries ***********************/
-#[allow(dead_code)]
 pub const INSERT_ARCHIVE: &'static str = "
 	INSERT OR IGNORE
 	INTO archives (name, created, hash, total_length, piece_length, pieces_count)
 	VALUES (?, ?, ?, ?, ?, ?)
 	";
 
+pub const INSERT_PIECE: &'static str = "
+	INSERT INTO pieces (archive_id, piece_idx, hash) VALUES (?, ?, ?)";
 /**************************** Select Queries ****************************/
-#[allow(dead_code)]
 pub const GET_ID_BY_HASH: &'static str = "
 	SELECT id FROM archives WHERE hash = ?1";
+
+pub const GET_INDEX_AND_HASH_BY_ARCH_ID: &'static str = "
+	SELECT piece_idx, hash FROM pieces WHERE archive_id = ?1";
+
+pub const GET_ARCH_SIZES_BY_NAME: &'static str = "
+	SELECT id, total_length, piece_length, pieces_count FROM archives WHERE name = ?1";
+
+pub const GET_HASH_BY_ARCH_ID_AND_INDEX: &'static str = "
+	SELECT hash FROM pieces WHERE archive_id = ?1 AND piece_idx = ?2";

@@ -14,14 +14,6 @@ const DROP_TABLES: &'static str = "
     COMMIT;
 ";
 
-const QUERY_INDEX_AND_HASH: &'static str = "SELECT piece_idx, hash FROM pieces WHERE archive_id = ?1";
-
-const QUERY_ARCHIVE_SIZES: &'static str = "SELECT id, total_length, piece_length, pieces_count FROM archives WHERE name = ?1";
-
-const QUERY_HASH_BY_INDEX: &'static str = "SELECT hash FROM pieces WHERE archive_id = ?1 AND piece_idx = ?2";
-
-const INSERT_PIECE: &'static str = "INSERT INTO pieces (archive_id, piece_idx, hash) VALUES (?, ?, ?)";
-
 
 pub type SalResultOption<T> = Result<Option<T>, rusqlite::Error>;
 pub type SalResult<T> = Result<T, rusqlite::Error>;
@@ -49,21 +41,21 @@ pub fn get_connection(db_file_name: &str) -> SalResult<Connection> {
     Connection::open(db_file_name)
 }
 
-pub fn get_archive_sizes(conn: &Connection, archive: &str) -> SalResultOption<ArchiveSizes> {
-    let mut stmt = conn.prepare(QUERY_ARCHIVE_SIZES)?;
-    let rows = stmt.query_map(&[&archive], |row| {
+pub fn get_archive_sizes(conn: &Connection, name: &str) -> SalResultOption<ArchiveSizes> {
+    let mut stmt = conn.prepare(queries::GET_ARCH_SIZES_BY_NAME)?;
+    let rows = stmt.query_map(&[&name], |row| {
         ArchiveSizes::new(row.get(0), row.get(1), row.get(2), row.get(3))
     })?;
     for row in rows {
         let arch = row?;
         println!("Found {:?}", arch);
-        return Ok(Some(arch)); // it is ok due to `name` is TEXT NOT NULL UNIQUE
+        return Ok(Some(arch)); // it is ok due to name column is unique
     }
     Ok(None)
 }
 
 pub fn validate(conn: &Connection, id: i64, desc: &HashesByIdx) -> SalResultOption<i64> {
-    let mut stmt = conn.prepare(QUERY_INDEX_AND_HASH)?;
+    let mut stmt = conn.prepare(queries::GET_INDEX_AND_HASH_BY_ARCH_ID)?;
     let rows = stmt.query_map(&[&id], |row| (row.get(0), row.get(1)))?;
     for row in rows {
         let (index, hash): (i64, String) = row?;
@@ -75,7 +67,7 @@ pub fn validate(conn: &Connection, id: i64, desc: &HashesByIdx) -> SalResultOpti
 }
 
 pub fn get_hash(conn: &Connection, id: i64, index: i64) -> SalResultOption<String> {
-    let mut stmt = conn.prepare(QUERY_HASH_BY_INDEX)?;
+    let mut stmt = conn.prepare(queries::GET_HASH_BY_ARCH_ID_AND_INDEX)?;
     let rows = stmt.query_map(&[&id, &index], |row| (row.get(0)))?;
     for row in rows {
         let hash: String = row?;
@@ -105,10 +97,9 @@ fn get_archive_id(conn: &Connection, metainfo: &Metainfo) -> SalResult<i64> {
 pub fn register(db_file_name: &str, metainfo: Metainfo) -> SalResult<()> {
     let mut conn = Connection::open(db_file_name)?;
     let archive_id = get_archive_id(&conn, &metainfo)?;
-    //println!("Using archive id {:?}", id);
     let tx = conn.transaction()?;
     {
-        let mut stmt = tx.prepare(INSERT_PIECE)?;
+        let mut stmt = tx.prepare(queries::INSERT_PIECE)?;
         let pieces: &[u8] = metainfo.info.pieces.as_ref();
         let mut index = 0;
         for sha1 in pieces.chunks(20) {
