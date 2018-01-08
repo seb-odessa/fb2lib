@@ -1,0 +1,784 @@
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-573000-575999.zip.torrent)
+file name:     fb2-573000-575999.zip
+creation date: Wed Jan 13 05:58:06 2016
+info hash:     5bb44ab52b538546d907185fcbc5313342dd32c0
+total length:  1689598959
+piece length:  2097152
+piece count:   806
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-545000-549999.zip.torrent)
+file name:     fb2-545000-549999.zip
+creation date: Thu Jun 18 12:15:20 2015
+info hash:     75e18891de24fcbc757ec7a8af282b1a7f53877e
+total length:  5190592358
+piece length:  4194304
+piece count:   1238
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-610000-611999.zip.torrent)
+file name:     fb2-610000-611999.zip
+creation date: Sun Apr  9 14:48:06 2017
+info hash:     d5b123c6b8f8980dca2a58789e5e9f64f2e025c6
+total length:  1709925348
+piece length:  262144
+piece count:   6523
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-463400-467299.zip.torrent)
+file name:     fb2-463400-467299.zip
+creation date: Tue Mar 11 18:56:02 2014
+info hash:     c6018f4f6de9b13d5289b078ed389f7924c17a29
+total length:  1733417295
+piece length:  2097152
+piece count:   827
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-199573-204903.zip.torrent)
+file name:     fb2-199573-204903.zip
+creation date: Wed Jun  2 06:10:31 2010
+info hash:     5a156453e82159c96cd7ee2cb1cc514ac4111fe8
+total length:  1424878540
+piece length:  2097152
+piece count:   680
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-593000-596999.zip.torrent)
+file name:     fb2-593000-596999.zip
+creation date: Sun Apr  9 22:03:50 2017
+info hash:     1c8d58d132e3365beb96bbb1b28bfac21139a281
+total length:  3034235032
+piece length:  2097152
+piece count:   1447
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-536000-540999.zip.torrent)
+file name:     fb2-536000-540999.zip
+creation date: Sun Apr 26 16:33:11 2015
+info hash:     3d1fa6d6dbfff3f3dc108a0ed40430dde42651c2
+total length:  2736640895
+piece length:  4194304
+piece count:   653
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-242000-251999.zip.torrent)
+file name:     fb2-242000-251999.zip
+creation date: Sun Jan  2 03:05:04 2011
+info hash:     756d223f1ca85a8a5f757cc53c2aa94828b278f1
+total length:  1289224849
+piece length:  2097152
+piece count:   615
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-512000-516999.zip.torrent)
+file name:     fb2-512000-516999.zip
+creation date: Sat Nov  8 21:49:16 2014
+info hash:     85010050ac7125c0f271c3016b125d5d5346759a
+total length:  2530759215
+piece length:  4194304
+piece count:   604
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-605307-608999.zip.torrent)
+file name:     fb2-605307-608999.zip
+creation date: Sat Nov 11 09:29:16 2017
+info hash:     794766aa81277ff14412f6cdd5652b096da0fa0d
+total length:  3211105998
+piece length:  2097152
+piece count:   1532
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-609000-609999.zip.torrent)
+file name:     fb2-609000-609999.zip
+creation date: Sat Nov 11 09:30:45 2017
+info hash:     5e433edae53e68af02bc2650e057d0fc4fe41fcd
+total length:  924600668
+piece length:  524288
+piece count:   1764
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-621000-624999.zip.torrent)
+file name:     fb2-621000-624999.zip
+creation date: Tue May  9 02:09:10 2017
+info hash:     cc279673599426a5003e92a67a8b36b60ea31807
+total length:  5468766229
+piece length:  2097152
+piece count:   2608
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-327000-334999.zip.torrent)
+file name:     fb2-327000-334999.zip
+creation date: Fri Nov  4 02:29:51 2011
+info hash:     92964a6f40b168cd34943f7ad6d73b1755d8b13e
+total length:  1820784090
+piece length:  2097152
+piece count:   869
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-625000-627999.zip.torrent)
+file name:     fb2-625000-627999.zip
+creation date: Fri Jul  7 22:00:12 2017
+info hash:     f9e76a8bc0ff5b104fc782fd50ddb9aeaab3a598
+total length:  2782322730
+piece length:  2097152
+piece count:   1327
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-521000-526999.zip.torrent)
+file name:     fb2-521000-526999.zip
+creation date: Mon Jan 12 11:15:05 2015
+info hash:     ee39be58c2ba1ef3b188fa07fc9baf4f4f5e5569
+total length:  3508711645
+piece length:  4194304
+piece count:   837
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-375000-381999.zip.torrent)
+file name:     fb2-375000-381999.zip
+creation date: Thu Jul  5 08:06:53 2012
+info hash:     3ad0eaf3aed34b18f0129eea39cf1f98b2315f37
+total length:  2067038615
+piece length:  2097152
+piece count:   986
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-550000-553999.zip.torrent)
+file name:     fb2-550000-553999.zip
+creation date: Sat Jul 11 01:28:16 2015
+info hash:     3bf4e35bedbd2a84d76ff77cb34dd674dd556ce4
+total length:  2044447159
+piece length:  2097152
+piece count:   975
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-382000-387999.zip.torrent)
+file name:     fb2-382000-387999.zip
+creation date: Sun Aug  5 09:24:01 2012
+info hash:     9d29de4f688e015e179f9cdca5d15aa0bee70778
+total length:  2008777279
+piece length:  2097152
+piece count:   958
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-569000-572999.zip.torrent)
+file name:     fb2-569000-572999.zip
+creation date: Wed Dec 16 13:07:03 2015
+info hash:     bf096b9e167e381588cc59d035a06ccf86c71b81
+total length:  2875206175
+piece length:  4194304
+piece count:   686
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-426000-433000.zip.torrent)
+file name:     fb2-426000-433000.zip
+creation date: Wed May 15 06:26:08 2013
+info hash:     2642f0265643a1325452189a0c1a8c35bdced246
+total length:  2902381234
+piece length:  4194304
+piece count:   692
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-597000-598999.zip.torrent)
+file name:     fb2-597000-598999.zip
+creation date: Mon Apr 10 21:03:12 2017
+info hash:     9b3bff25935ef8b16556be9eee9cc52cbe7d6482
+total length:  1549109455
+piece length:  1048576
+piece count:   1478
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-000065-572310_lost.zip.torrent)
+file name:     fb2-000065-572310_lost.zip
+creation date: Wed Nov 30 22:47:25 2016
+info hash:     8be8683c0fa9a0fc9163a147f5da87f6eea1707f
+total length:  1293378973
+piece length:  2097152
+piece count:   617
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-433001-436999.zip.torrent)
+file name:     fb2-433001-436999.zip
+creation date: Sat Jun  8 12:01:30 2013
+info hash:     854b7a30e0767bbc27eea56c44710deafd8f3636
+total length:  1554333712
+piece length:  2097152
+piece count:   742
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-476000-479999.zip.torrent)
+file name:     fb2-476000-479999.zip
+creation date: Sat Apr  5 20:25:03 2014
+info hash:     7c5392dcf37019fe5dc3bc724be4570028906046
+total length:  2027384647
+piece length:  2097152
+piece count:   967
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-618000-620999.zip.torrent)
+file name:     fb2-618000-620999.zip
+creation date: Sun Apr  9 21:19:43 2017
+info hash:     c05fff51a82cde194c74882e7e838baf9a1eae62
+total length:  3397729313
+piece length:  2097152
+piece count:   1621
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-187148-193822.zip.torrent)
+file name:     fb2-187148-193822.zip
+creation date: Thu Apr  1 08:50:03 2010
+info hash:     9448ac5b2e9278b9cd48d1f6a1f2057f61103568
+total length:  1681174207
+piece length:  2097152
+piece count:   802
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-309000-318999.zip.torrent)
+file name:     fb2-309000-318999.zip
+creation date: Thu Sep  1 09:44:06 2011
+info hash:     389a1ab5ef127741bc1d3dada04300c41c2b4048
+total length:  1533413129
+piece length:  2097152
+piece count:   732
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-579000-581999.zip.torrent)
+file name:     fb2-579000-581999.zip
+creation date: Wed Mar  2 22:57:13 2016
+info hash:     b403702142e05e4514db9057ffbf9cce6fafeaa2
+total length:  1995940103
+piece length:  2097152
+piece count:   952
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-449400-453299.zip.torrent)
+file name:     fb2-449400-453299.zip
+creation date: Sat Oct 19 09:20:22 2013
+info hash:     043b4e5e8a23cedb98d02561d7c94c7aff863b27
+total length:  1900187492
+piece length:  2097152
+piece count:   907
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-603000-605288.zip.torrent)
+file name:     fb2-603000-605288.zip
+creation date: Mon Apr 10 21:22:36 2017
+info hash:     30a798b2911de1f97b46148c0d2c47fe3d605891
+total length:  1420843466
+piece length:  1048576
+piece count:   1356
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-561000-564999.zip.torrent)
+file name:     fb2-561000-564999.zip
+creation date: Sun Oct 11 00:43:17 2015
+info hash:     2e08aa21f787b7a2c9d383c35ee4849c889853b4
+total length:  3146873390
+piece length:  4194304
+piece count:   751
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-388000-391999.zip.torrent)
+file name:     fb2-388000-391999.zip
+creation date: Thu Sep  6 12:35:24 2012
+info hash:     577846ec0a0e8755f6d7a1da59f9bcc2578cf0e6
+total length:  1243238882
+piece length:  2097152
+piece count:   593
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-168103-172702.zip.torrent)
+file name:     fb2-168103-172702.zip
+creation date: Fri Nov 13 07:55:36 2009
+info hash:     9b5df29ac3f610640e0622afb2d0b8fcaca3b3ae
+total length:  1644924439
+piece length:  2097152
+piece count:   785
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-209029-212751.zip.torrent)
+file name:     fb2-209029-212751.zip
+creation date: Mon Aug  2 08:35:12 2010
+info hash:     ea054a72ccbce91266c280caa64bc9eb4377e4dc
+total length:  1054031161
+piece length:  1048576
+piece count:   1006
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-393072-405875.zip.torrent)
+file name:     fb2-393072-405875.zip
+creation date: Sat Feb  9 07:33:00 2013
+info hash:     d6cdb4edb1357033fc66f51fa14e7bba79fa8723
+total length:  288879219
+piece length:  524288
+piece count:   551
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-359000-364999.zip.torrent)
+file name:     fb2-359000-364999.zip
+creation date: Mon Apr  2 18:54:08 2012
+info hash:     d7ff7a5071404acf58d15f8c1ee9c16fdd3be58d
+total length:  1808686308
+piece length:  2097152
+piece count:   863
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-605289-609999.zip.torrent)
+file name:     fb2-605289-609999.zip
+creation date: Sun Dec  4 01:03:34 2016
+info hash:     c6899c20c69cfe3fdfddc3f827487b23c50ae553
+total length:  4060924178
+piece length:  4194304
+piece count:   969
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-365000-370999.zip.torrent)
+file name:     fb2-365000-370999.zip
+creation date: Tue May  8 10:02:18 2012
+info hash:     d77d6ca09c26df3763d59d3182a48c319f035324
+total length:  2034626171
+piece length:  2097152
+piece count:   971
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-158328-161830.zip.torrent)
+file name:     fb2-158328-161830.zip
+creation date: Thu Aug 13 11:48:53 2009
+info hash:     bae9c3823517508605d74308675ba661cb3d17b9
+total length:  890997475
+piece length:  1048576
+piece count:   850
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-141329-147517.zip.torrent)
+file name:     fb2-141329-147517.zip
+creation date: Tue Oct  6 00:35:16 2009
+info hash:     fad3e2327924276ee1a039faaee58ba8d7a3111b
+total length:  1391240164
+piece length:  2097152
+piece count:   664
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-411000-415299.zip.torrent)
+file name:     fb2-411000-415299.zip
+creation date: Sat Feb  9 07:36:01 2013
+info hash:     f4a32f3e3cc88fd600a72d2b8635b722511f44ec
+total length:  2000376681
+piece length:  2097152
+piece count:   954
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-091841-104214.zip.torrent)
+file name:     fb2-091841-104214.zip
+creation date: Tue Oct  6 00:39:17 2009
+info hash:     c555f1095aa52d066773e196b549ed5aacb468d1
+total length:  1885145153
+piece length:  2097152
+piece count:   899
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-628000-631999.zip.torrent)
+file name:     fb2-628000-631999.zip
+creation date: Fri Jul  7 22:02:08 2017
+info hash:     3e039b8df101857beab0ac18710f6139c3a0ddc2
+total length:  3094008699
+piece length:  2097152
+piece count:   1476
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-354000-358999.zip.torrent)
+file name:     fb2-354000-358999.zip
+creation date: Sat Mar  3 17:40:59 2012
+info hash:     54cca31cf85b5e4f5b2264b435b3ecbe79b4ee38
+total length:  1485858270
+piece length:  2097152
+piece count:   709
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-480000-484999.zip.torrent)
+file name:     fb2-480000-484999.zip
+creation date: Wed May  7 11:21:57 2014
+info hash:     ffc3ce8487dfc0d27868acb92f42c12d3c2cbdbf
+total length:  1896783132
+piece length:  2097152
+piece count:   905
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-565000-568999.zip.torrent)
+file name:     fb2-565000-568999.zip
+creation date: Wed Nov 18 09:15:58 2015
+info hash:     d6b2587d68cd75be813e8c40a57cf1187031f882
+total length:  2838679219
+piece length:  4194304
+piece count:   677
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-420000-425999.zip.torrent)
+file name:     fb2-420000-425999.zip
+creation date: Fri Apr  5 13:08:05 2013
+info hash:     b7e17df6f5660f55eeac4d2ec9accaff668404df
+total length:  2283250912
+piece length:  4194304
+piece count:   545
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-344000-348999.zip.torrent)
+file name:     fb2-344000-348999.zip
+creation date: Sat Jan  7 10:54:53 2012
+info hash:     9f5a6b0ef748491fa7442ff9f715dc2ed4c61fe5
+total length:  1574334395
+piece length:  2097152
+piece count:   751
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-074392-091839.zip.torrent)
+file name:     fb2-074392-091839.zip
+creation date: Tue Oct  6 00:39:47 2009
+info hash:     4a9e844dc325ae606577e8e9252446083f60e574
+total length:  1747802585
+piece length:  2097152
+piece count:   834
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-415300-419999.zip.torrent)
+file name:     fb2-415300-419999.zip
+creation date: Mon Mar 11 10:37:59 2013
+info hash:     8ac62998e1e27b13cb9b0a05f652b99e31e5907e
+total length:  2136130182
+piece length:  2097152
+piece count:   1019
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-495000-500999.zip.torrent)
+file name:     fb2-495000-500999.zip
+creation date: Sun Aug 31 21:58:17 2014
+info hash:     a2498917ddccbefc3cfc4165fb41101cc2e9791d
+total length:  3084244414
+piece length:  4194304
+piece count:   736
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-284000-291999.zip.torrent)
+file name:     fb2-284000-291999.zip
+creation date: Mon Jun  6 03:59:53 2011
+info hash:     26c486011699cecad33b7993d04431e2bab04160
+total length:  1421513108
+piece length:  2097152
+piece count:   678
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-472000-475999.zip.torrent)
+file name:     fb2-472000-475999.zip
+creation date: Tue Mar 11 19:08:42 2014
+info hash:     2b88fcf88d0641f1d2a4f3ba216393c91144c5c7
+total length:  2139480894
+piece length:  2097152
+piece count:   1021
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-292000-299999.zip.torrent)
+file name:     fb2-292000-299999.zip
+creation date: Mon Jul  4 12:51:06 2011
+info hash:     44274f8bee51bb95973e6c10c3be1351ffe40e97
+total length:  1489712538
+piece length:  2097152
+piece count:   711
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-172703-175951.zip.torrent)
+file name:     fb2-172703-175951.zip
+creation date: Sat Dec 12 09:01:30 2009
+info hash:     4924ae705cfc906b304a43cc5c689b13f0aac340
+total length:  1069722693
+piece length:  1048576
+piece count:   1021
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-437000-441999.zip.torrent)
+file name:     fb2-437000-441999.zip
+creation date: Tue Jul 30 17:36:07 2013
+info hash:     6ac7637fc176baf9d887cbae9fefeedf1778d243
+total length:  2505609756
+piece length:  4194304
+piece count:   598
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-467300-471999.zip.torrent)
+file name:     fb2-467300-471999.zip
+creation date: Tue Mar 11 19:02:47 2014
+info hash:     e3d50f980e8f361c74af1d783905beb48fad3b9d
+total length:  2257366336
+piece length:  4194304
+piece count:   539
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-275000-283999.zip.torrent)
+file name:     fb2-275000-283999.zip
+creation date: Sat Apr 30 07:25:26 2011
+info hash:     43b34c56a0098e09746641ae3844722e17992332
+total length:  1569286698
+piece length:  2097152
+piece count:   749
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-582000-585999.zip.torrent)
+file name:     fb2-582000-585999.zip
+creation date: Sun May  1 18:27:07 2016
+info hash:     d6d233e8e4b64a8790aeddc22827100ff5fb81cb
+total length:  3205078573
+piece length:  4194304
+piece count:   765
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-406000-410999.zip.torrent)
+file name:     fb2-406000-410999.zip
+creation date: Sat Feb  9 07:35:23 2013
+info hash:     613a11d2101b82074bad191a398d5b79b56bd43b
+total length:  2774154343
+piece length:  4194304
+piece count:   662
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-166043-168102.zip.torrent)
+file name:     fb2-166043-168102.zip
+creation date: Thu Oct 15 04:41:20 2009
+info hash:     4ace8d46bb18669786965b26d50d14e8449c9ae8
+total length:  956557174
+piece length:  1048576
+piece count:   913
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-349000-353999.zip.torrent)
+file name:     fb2-349000-353999.zip
+creation date: Thu Feb  2 20:15:10 2012
+info hash:     339d11c37f0d7941234119e7e5691e33dec9b089
+total length:  1606628948
+piece length:  2097152
+piece count:   767
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-527000-531999.zip.torrent)
+file name:     fb2-527000-531999.zip
+creation date: Sat Feb  7 16:58:29 2015
+info hash:     c6b19e9e0e40327fe40309ce7055bd1015852f80
+total length:  2012184235
+piece length:  2097152
+piece count:   960
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-193823-199572.zip.torrent)
+file name:     fb2-193823-199572.zip
+creation date: Sun May  2 04:41:53 2010
+info hash:     dcc3d55c89f25053bbbe55ca2ef65c1ece2a1d37
+total length:  1395476631
+piece length:  2097152
+piece count:   666
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-104215-113436.zip.torrent)
+file name:     fb2-104215-113436.zip
+creation date: Tue Oct  6 00:38:27 2009
+info hash:     efde51b77e9948113efe1612d759eb066e95a6d4
+total length:  1736316243
+piece length:  2097152
+piece count:   828
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-612000-614999.zip.torrent)
+file name:     fb2-612000-614999.zip
+creation date: Sun Apr  9 20:51:16 2017
+info hash:     2ab578125eb3be8bdc033823a46ce1cedcb01406
+total length:  3240510006
+piece length:  2097152
+piece count:   1546
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-393000-395999.zip.torrent)
+file name:     fb2-393000-395999.zip
+creation date: Sat Feb  9 07:32:24 2013
+info hash:     9cebee781464d6e181482d59b2c696a1ca99789a
+total length:  949228865
+piece length:  1048576
+piece count:   906
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-576000-578999.zip.torrent)
+file name:     fb2-576000-578999.zip
+creation date: Sun Feb 14 14:30:04 2016
+info hash:     a99cb5c9f609974542b65a66da13f78d683a7195
+total length:  2142789828
+piece length:  2097152
+piece count:   1022
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-490000-494999.zip.torrent)
+file name:     fb2-490000-494999.zip
+creation date: Sun Aug 31 21:57:01 2014
+info hash:     8c70d95fa791e14a70ab5fe3baaa1415cc45e0cf
+total length:  2207555972
+piece length:  4194304
+piece count:   527
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-030560-060423.zip.torrent)
+file name:     fb2-030560-060423.zip
+creation date: Tue Oct  6 00:30:27 2009
+info hash:     d2f395216da51078c24bbd8c8a5dbf35df4acbb3
+total length:  1729009066
+piece length:  2097152
+piece count:   825
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-442000-445299.zip.torrent)
+file name:     fb2-442000-445299.zip
+creation date: Mon Sep  9 19:52:54 2013
+info hash:     f58a1c481996072a150b8d6c420318bcd13690f3
+total length:  1466044650
+piece length:  2097152
+piece count:   700
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-392000-392999.zip.torrent)
+file name:     fb2-392000-392999.zip
+creation date: Fri Oct  5 20:36:20 2012
+info hash:     2f8a5f3a8aa1b1182fa0cbf91949a862b64a47f5
+total length:  334776160
+piece length:  524288
+piece count:   639
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-371000-374999.zip.torrent)
+file name:     fb2-371000-374999.zip
+creation date: Tue Jun  5 14:01:04 2012
+info hash:     e142c5c157d64873bd039b8c1106586ee586851b
+total length:  1495736935
+piece length:  2097152
+piece count:   714
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-554000-557999.zip.torrent)
+file name:     fb2-554000-557999.zip
+creation date: Sat Aug 15 10:13:17 2015
+info hash:     8ef9e5b182540c79f357e7f67a2f8cc9f5633f45
+total length:  2844085700
+piece length:  4194304
+piece count:   679
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-132108-141328.zip.torrent)
+file name:     fb2-132108-141328.zip
+creation date: Tue Oct  6 00:36:05 2009
+info hash:     e037842a9c4671899090199bf650e9c483975d51
+total length:  1785330636
+piece length:  2097152
+piece count:   852
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-119691-132107.zip.torrent)
+file name:     fb2-119691-132107.zip
+creation date: Tue Oct  6 00:36:45 2009
+info hash:     edfaa74d44d6a04247911886311c8f4eb025c7e1
+total length:  1879226330
+piece length:  2097152
+piece count:   897
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-492166-492374_lost.torrent)
+file name:     fb2-492166-492374_lost.zip
+creation date: Mon Sep  7 12:35:30 2015
+info hash:     d0e2cfe814b5e4899ad0c39eaabe4fcbec73e0ae
+total length:  52122007
+piece length:  65536
+piece count:   796
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-216642-221999.zip.torrent)
+file name:     fb2-216642-221999.zip
+creation date: Thu Oct  7 08:52:28 2010
+info hash:     86b1be835d8dd9024f5046d1172104b5b2cfb265
+total length:  1062048131
+piece length:  1048576
+piece count:   1013
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-000024-030559.zip.torrent)
+file name:     fb2-000024-030559.zip
+creation date: Tue Oct  6 00:42:36 2009
+info hash:     04ca2c158ad105270bd73508c51a46c17eabd254
+total length:  1731306396
+piece length:  2097152
+piece count:   826
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-400000-405999.zip.torrent)
+file name:     fb2-400000-405999.zip
+creation date: Sat Feb  9 07:34:26 2013
+info hash:     016576640ac55771fd8d0e73fd737dee67835541
+total length:  2172148829
+piece length:  4194304
+piece count:   518
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-586000-588999.zip.torrent)
+file name:     fb2-586000-588999.zip
+creation date: Sat May  7 14:40:19 2016
+info hash:     94a8b0c0dff99320422b1143364cdf03d7fb97c6
+total length:  2214192346
+piece length:  4194304
+piece count:   528
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-453300-458899.zip.torrent)
+file name:     fb2-453300-458899.zip
+creation date: Sat Nov  9 12:13:18 2013
+info hash:     a2614ad187e2b795caf8764695c5d1078858f4d3
+total length:  2733895783
+piece length:  4194304
+piece count:   652
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-230000-241999.zip.torrent)
+file name:     fb2-230000-241999.zip
+creation date: Sun Dec  5 02:41:39 2010
+info hash:     f0e8d6def195083e11e8a4bd9aa17de193ddd319
+total length:  1474488652
+piece length:  2097152
+piece count:   704
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-396000-399999.zip.torrent)
+file name:     fb2-396000-399999.zip
+creation date: Sat Feb  9 07:33:34 2013
+info hash:     58c46698d2323d70b6c7a6940ba09015ca00924a
+total length:  1369997108
+piece length:  2097152
+piece count:   654
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-541000-544999.zip.torrent)
+file name:     fb2-541000-544999.zip
+creation date: Mon May 18 12:27:14 2015
+info hash:     cc8c9183f5fc4aec114b83c895a6689e29832d9e
+total length:  2530971778
+piece length:  4194304
+piece count:   604
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-558000-560999.zip.torrent)
+file name:     fb2-558000-560999.zip
+creation date: Mon Sep  7 12:33:12 2015
+info hash:     998cfa2d24359c35081ea1324e11dbd9f35a26f3
+total length:  2099246745
+piece length:  2097152
+piece count:   1001
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-517000-520999.zip.torrent)
+file name:     fb2-517000-520999.zip
+creation date: Fri Dec  5 23:15:38 2014
+info hash:     2f6dec924b4c769b765da6ea62600a0561e47595
+total length:  1800417012
+piece length:  2097152
+piece count:   859
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-632000-634999.zip.torrent)
+file name:     fb2-632000-634999.zip
+creation date: Sun Aug 13 11:26:29 2017
+info hash:     4bcdc71ba9106cd353fbb1bb3fff4a8e9bb98786
+total length:  2674707381
+piece length:  1048576
+piece count:   2551
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-182285-187147.zip.torrent)
+file name:     fb2-182285-187147.zip
+creation date: Sun Feb 21 09:49:55 2010
+info hash:     0e0f3256b21b0d6d2e58c2bcc79d1963d1162f6a
+total length:  1307857409
+piece length:  2097152
+piece count:   624
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-615000-617999.zip.torrent)
+file name:     fb2-615000-617999.zip
+creation date: Sun Apr  9 21:06:19 2017
+info hash:     a8ba95a8f74f60188d258d5801e66e2299c97500
+total length:  3655069363
+piece length:  2097152
+piece count:   1743
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-532000-535999.zip.torrent)
+file name:     fb2-532000-535999.zip
+creation date: Tue Mar 10 17:25:33 2015
+info hash:     9e64fd61f9fa3d6eeb1fa65bfc096e696542802f
+total length:  1721768581
+piece length:  2097152
+piece count:   822
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-161831-166042.zip.torrent)
+file name:     fb2-161831-166042.zip
+creation date: Thu Sep 17 09:15:12 2009
+info hash:     a4e52431653b47f1adaae64df7bdb5edf643b976
+total length:  1524270468
+piece length:  2097152
+piece count:   727
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-262000-274999.zip.torrent)
+file name:     fb2-262000-274999.zip
+creation date: Fri Apr  1 06:14:31 2011
+info hash:     7dc72e0786e218e670ac0437e300c727cdba6f7c
+total length:  2452487161
+piece length:  4194304
+piece count:   585
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-550243-553777_lost.zip.torrent)
+file name:     fb2-550243-553777_lost.zip
+creation date: Sat Aug 15 10:12:21 2015
+info hash:     438fd5100b3ef6db95628c99b9e9ab0facda68a7
+total length:  310695337
+piece length:  524288
+piece count:   593
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-335000-343999.zip.torrent)
+file name:     fb2-335000-343999.zip
+creation date: Wed Dec 14 15:59:59 2011
+info hash:     b72eb47bd41c8e8f818c31618cdd7152096c6dd0
+total length:  1613761241
+piece length:  2097152
+piece count:   770
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-300000-308999.zip.torrent)
+file name:     fb2-300000-308999.zip
+creation date: Wed Aug  3 09:24:40 2011
+info hash:     162d4b2927ecc31aa5e929eb010f94e893e35453
+total length:  1351658038
+piece length:  2097152
+piece count:   645
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-485000-489999.zip.torrent)
+file name:     fb2-485000-489999.zip
+creation date: Mon Jun  9 09:02:40 2014
+info hash:     0632c25a0d65f2d00f2ac080691b9d64882b74d9
+total length:  1900775117
+piece length:  2097152
+piece count:   907
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-319000-326999.zip.torrent)
+file name:     fb2-319000-326999.zip
+creation date: Thu Oct  6 03:35:06 2011
+info hash:     445e64827d7a4e87f2ba9878136c46a62aa61878
+total length:  1710034072
+piece length:  2097152
+piece count:   816
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-501000-505999.zip.torrent)
+file name:     fb2-501000-505999.zip
+creation date: Sat Sep 20 15:27:16 2014
+info hash:     900fce5f1167354120abb5829ca07ed9327c5d11
+total length:  2013288980
+piece length:  2097152
+piece count:   961
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-060424-074391.zip.torrent)
+file name:     fb2-060424-074391.zip
+creation date: Tue Oct  6 00:40:33 2009
+info hash:     a70e11c0b259167754b11e016c548e574426be11
+total length:  1709111774
+piece length:  2097152
+piece count:   815
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-252000-261999.zip.torrent)
+file name:     fb2-252000-261999.zip
+creation date: Thu Feb  3 05:04:08 2011
+info hash:     afdcf97975f965fb274eb9bec9d63d3ce1441175
+total length:  1477336928
+piece length:  2097152
+piece count:   705
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-212752-216641.zip.torrent)
+file name:     fb2-212752-216641.zip
+creation date: Wed Sep 15 04:42:25 2010
+info hash:     420094add0f991066f379e6809930a93804f71dc
+total length:  1216675358
+piece length:  2097152
+piece count:   581
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-113437-119690.zip.torrent)
+file name:     fb2-113437-119690.zip
+creation date: Tue Oct  6 00:37:29 2009
+info hash:     9d3161dd58446f835751aec573e6ecd70d634da7
+total length:  1624418202
+piece length:  2097152
+piece count:   775
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-222000-229999.zip.torrent)
+file name:     fb2-222000-229999.zip
+creation date: Fri Dec  3 11:21:13 2010
+info hash:     ff93ff646edd2a01ed9003083f20143832bec6ef
+total length:  1385954841
+piece length:  2097152
+piece count:   661
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-458900-463399.zip.torrent)
+file name:     fb2-458900-463399.zip
+creation date: Tue Mar 11 18:52:48 2014
+info hash:     4390727b0adf24999cea53b3c9645ee4b152f223
+total length:  2253868233
+piece length:  4194304
+piece count:   538
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-204904-209028.zip.torrent)
+file name:     fb2-204904-209028.zip
+creation date: Sun Jul  4 04:41:14 2010
+info hash:     f4e189b51dc34e404aba98a1538818c355295160
+total length:  1204778596
+piece length:  2097152
+piece count:   575
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-175952-182284.zip.torrent)
+file name:     fb2-175952-182284.zip
+creation date: Thu Jan 21 02:57:22 2010
+info hash:     9d3bd86537dc247a85bff7144225dff2cd9e30b4
+total length:  1625716100
+piece length:  2097152
+piece count:   776
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-153556-158325.zip.torrent)
+file name:     fb2-153556-158325.zip
+creation date: Thu Jul 16 04:54:40 2009
+info hash:     2e5f2485e7e4a31e2deffa07c47941aab4cf83be
+total length:  1043271053
+piece length:  262144
+piece count:   3980
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-445300-449399.zip.torrent)
+file name:     fb2-445300-449399.zip
+creation date: Mon Sep  9 19:54:24 2013
+info hash:     c83f35cb128a42c3cc6f6858456d21949cb9fea5
+total length:  2685756584
+piece length:  4194304
+piece count:   641
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-599000-602999.zip.torrent)
+file name:     fb2-599000-602999.zip
+creation date: Mon Apr 10 21:12:51 2017
+info hash:     9d56ba987314bdbfcc64054dfb70a75273715975
+total length:  2945278877
+piece length:  2097152
+piece count:   1405
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-147519-153549.zip.torrent)
+file name:     fb2-147519-153549.zip
+creation date: Tue Oct  6 00:34:42 2009
+info hash:     9e348d1743d646150dbe95c2570c36aa3a0d003a
+total length:  2297120035
+piece length:  4194304
+piece count:   548
+db_register(lib.rus.ec.db, ../torrent-rs/torrents/fb2-589000-592999.zip.torrent)
+file name:     fb2-589000-592999.zip
+creation date: Sun Apr  9 21:50:02 2017
+info hash:     01af9ec9f746637e909f27d8a160b55193f736e3
+total length:  2566014441
+piece length:  2097152
+piece count:   1224

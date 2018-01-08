@@ -28,4 +28,5 @@ mod sal;
 mod tools;
 mod iconv;
 mod archive;
+mod queries;
 mod filesystem;
