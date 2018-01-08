@@ -10,6 +10,7 @@ path = "src/lib/lib.rs"
 [dependencies]
     zip = { git = "https://github.com/seb-odessa/zip-rs.git" }
     fb2parser = { git = "https://github.com/seb-odessa/fb2parser.git" }
+    torrent = { git = "https://github.com/seb-odessa/torrent-rs.git" }
     rusqlite = "*"
     rust-crypto = "*"
     time = "*"

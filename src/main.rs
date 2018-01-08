@@ -7,6 +7,7 @@ use lib::subcommands::*;
 const VERSION: &'static str = "v0.5.0";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 
+const TORRENT: &'static str = "archive.torrent";
 const ARCH: &'static str = "archive.zip";
 const BOOK: &'static str = "book.fb2";
 const XML: &'static str = "book.xml";
@@ -28,6 +29,7 @@ const CMD_DB: &'static str = "db";
 const CMD_DB_INIT: &'static str = "init";
 const CMD_DB_DROP: &'static str = "drop";
 const CMD_DB_CHECK: &'static str = "check";
+const CMD_DB_REGISTER: &'static str = "register";
 const CMD_DB_LOAD: &'static str = "load";
 
 
@@ -40,6 +42,10 @@ fn get_or<'a>(arg: &ArgMatches<'a>, name: &str, default: &str) -> String {
 }
 
 fn main() {
+    let torrent = Arg::with_name(TORRENT)
+        .help("torrent file for archive.zip")
+        .required(true);
+
     let archive = Arg::with_name(ARCH)
         .help("an archive with books in FB2 format")
         .required(true);
@@ -100,8 +106,11 @@ fn main() {
     let cmd_db_load = SubCommand::with_name(CMD_DB_LOAD)
         .about("Load data from archive")
         .arg(archive.clone());
+    let cmd_db_register = SubCommand::with_name(CMD_DB_REGISTER)
+        .about("Load metainfo from torrent ito DB")
+        .arg(torrent.clone());
     let cmd_db_check = SubCommand::with_name(CMD_DB_CHECK)
-        .about("Check integrity of the archive file (sha1 check)")
+        .about("Check integrity of the downloaded archive file (sha1 check)")
         .arg(archive.clone());
     //------------------------------------------------------------------------------------------------------//
 
@@ -132,6 +141,7 @@ fn main() {
                 .subcommand(cmd_db_init)
                 .subcommand(cmd_db_drop)
                 .subcommand(cmd_db_load)
+                .subcommand(cmd_db_register)
                 .subcommand(cmd_db_check),
         )
         .get_matches();
@@ -155,9 +165,10 @@ fn main() {
         }
         (CMD_DB, Some(cmd)) => {
             let database = get_or(&cmd, DB, DB);
-            match cmd.subcommand() {                
+            match cmd.subcommand() {
                 (CMD_DB_INIT, Some(_)) => db_init(&database),
                 (CMD_DB_DROP, Some(_)) => db_drop(&database),
+                (CMD_DB_REGISTER, Some(cmd)) => db_register(&database, &get(&cmd, TORRENT)),
                 (CMD_DB_LOAD, Some(cmd)) => db_load(&database, &get(&cmd, ARCH)),
                 (CMD_DB_CHECK, Some(cmd)) => db_check(&database, &get(&cmd, ARCH)),
                 (_, _) => {

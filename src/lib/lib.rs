@@ -7,12 +7,14 @@
 extern crate test;
 
 extern crate zip;
+extern crate torrent;
+extern crate fb2parser;
+
 extern crate libc;
 extern crate time;
 extern crate regex;
 extern crate crypto;
 extern crate rusqlite;
-extern crate fb2parser;
 extern crate crossbeam;
 extern crate rustc_serialize;
 

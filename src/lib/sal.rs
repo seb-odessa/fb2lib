@@ -3,7 +3,8 @@
 
 use rusqlite::Error;
 use rusqlite::Connection;
-
+use torrent::Metainfo;
+use rustc_serialize::hex::ToHex;
 use std::collections::HashMap;
 
 #[allow(dead_code)]
@@ -50,6 +51,11 @@ const QUERY_INDEX_AND_HASH: &'static str = "SELECT piece_idx, hash FROM pieces W
 const QUERY_ARCHIVE_SIZES: &'static str = "SELECT id, total_length, piece_length, pieces_count FROM archives WHERE name = ?1";
 
 const QUERY_HASH_BY_INDEX: &'static str = "SELECT hash FROM pieces WHERE archive_id = ?1 AND piece_idx = ?2";
+
+const INSERT_ARCHIVE: &'static str = "INSERT INTO archives (name, created, hash, total_length, piece_length, pieces_count) VALUES (?, ?, ?, ?, ?, ?)";
+
+const INSERT_PIECE: &'static str = "INSERT INTO pieces (archive_id, offset, hash) VALUES (?, ?, ?)";
+
 
 pub type SalResult<T> = Result<Option<T>, Error>;
 pub type HashesByIdx = HashMap<i64, String>;
@@ -109,6 +115,31 @@ pub fn get_hash(conn: &Connection, id: i64, index: i64) -> SalResult<String> {
         return Ok(Some(hash));
     }
     Ok(None)
+}
+
+pub fn register(db_file_name: &str, metainfo: Metainfo) -> Result<(), Error> {
+    let mut conn = Connection::open(db_file_name)?;
+    conn.execute(INSERT_ARCHIVE, &[
+        &metainfo.get_file_name(),
+        &metainfo.get_creation_date(),
+        &metainfo.get_info_hash(),
+        &(metainfo.get_length() as i64),
+        &(metainfo.get_piece_length() as i64),
+        &(metainfo.get_piece_count() as i64),
+    ])?;
+    let archive_id = conn.last_insert_rowid();
+    let tx = conn.transaction()?;
+    {
+       let mut stmt = tx.prepare(INSERT_PIECE)?;
+        let pieces: &[u8] = metainfo.info.pieces.as_ref();
+        let mut index = 0;
+        for sha1 in pieces.chunks(20) {
+            stmt.execute(&[&archive_id, &index, &sha1.to_hex().to_uppercase()])?;
+            index += 1;
+        }
+    }
+    tx.commit()?;
+    Ok(())
 }
 
 pub fn init_tables(db_file_name: &str) -> Result<(), Error> {

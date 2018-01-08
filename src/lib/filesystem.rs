@@ -4,12 +4,15 @@ use result::Fb2Error;
 use crypto::sha1::Sha1;
 use crypto::digest::Digest;
 use crossbeam;
+use torrent::Metainfo;
 
+use std::io;
+use std::error::Error;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-fn get_basename(file_name: &str) -> Result<String, Fb2Error> {
+fn get_basename(file_name: &str) -> Fb2Result<String> {
     let path = Path::new(file_name);
     if path.is_file() {
         if let Some(name) = path.file_name() {
@@ -89,4 +92,11 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         db_file_name
     ));
     Err(err)
+}
+
+pub fn load_torrent(torrent_file_name: &str) -> Fb2Result<Metainfo>{
+    let mut buffer = Vec::new();
+    File::open(torrent_file_name)?.read_to_end(&mut buffer)?;
+    let meta = Metainfo::from(&buffer).map_err(|e| io::Error::new(io::ErrorKind::Other, e.description()))?;
+    Ok(meta)
 }

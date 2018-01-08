@@ -11,6 +11,10 @@ use result::Fb2Error;
 use std::error::Error;
 use std::fs::File;
 
+fn into<F: Error>(e: F) -> Fb2Error {
+    Fb2Error::Custom(e.description().to_string())
+}
+
 pub fn do_ls(archive_name: &str) -> Fb2Result<()> {
     let mut zip = archive::open(archive_name)?;
     for i in 0..zip.len() {
@@ -42,12 +46,24 @@ pub fn show_zip(archive_name: &str, file_name: &str) -> Fb2Result<()> {
 
 pub fn db_init(db_file_name: &str) -> Fb2Result<()> {
     println!("db_init({})", db_file_name);
-    sal::init_tables(db_file_name).map_err(|e| Fb2Error::Custom(e.description().to_string()))
+    sal::init_tables(db_file_name).map_err(into)
 }
 
 pub fn db_drop(db_file_name: &str) -> Fb2Result<()> {
     println!("db_drop({})", db_file_name);
-    sal::drop_tables(db_file_name).map_err(|e| Fb2Error::Custom(e.description().to_string()))
+    sal::drop_tables(db_file_name).map_err(into)
+}
+
+pub fn db_register(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
+    println!("db_register({}, {})", db_file_name, torrent_name);
+    let metainfo = filesystem::load_torrent(torrent_name)?;
+    println!("file name:     {}", &metainfo.get_file_name());
+    println!("creation date: {}", &metainfo.get_creation_date());
+    println!("info hash:     {}", &metainfo.get_info_hash());
+    println!("total length:  {}", &metainfo.get_length());
+    println!("piece length:  {}", &metainfo.get_piece_length());
+    println!("piece count:   {}", &metainfo.get_piece_count());
+    sal::register(db_file_name, metainfo).map_err(into)
 }
 
 pub fn db_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
@@ -61,7 +77,7 @@ pub fn db_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
 }
 
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {
-    let mut file = File::open(file_name).map_err(|io| Fb2Error::Io(io))?;
+    let mut file = File::open(file_name).map_err(into)?;
     let xml = archive::load_header(&mut file)?;
     let fb2 = tools::into_utf8(xml).and_then(tools::into_fb2)?;
     println!("{}", fb2);
