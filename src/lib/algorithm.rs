@@ -4,13 +4,14 @@ use archive::{ZipArchive, ZipFile};
 use regex::Regex;
 use result::{Fb2Result, Fb2Error};
 use std::error::Error;
+use std::sync::mpsc::Sender;
 use crossbeam;
 
-pub fn apply<F>(mut zip: ZipArchive, file_name: &str, visitor: F) -> Fb2Result<()>
+pub fn apply<F>(mut zip: ZipArchive, file_mask: &str, visitor: F) -> Fb2Result<()>
 where
     F: Fn(String, String) -> () + Send + Copy,
 {
-    let re = make_regex(file_name)?;
+    let re = make_regex(file_mask)?;
     crossbeam::scope(|scope| for i in 0..zip.len() {
         if let Some(mut file) = zip.by_index(i).ok() {
             if re.is_match(file.name()) {
@@ -27,11 +28,33 @@ where
     Ok(())
 }
 
-pub fn apply_to_xml<F>(mut zip: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
+pub fn apply_and_collect<F, R>(mut zip: ZipArchive, file_mask: &str, out: Sender<R>, visitor: F) -> Fb2Result<()>
+where
+    F: Fn(String) -> R + Send + Copy,
+    R: Send
+{
+    let re = make_regex(file_mask)?;
+    crossbeam::scope(|scope| for i in 0..zip.len() {
+        if let Some(mut file) = zip.by_index(i).ok() {
+            if re.is_match(file.name()) {
+                if let Some(xml) = archive::load_header(&mut file)
+                    .and_then(tools::into_utf8)
+                    .ok()
+                {
+                    let channel = out.clone();
+                    scope.spawn(move || channel.send(visitor(xml)));
+                }
+            }
+        }
+    });
+    Ok(())
+}
+
+pub fn apply_to_xml<F>(mut zip: ZipArchive, file_mask: &str, mut visitor: F) -> Fb2Result<()>
 where
     F: FnMut(String, String) -> (),
 {
-    let re = make_regex(file_name)?;
+    let re = make_regex(file_mask)?;
     for i in 0..zip.len() {
         let mut file = zip.by_index(i)?;
         if re.is_match(file.name()) {
@@ -43,11 +66,11 @@ where
     Ok(())
 }
 
-pub fn apply_to_file<F>(mut zip: ZipArchive, file_name: &str, mut visitor: F) -> Fb2Result<()>
+pub fn apply_to_file<F>(mut zip: ZipArchive, file_mask: &str, mut visitor: F) -> Fb2Result<()>
 where
     F: FnMut(&ZipFile) -> Fb2Result<()>,
 {
-    let re = make_regex(file_name)?;
+    let re = make_regex(file_mask)?;
     for i in 0..zip.len() {
         let file = zip.by_index(i)?;
         if re.is_match(file.name()) {
@@ -58,8 +81,8 @@ where
 }
 
 
-fn make_regex(file_name: &str) -> Fb2Result<Regex> {
-    Regex::new(&wildcards_to_regex(file_name)).map_err(|e| {
+fn make_regex(file_mask: &str) -> Fb2Result<Regex> {
+    Regex::new(&wildcards_to_regex(file_mask)).map_err(|e| {
         Fb2Error::Custom(String::from(e.description()))
     })
 }

@@ -3,13 +3,14 @@ use sal;
 use tools;
 use archive;
 use filesystem;
-use algorithm::{apply_to_xml, apply_to_file, apply};
+use algorithm::{apply_to_xml, apply_to_file, apply, apply_and_collect};
 
 use result::Fb2Result;
 use result::Fb2Error;
 
 use std::error::Error;
 use std::fs::File;
+use std::sync::mpsc::channel;
 
 fn into<F: Error>(e: F) -> Fb2Error {
     Fb2Error::Custom(e.description().to_string())
@@ -66,10 +67,20 @@ pub fn db_register(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
     sal::register(db_file_name, metainfo).map_err(into)
 }
 
+
 pub fn db_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     println!("db_load({}, {})", db_file_name, archive_name);
     let zip = archive::open(archive_name)?;
-    apply(zip, "*.fb2", sal::load)
+    let mut conn = sal::get_connection(db_file_name).map_err(into)?;
+    let (sender, receiver) = channel();
+    apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
+    for result in receiver.iter() {
+        match result {
+            Ok(fb2) => sal::load_description(&mut conn, fb2),
+            Err(e) => println!("db_load(): {}", e)
+        }
+    }
+    Ok(())
 }
 
 pub fn db_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {

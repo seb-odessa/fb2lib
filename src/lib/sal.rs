@@ -2,7 +2,6 @@
 //use time::Timespec;
 use queries;
 use torrent::Metainfo;
-use tools::into_fb2;
 use fb2parser::FictionBook;
 
 use rusqlite;
@@ -160,11 +159,6 @@ pub fn drop_tables(db_file_name: &str) -> SalResult<()> {
     conn.execute_batch(DROP_TABLES)
 }
 
-pub fn load(file_name: String, xml: String) {
-    let result = into_fb2(xml);
-    if result.is_err() {    
-        println!("{}: {}", file_name, result.unwrap_err());
-        return;
-    }
-    let fb2 = result.unwrap();
+pub fn load_description(conn: &mut Connection, fb2: FictionBook) {
+    println!("{:?} - {}", fb2.get_book_authors(), fb2.get_book_title());
 }
