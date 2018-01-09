@@ -68,7 +68,8 @@ pub fn db_register(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
 
 pub fn db_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     println!("db_load({}, {})", db_file_name, archive_name);
-    Ok(())
+    let zip = archive::open(archive_name)?;
+    apply(zip, "*.fb2", sal::load)
 }
 
 pub fn db_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {

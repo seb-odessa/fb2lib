@@ -2,18 +2,14 @@
 //use time::Timespec;
 use queries;
 use torrent::Metainfo;
+use tools::into_fb2;
+use fb2parser::FictionBook;
+
 use rusqlite;
 use rusqlite::Connection;
 use rustc_serialize::hex::ToHex;
+
 use std::collections::HashMap;
-
-const DROP_TABLES: &'static str = "
-    BEGIN;
-    DROP TABLE archives;
-    DROP TABLE pieces;
-    COMMIT;
-";
-
 
 pub type SalResultOption<T> = Result<Option<T>, rusqlite::Error>;
 pub type SalResult<T> = Result<T, rusqlite::Error>;
@@ -113,12 +109,62 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> SalResult<()> {
 pub fn init_tables(db_file_name: &str) -> SalResult<()> {
     let mut conn = Connection::open(db_file_name)?;
     let tx = conn.transaction()?;
-    tx.execute(queries::CREATE_ARCHIVES, &[])?;
-    tx.execute(queries::CREATE_PIECES, &[])?;
+//    tx.execute(queries::CREATE_ARCHIVES, &[])?;
+//    tx.execute(queries::CREATE_PIECES, &[])?;
+//    tx.execute(queries::CREATE_BOOKS, &[])?;
+
+    tx.execute(queries::CREATE_GENRES, &[])?;
+    tx.execute(queries::CREATE_PEOPLE, &[])?;
+    tx.execute(queries::CREATE_PEOPLE_SET, &[])?;
+    tx.execute(queries::CREATE_TITLES, &[])?;    
+    tx.execute(queries::CREATE_LANGUAGES, &[])?;
+    tx.execute(queries::CREATE_SEQUENCES, &[])?;
+    tx.execute(queries::CREATE_PUBLISHERS, &[])?;
+    tx.execute(queries::CREATE_CITIES, &[])?;
+    tx.execute(queries::CREATE_ISBNS, &[])?;
+    tx.execute(queries::CREATE_PROGRAMS, &[])?;
+
+    tx.execute(queries::CREATE_TITLE_INFO, &[])?;
+    tx.execute(queries::CREATE_DOCUMENT_INFO, &[])?;
+    tx.execute(queries::CREATE_PUBLICH_INFO, &[])?;
+    tx.execute(queries::CREATE_DESCRIPTION, &[])?;
+
     tx.commit()
 }
 
 pub fn drop_tables(db_file_name: &str) -> SalResult<()> {
+    const DROP_TABLES: &'static str = "
+    BEGIN;
+/*
+    DROP TABLE archives;
+    DROP TABLE pieces;
+    DROP TABLE books;
+*/  
+    DROP TABLE description;  
+    DROP TABLE title_info;
+    DROP TABLE document_info;
+    DROP TABLE publish_info;    
+    DROP TABLE genres;
+    DROP TABLE people;
+    DROP TABLE titles;
+    DROP TABLE languages;
+    DROP TABLE sequences;
+    DROP TABLE publishers;
+    DROP TABLE cities;
+    DROP TABLE isbns;    
+    DROP TABLE programs;
+    DROP TABLE people_set;
+    COMMIT;
+    ";
     let conn = Connection::open(db_file_name)?;
     conn.execute_batch(DROP_TABLES)
+}
+
+pub fn load(file_name: String, xml: String) {
+    let result = into_fb2(xml);
+    if result.is_err() {    
+        println!("{}: {}", file_name, result.unwrap_err());
+        return;
+    }
+    let fb2 = result.unwrap();
 }

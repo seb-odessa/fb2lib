@@ -113,7 +113,7 @@ pub const CREATE_PEOPLE: &'static str = "
 	    first_name 	    TEXT NOT NULL,
         middle_name	    TEXT NOT NULL,
         last_name	    TEXT NOT NULL,
-        nickname	    TEXT NOT NULL,
+        nickname	    TEXT NOT NULL
     );";
 
 #[allow(dead_code)]
@@ -209,6 +209,15 @@ pub const CREATE_PUBLICH_INFO: &'static str = "
 		isbn_id       		INTEGER,    /* FK to isbns.id */
         sequence_id         INTEGER,    /* FK to sequences.id */
         sequence_number     INTEGER     /* the number of book in sequence */
+	);";
+
+#[allow(dead_code)]
+pub const CREATE_DESCRIPTION: &'static str = "
+    CREATE TABLE description (
+	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		title_info_id        INTEGER,    /* FK to title_info.id */
+		document_info_id     INTEGER,    /* FK to document_info.id */
+        publish_info_id      INTEGER     /* FK to publish_info.id */
 	);";
 
 
