@@ -126,9 +126,29 @@ pub const CREATE_TITLES: &'static str = "
 #[allow(dead_code)]
 pub const CREATE_LANGUAGES: &'static str = "
     CREATE TABLE languages (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    id  	        INTEGER NOT NULL PRIMARY KEY UNIQUE,
 	    text      	    TEXT NOT NULL UNIQUE
+    );
+	CREATE TRIGGER languages_auto AFTER INSERT ON languages
+	BEGIN
+	    UPDATE	languages
+    	SET 	id = (SELECT max(id) + 1 FROM languages)
+    	WHERE   ROWID = new.ROWID;
+	END;";
+
+#[allow(dead_code)]
+pub const CREATE_IGNORED_LANGUAGES: &'static str = "
+	CREATE TABLE ignored_languages (
+	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    language_id         INTEGER    /* FK to languages.id */
     );";
+
+#[allow(dead_code)]
+pub const CREATE_EXPECTED_LANGUAGES: &'static str = "
+	CREATE VIEW expected_languages
+		AS SELECT languages.id, languages.text
+		FROM languages LEFT JOIN ignored_language ON languages.id = ignored_language.language_id
+		WHERE language_id is null;";
 
 #[allow(dead_code)]
 pub const CREATE_SEQUENCES: &'static str = "
@@ -214,7 +234,7 @@ pub const CREATE_PUBLICH_INFO: &'static str = "
 #[allow(dead_code)]
 pub const CREATE_DESCRIPTION: &'static str = "
     CREATE TABLE description (
-	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    id  	             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		title_info_id        INTEGER,    /* FK to title_info.id */
 		document_info_id     INTEGER,    /* FK to document_info.id */
         publish_info_id      INTEGER     /* FK to publish_info.id */
@@ -230,6 +250,10 @@ pub const INSERT_ARCHIVE: &'static str = "
 
 pub const INSERT_PIECE: &'static str = "
 	INSERT INTO pieces (archive_id, piece_idx, hash) VALUES (?, ?, ?)";
+
+pub const INSERT_LANGUAGES: &'static str = "
+    INSERT OR IGNORE INTO languages (id, text) VALUES (0, ?);";
+
 /**************************** Select Queries ****************************/
 pub const GET_ID_BY_HASH: &'static str = "
 	SELECT id FROM archives WHERE hash = ?1";

@@ -68,20 +68,39 @@ pub fn db_register(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
 }
 
 
-pub fn db_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("db_load({}, {})", db_file_name, archive_name);
+pub fn load_lang(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+    println!("load_lang({}, {})", db_file_name, archive_name);
     let zip = archive::open(archive_name)?;
-    let mut conn = sal::get_connection(db_file_name).map_err(into)?;
     let (sender, receiver) = channel();
     apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
-    for result in receiver.iter() {
-        match result {
-            Ok(fb2) => sal::load_description(&mut conn, fb2),
-            Err(e) => println!("db_load(): {}", e)
-        }
+
+    let mut conn = sal::get_connection(db_file_name).map_err(into)?;
+    let tx = conn.transaction().map_err(into)?;
+    for msg in receiver.iter() {
+        let fb2 = msg?;
+        let id = sal::load_languages(&tx, fb2).map_err(into)?;
+        println!("id {}", id);
+    }
+    tx.commit().map_err(into)
+}
+
+pub fn load_info(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+    println!("load_lang({}, {})", db_file_name, archive_name);
+    let zip = archive::open(archive_name)?;
+    let (sender, receiver) = channel();
+    apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
+
+    for msg in receiver.iter() {
+        let fb2 = msg?;
+        println!("<{:6}> {:?} {}",
+            fb2.get_book_lang(),
+            fb2.get_book_authors(),
+            fb2.get_book_title()
+        );
     }
     Ok(())
 }
+
 
 pub fn db_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     println!("db_check({}, {})", db_file_name, archive_name);

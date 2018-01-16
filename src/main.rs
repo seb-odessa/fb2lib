@@ -30,7 +30,10 @@ const CMD_DB_INIT: &'static str = "init";
 const CMD_DB_DROP: &'static str = "drop";
 const CMD_DB_CHECK: &'static str = "check";
 const CMD_DB_REGISTER: &'static str = "register";
-const CMD_DB_LOAD: &'static str = "load";
+
+const CMD_LOAD: &'static str = "load";
+const CMD_LOAD_LANG: &'static str = "languages";
+const CMD_LOAD_INFO: &'static str = "info";
 
 
 fn get<'a>(arg: &ArgMatches<'a>, name: &str) -> String {
@@ -99,13 +102,10 @@ fn main() {
         .arg(book.clone());
     //------------------------------------------------------------------------------------------------------//
     let cmd_db = SubCommand::with_name(CMD_DB)
-        .about("Use to manage operations with external Database")
+        .about("Use to manage external Database structure")
         .arg(db.clone().required(false));
     let cmd_db_init = SubCommand::with_name(CMD_DB_INIT).about("Initialize DB (create tables)");
     let cmd_db_drop = SubCommand::with_name(CMD_DB_DROP).about("Cleanup DB (drop tables)");
-    let cmd_db_load = SubCommand::with_name(CMD_DB_LOAD)
-        .about("Load data from archive")
-        .arg(archive.clone());
     let cmd_db_register = SubCommand::with_name(CMD_DB_REGISTER)
         .about("Load metainfo from torrent ito DB")
         .arg(torrent.clone());
@@ -113,7 +113,17 @@ fn main() {
         .about("Check integrity of the downloaded archive file (sha1 check)")
         .arg(archive.clone());
     //------------------------------------------------------------------------------------------------------//
+    let cmd_load = SubCommand::with_name(CMD_LOAD)
+        .about("Use to load data from archive into Database")
+        .arg(db.clone().required(false));
+    let cmd_load_lang = SubCommand::with_name(CMD_LOAD_LANG)
+        .about("Load languages from archive")
+        .arg(archive.clone());
+    let cmd_load_info = SubCommand::with_name(CMD_LOAD_INFO)
+        .about("Print info from archive")
+        .arg(archive.clone());
 
+    //------------------------------------------------------------------------------------------------------//
     let arguments: Vec<String> = std::env::args().collect();
     let program = std::path::Path::new(&arguments[0])
         .file_name()
@@ -140,9 +150,13 @@ fn main() {
             cmd_db
                 .subcommand(cmd_db_init)
                 .subcommand(cmd_db_drop)
-                .subcommand(cmd_db_load)
                 .subcommand(cmd_db_register)
                 .subcommand(cmd_db_check),
+        )
+        .subcommand(
+            cmd_load
+                .subcommand(cmd_load_lang)
+                .subcommand(cmd_load_info)
         )
         .get_matches();
     //------------------------------------------------------------------------------------------------------//
@@ -169,8 +183,18 @@ fn main() {
                 (CMD_DB_INIT, Some(_)) => db_init(&database),
                 (CMD_DB_DROP, Some(_)) => db_drop(&database),
                 (CMD_DB_REGISTER, Some(cmd)) => db_register(&database, &get(&cmd, TORRENT)),
-                (CMD_DB_LOAD, Some(cmd)) => db_load(&database, &get(&cmd, ARCH)),
                 (CMD_DB_CHECK, Some(cmd)) => db_check(&database, &get(&cmd, ARCH)),
+                (_, _) => {
+                    app.usage();
+                    Ok(())
+                }
+            }
+        }
+        (CMD_LOAD, Some(cmd)) => {
+            let database = get_or(&cmd, DB, DB);
+            match cmd.subcommand() {
+                (CMD_LOAD_LANG, Some(cmd)) => load_lang(&database, &get(&cmd, ARCH)),
+                (CMD_LOAD_INFO, Some(cmd)) => load_info(&database, &get(&cmd, ARCH)),
                 (_, _) => {
                     app.usage();
                     Ok(())

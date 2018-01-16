@@ -5,7 +5,7 @@ use torrent::Metainfo;
 use fb2parser::FictionBook;
 
 use rusqlite;
-use rusqlite::Connection;
+use rusqlite::{Connection, Transaction};
 use rustc_serialize::hex::ToHex;
 
 use std::collections::HashMap;
@@ -112,11 +112,14 @@ pub fn init_tables(db_file_name: &str) -> SalResult<()> {
 //    tx.execute(queries::CREATE_PIECES, &[])?;
 //    tx.execute(queries::CREATE_BOOKS, &[])?;
 
+    // tx.execute(queries::CREATE_LANGUAGES, &[])?;
+    // tx.execute(queries::CREATE_IGNORED_LANGUAGES, &[])?;
+    // tx.execute(queries::CREATE_EXPECTED_LANGUAGES, &[])?;
+
     tx.execute(queries::CREATE_GENRES, &[])?;
     tx.execute(queries::CREATE_PEOPLE, &[])?;
     tx.execute(queries::CREATE_PEOPLE_SET, &[])?;
-    tx.execute(queries::CREATE_TITLES, &[])?;    
-    tx.execute(queries::CREATE_LANGUAGES, &[])?;
+    tx.execute(queries::CREATE_TITLES, &[])?;
     tx.execute(queries::CREATE_SEQUENCES, &[])?;
     tx.execute(queries::CREATE_PUBLISHERS, &[])?;
     tx.execute(queries::CREATE_CITIES, &[])?;
@@ -127,7 +130,6 @@ pub fn init_tables(db_file_name: &str) -> SalResult<()> {
     tx.execute(queries::CREATE_DOCUMENT_INFO, &[])?;
     tx.execute(queries::CREATE_PUBLICH_INFO, &[])?;
     tx.execute(queries::CREATE_DESCRIPTION, &[])?;
-
     tx.commit()
 }
 
@@ -138,19 +140,23 @@ pub fn drop_tables(db_file_name: &str) -> SalResult<()> {
     DROP TABLE archives;
     DROP TABLE pieces;
     DROP TABLE books;
-*/  
-    DROP TABLE description;  
+
+    DROP TABLE languages;
+    DROP TABLE ignored_languages;
+    DROP VIEW expected_languages;
+*/
+
+    DROP TABLE description;
     DROP TABLE title_info;
     DROP TABLE document_info;
-    DROP TABLE publish_info;    
+    DROP TABLE publish_info;
     DROP TABLE genres;
     DROP TABLE people;
     DROP TABLE titles;
-    DROP TABLE languages;
     DROP TABLE sequences;
     DROP TABLE publishers;
     DROP TABLE cities;
-    DROP TABLE isbns;    
+    DROP TABLE isbns;
     DROP TABLE programs;
     DROP TABLE people_set;
     COMMIT;
@@ -159,6 +165,6 @@ pub fn drop_tables(db_file_name: &str) -> SalResult<()> {
     conn.execute_batch(DROP_TABLES)
 }
 
-pub fn load_description(conn: &mut Connection, fb2: FictionBook) {
-    println!("{:?} - {}", fb2.get_book_authors(), fb2.get_book_title());
+pub fn load_languages(tx: &Transaction, fb2: FictionBook) -> SalResult<i32> {
+    tx.execute(queries::INSERT_LANGUAGES, &[&fb2.get_book_lang()])
 }
