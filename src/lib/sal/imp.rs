@@ -127,3 +127,7 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
 pub fn insert_language(tx: &Transaction, lang: &String) -> SalResult<i32> {
     tx.execute(query_insert::LANGUAGES, &[lang])
 }
+
+pub fn insert_ignored_language(conn: &Connection, lang: &String) -> SalResult<i32> {
+    conn.execute(query_insert::IGNORE_LANGUAGES, &[lang])
+}

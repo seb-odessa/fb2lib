@@ -107,7 +107,7 @@ pub const LANGUAGES_AUTO: &'static str = "
 pub const IGNORED_LANGUAGES: &'static str = "
 	CREATE TABLE IF NOT EXISTS ignored_languages (
 	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    language_id         INTEGER    /* FK to languages.id */
+	    language_id         INTEGER NOT NULL UNIQUE   /* FK to languages.id */
     );";
 
 #[allow(dead_code)]

@@ -11,6 +11,7 @@ pub type HashesByIdx = HashMap<i64, String>;
 
 pub use sal::imp::cleanup_tables;
 pub use sal::imp::insert_language;
+pub use sal::imp::insert_ignored_language;
 
 pub use sal::imp::get_connection;
 pub use sal::imp::get_archive_sizes;

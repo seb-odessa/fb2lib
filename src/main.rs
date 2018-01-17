@@ -8,6 +8,7 @@ const VERSION: &'static str = "v0.5.0";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 
 const TORRENT: &'static str = "archive.torrent";
+const VALUE: &'static str = "value";
 const ARCH: &'static str = "archive.zip";
 const BOOK: &'static str = "book.fb2";
 const XML: &'static str = "book.xml";
@@ -35,6 +36,7 @@ const CMD_TORRENT_LOAD: &'static str = "load";
 const CMD_LANG: &'static str = "lang";
 const CMD_LANG_LOAD: &'static str = "load";
 const CMD_LANG_SHOW: &'static str = "show";
+const CMD_LANG_IGNORE: &'static str = "ignore";
 
 
 fn get<'a>(arg: &ArgMatches<'a>, name: &str) -> String {
@@ -64,6 +66,10 @@ fn main() {
 
     let db = Arg::with_name(DB)
         .help("a sqlite database file name")
+        .required(true);
+
+    let value = Arg::with_name(VALUE)
+        .help("command argument")
         .required(true);
 
     let quiet = Arg::with_name(QUIET)
@@ -111,16 +117,14 @@ fn main() {
     let cmd_torrent = SubCommand::with_name(CMD_TORRENT)
         .about("Use to manage external external torrent files")
         .arg(db.clone().required(false));
-
     let cmd_torrent_load = SubCommand::with_name(CMD_TORRENT_LOAD)
         .about("Load metainfo from torrent into DB")
         .arg(torrent.clone());
-
     let cmd_torrent_check = SubCommand::with_name(CMD_TORRENT_CHECK)
         .about("Check integrity of the downloaded archive file (sha1 check)")
         .arg(archive.clone());
     //------------------------------------------------------------------------------------------------------//
-    let cmd_load = SubCommand::with_name(CMD_LANG)
+    let cmd_lang = SubCommand::with_name(CMD_LANG)
         .about("Use to work with languages")
         .arg(db.clone().required(false));
     let cmd_lang_load = SubCommand::with_name(CMD_LANG_LOAD)
@@ -129,6 +133,9 @@ fn main() {
     let cmd_lang_show = SubCommand::with_name(CMD_LANG_SHOW)
         .about("Print unique sorted list of languages from archive")
         .arg(archive.clone());
+    let cmd_lang_ignore = SubCommand::with_name(CMD_LANG_IGNORE)
+        .about("Add language to ignore list")
+        .arg(value.clone());
 
     //------------------------------------------------------------------------------------------------------//
     let arguments: Vec<String> = std::env::args().collect();
@@ -163,9 +170,10 @@ fn main() {
                 .subcommand(cmd_torrent_check)
         )
         .subcommand(
-            cmd_load
+            cmd_lang
                 .subcommand(cmd_lang_load)
                 .subcommand(cmd_lang_show)
+                .subcommand(cmd_lang_ignore)
         )
         .get_matches();
     //------------------------------------------------------------------------------------------------------//
@@ -212,6 +220,7 @@ fn main() {
             match cmd.subcommand() {
                 (CMD_LANG_LOAD, Some(cmd)) => lang_load(&database, &get(&cmd, ARCH)),
                 (CMD_LANG_SHOW, Some(cmd)) => lang_show(&database, &get(&cmd, ARCH)),
+                (CMD_LANG_IGNORE, Some(cmd)) => lang_ignore(&database, &get(&cmd, VALUE)),
                 (_, _) => {
                     app.usage();
                     Ok(())

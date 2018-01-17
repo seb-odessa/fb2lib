@@ -10,3 +10,6 @@ pub const PIECE: &'static str = "
 
 pub const LANGUAGES: &'static str = "
     INSERT OR IGNORE INTO languages (id, text) VALUES (0, ?);";
+
+pub const IGNORE_LANGUAGES: &'static str = "
+    INSERT OR IGNORE INTO ignored_languages (language_id) SELECT id FROM languages WHERE text = ?;";

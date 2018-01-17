@@ -145,6 +145,58 @@ test tools::bench::into_utf8             ... bench:       1,136 ns/iter (+/- 100
 
 ```
 
+## Work with database
+### Initialize database structure
+```
+$ ./fb2lib database cleanup
+db_cleanup(lib.rus.ec.db)
+```
+### Work with Metainfo (torrent) data
+TODO
+
+### Work with Languages
+```
+USAGE:
+    fb2lib lang [lib.rus.ec.db] [SUBCOMMAND]
+
+ARGS:
+    <lib.rus.ec.db>    a sqlite database file name
+
+SUBCOMMANDS:
+    help      Prints this message or the help of the given subcommand(s)
+    ignore    Add language to ignore list
+    load      Load languages from archive into DB
+    show      Print unique sorted list of languages from archive
+
+```
+#### Show all unique languages in archive
+SUBCOMMAND: show
+```
+$ ./fb2lib lang show ~/books/fb2-000065-572310_lost.zip 
+lang_show(lib.rus.ec.db, /home/seb/books/fb2-000065-572310_lost.zip)
+extract_langs(lib.rus.ec.db, /home/seb/books/fb2-000065-572310_lost.zip)
+    'uk'
+    'de'
+    ''
+    'pl'
+    'ru'
+    'bg'
+    'ru-RU'
+    'en'
+```
+#### Load unique languages from archive into database
+SUBCOMMAND: load
+```
+$ ./fb2lib lang load ~/books/fb2-000065-572310_lost.zip 
+lang_show(lib.rus.ec.db, /home/seb/books/fb2-000065-572310_lost.zip)
+extract_langs(lib.rus.ec.db, /home/seb/books/fb2-000065-572310_lost.zip)
+```
+#### Add language to the ignore list
+SUBCOMMAND: ignore
+```
+$ ./fb2lib lang ignore bg
+lang_ignore(lib.rus.ec.db, bg)
+```
 
 ### Links
 - https://en.wikipedia.org/wiki/FictionBook
