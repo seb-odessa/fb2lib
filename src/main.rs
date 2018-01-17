@@ -25,9 +25,9 @@ const CMD_SHOW_FB2: &'static str = "fb2";
 const CMD_SHOW_INF: &'static str = "info";
 const CMD_SHOW_ZIP: &'static str = "zip";
 
-const CMD_DB: &'static str = "db";
-const CMD_DB_INIT: &'static str = "init";
-const CMD_DB_DROP: &'static str = "drop";
+const CMD_DB: &'static str = "database";
+const CMD_DB_CLEAN: &'static str = "cleanup";
+
 const CMD_DB_CHECK: &'static str = "check";
 const CMD_DB_REGISTER: &'static str = "register";
 
@@ -104,11 +104,12 @@ fn main() {
     let cmd_db = SubCommand::with_name(CMD_DB)
         .about("Use to manage external Database structure")
         .arg(db.clone().required(false));
-    let cmd_db_init = SubCommand::with_name(CMD_DB_INIT).about("Initialize DB (create tables)");
-    let cmd_db_drop = SubCommand::with_name(CMD_DB_DROP).about("Cleanup DB (drop tables)");
+    let cmd_db_clean = SubCommand::with_name(CMD_DB_CLEAN).about("Re-Initialize DB (drop/create tables)");
+    
     let cmd_db_register = SubCommand::with_name(CMD_DB_REGISTER)
         .about("Load metainfo from torrent ito DB")
         .arg(torrent.clone());
+    
     let cmd_db_check = SubCommand::with_name(CMD_DB_CHECK)
         .about("Check integrity of the downloaded archive file (sha1 check)")
         .arg(archive.clone());
@@ -148,8 +149,8 @@ fn main() {
         )
         .subcommand(
             cmd_db
-                .subcommand(cmd_db_init)
-                .subcommand(cmd_db_drop)
+                .subcommand(cmd_db_clean)
+
                 .subcommand(cmd_db_register)
                 .subcommand(cmd_db_check),
         )
@@ -180,8 +181,8 @@ fn main() {
         (CMD_DB, Some(cmd)) => {
             let database = get_or(&cmd, DB, DB);
             match cmd.subcommand() {
-                (CMD_DB_INIT, Some(_)) => db_init(&database),
-                (CMD_DB_DROP, Some(_)) => db_drop(&database),
+                (CMD_DB_CLEAN, Some(_)) => db_cleanup(&database),
+
                 (CMD_DB_REGISTER, Some(cmd)) => db_register(&database, &get(&cmd, TORRENT)),
                 (CMD_DB_CHECK, Some(cmd)) => db_check(&database, &get(&cmd, ARCH)),
                 (_, _) => {

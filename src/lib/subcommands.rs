@@ -45,14 +45,9 @@ pub fn show_zip(archive_name: &str, file_name: &str) -> Fb2Result<()> {
     apply_to_file(zip, file_name, out::zip_info)
 }
 
-pub fn db_init(db_file_name: &str) -> Fb2Result<()> {
-    println!("db_init({})", db_file_name);
-    sal::init_tables(db_file_name).map_err(into)
-}
-
-pub fn db_drop(db_file_name: &str) -> Fb2Result<()> {
-    println!("db_drop({})", db_file_name);
-    sal::drop_tables(db_file_name).map_err(into)
+pub fn db_cleanup(db_file_name: &str) -> Fb2Result<()> {
+    println!("db_cleanup({})", db_file_name);
+    sal::cleanup_tables(db_file_name).map_err(into)
 }
 
 pub fn db_register(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
