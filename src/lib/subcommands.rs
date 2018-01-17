@@ -11,6 +11,7 @@ use result::Fb2Error;
 use std::error::Error;
 use std::fs::File;
 use std::sync::mpsc::channel;
+use std::collections::HashSet;
 
 fn into<F: Error>(e: F) -> Fb2Error {
     Fb2Error::Custom(e.description().to_string())
@@ -50,8 +51,8 @@ pub fn db_cleanup(db_file_name: &str) -> Fb2Result<()> {
     sal::cleanup_tables(db_file_name).map_err(into)
 }
 
-pub fn db_register(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
-    println!("db_register({}, {})", db_file_name, torrent_name);
+pub fn torrent_load(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
+    println!("torrent_load({}, {})", db_file_name, torrent_name);
     let metainfo = filesystem::load_torrent(torrent_name)?;
     println!("file name:     {}", &metainfo.get_file_name());
     println!("creation date: {}", &metainfo.get_creation_date());
@@ -62,44 +63,41 @@ pub fn db_register(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
     sal::register(db_file_name, metainfo).map_err(into)
 }
 
+pub fn torrent_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+    println!("torrent_check({}, {})", db_file_name, archive_name);
+    filesystem::check_integrity(db_file_name, archive_name)
+}
 
-pub fn load_lang(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("load_lang({}, {})", db_file_name, archive_name);
+pub fn extract_langs(db_file_name: &str, archive_name: &str) -> Fb2Result<Vec<String>> {
+    println!("extract_langs({}, {})", db_file_name, archive_name);
     let zip = archive::open(archive_name)?;
     let (sender, receiver) = channel();
     apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
+    let mut langs = HashSet::new();
+    for fb2book in receiver.iter() {
+        langs.insert(fb2book?.get_book_lang());
+    }
+    Ok(langs.into_iter().collect())
+}
 
+pub fn lang_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+    println!("lang_load({}, {})", db_file_name, archive_name);
+    let langs = extract_langs(db_file_name, archive_name)?;
     let mut conn = sal::get_connection(db_file_name).map_err(into)?;
     let tx = conn.transaction().map_err(into)?;
-    for msg in receiver.iter() {
-        let fb2 = msg?;
-        let id = sal::load_languages(&tx, fb2).map_err(into)?;
-        println!("id {}", id);
+    for lang in &langs {
+        sal::insert_language(&tx, lang).map_err(into)?;
     }
     tx.commit().map_err(into)
 }
 
-pub fn load_info(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("load_lang({}, {})", db_file_name, archive_name);
-    let zip = archive::open(archive_name)?;
-    let (sender, receiver) = channel();
-    apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
-
-    for msg in receiver.iter() {
-        let fb2 = msg?;
-        println!("<{:6}> {:?} {}",
-            fb2.get_book_lang(),
-            fb2.get_book_authors(),
-            fb2.get_book_title()
-        );
+pub fn lang_show(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+    println!("lang_show({}, {})", db_file_name, archive_name);
+    let langs = extract_langs(db_file_name, archive_name)?;
+    for lang in &langs {
+        println!("'{}'", lang);
     }
     Ok(())
-}
-
-
-pub fn db_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("db_check({}, {})", db_file_name, archive_name);
-    filesystem::check_integrity(db_file_name, archive_name)
 }
 
 pub fn do_parse(file_name: &str) -> Fb2Result<()> {

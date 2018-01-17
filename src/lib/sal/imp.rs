@@ -7,7 +7,6 @@ use sal::HashesByIdx;
 
 
 use torrent::Metainfo;
-use fb2parser::FictionBook;
 
 use rusqlite;
 use rusqlite::{Connection, Transaction};
@@ -109,22 +108,22 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> SalResult<()> {
 }
 
 pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
-    let mut conn = Connection::open(db_file_name)?;
-    let tx = conn.transaction()?;  
-    // tx.execute(query_drop::ARCHIVES, &[])?;
-    // tx.execute(query_drop::PIECES, &[])?;
-    tx.execute(query_drop::EXPECTED_LANGUAGES, &[])?;
-    tx.execute(query_drop::LANGUAGES, &[])?;
-    tx.execute(query_drop::IGNORED_LANGUAGES, &[])?;
+    let conn = Connection::open(db_file_name)?;
+    // conn.execute(query_drop::ARCHIVES, &[])?;
+    // conn.execute(query_drop::PIECES, &[])?;
+    conn.execute(query_drop::EXPECTED_LANGUAGES, &[])?;
+    conn.execute(query_drop::LANGUAGES, &[])?;
+    conn.execute(query_drop::IGNORED_LANGUAGES, &[])?;
+    // conn.execute(query_create::ARCHIVES, &[])?;
+    // conn.execute(query_create::PIECES, &[])?;    
+    conn.execute(query_create::LANGUAGES, &[])?;
+    conn.execute(query_create::IGNORED_LANGUAGES, &[])?;
+    conn.execute(query_create::EXPECTED_LANGUAGES, &[])?;
+    conn.execute(query_create::LANGUAGES_AUTO, &[])?;
 
-    // tx.execute(query_create::ARCHIVES, &[])?;
-    // tx.execute(query_create::PIECES, &[])?;    
-    tx.execute(query_create::LANGUAGES, &[])?;
-    tx.execute(query_create::IGNORED_LANGUAGES, &[])?;
-    tx.execute(query_create::EXPECTED_LANGUAGES, &[])?;
-    tx.commit()
+    Ok(())
 }
 
-pub fn load_languages(tx: &Transaction, fb2: FictionBook) -> SalResult<i32> {
-    tx.execute(query_insert::LANGUAGES, &[&fb2.get_book_lang()])
+pub fn insert_language(tx: &Transaction, lang: &String) -> SalResult<i32> {
+    tx.execute(query_insert::LANGUAGES, &[lang])
 }

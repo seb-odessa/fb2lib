@@ -28,12 +28,13 @@ const CMD_SHOW_ZIP: &'static str = "zip";
 const CMD_DB: &'static str = "database";
 const CMD_DB_CLEAN: &'static str = "cleanup";
 
-const CMD_DB_CHECK: &'static str = "check";
-const CMD_DB_REGISTER: &'static str = "register";
+const CMD_TORRENT: &'static str = "torrent";
+const CMD_TORRENT_CHECK: &'static str = "check";
+const CMD_TORRENT_LOAD: &'static str = "load";
 
-const CMD_LOAD: &'static str = "load";
-const CMD_LOAD_LANG: &'static str = "languages";
-const CMD_LOAD_INFO: &'static str = "info";
+const CMD_LANG: &'static str = "lang";
+const CMD_LANG_LOAD: &'static str = "load";
+const CMD_LANG_SHOW: &'static str = "show";
 
 
 fn get<'a>(arg: &ArgMatches<'a>, name: &str) -> String {
@@ -100,28 +101,33 @@ fn main() {
     let cmd_show_zip = SubCommand::with_name(CMD_SHOW_ZIP)
         .about("Print human readable info for the file in zip archive")
         .arg(book.clone());
+
     //------------------------------------------------------------------------------------------------------//
     let cmd_db = SubCommand::with_name(CMD_DB)
         .about("Use to manage external Database structure")
         .arg(db.clone().required(false));
-    let cmd_db_clean = SubCommand::with_name(CMD_DB_CLEAN).about("Re-Initialize DB (drop/create tables)");
-    
-    let cmd_db_register = SubCommand::with_name(CMD_DB_REGISTER)
-        .about("Load metainfo from torrent ito DB")
+    let cmd_db_clean = SubCommand::with_name(CMD_DB_CLEAN).about("Re-Initialize DB (drop/create tables)");    
+    //------------------------------------------------------------------------------------------------------//
+    let cmd_torrent = SubCommand::with_name(CMD_TORRENT)
+        .about("Use to manage external external torrent files")
+        .arg(db.clone().required(false));
+
+    let cmd_torrent_load = SubCommand::with_name(CMD_TORRENT_LOAD)
+        .about("Load metainfo from torrent into DB")
         .arg(torrent.clone());
-    
-    let cmd_db_check = SubCommand::with_name(CMD_DB_CHECK)
+
+    let cmd_torrent_check = SubCommand::with_name(CMD_TORRENT_CHECK)
         .about("Check integrity of the downloaded archive file (sha1 check)")
         .arg(archive.clone());
     //------------------------------------------------------------------------------------------------------//
-    let cmd_load = SubCommand::with_name(CMD_LOAD)
-        .about("Use to load data from archive into Database")
+    let cmd_load = SubCommand::with_name(CMD_LANG)
+        .about("Use to work with languages")
         .arg(db.clone().required(false));
-    let cmd_load_lang = SubCommand::with_name(CMD_LOAD_LANG)
-        .about("Load languages from archive")
+    let cmd_lang_load = SubCommand::with_name(CMD_LANG_LOAD)
+        .about("Load languages from archive into DB")
         .arg(archive.clone());
-    let cmd_load_info = SubCommand::with_name(CMD_LOAD_INFO)
-        .about("Print info from archive")
+    let cmd_lang_show = SubCommand::with_name(CMD_LANG_SHOW)
+        .about("Print unique sorted list of languages from archive")
         .arg(archive.clone());
 
     //------------------------------------------------------------------------------------------------------//
@@ -145,19 +151,21 @@ fn main() {
                 .subcommand(cmd_show_xml)
                 .subcommand(cmd_show_fb2)
                 .subcommand(cmd_show_inf)
-                .subcommand(cmd_show_zip),
+                .subcommand(cmd_show_zip)
         )
         .subcommand(
             cmd_db
                 .subcommand(cmd_db_clean)
-
-                .subcommand(cmd_db_register)
-                .subcommand(cmd_db_check),
+        )
+        .subcommand(
+            cmd_torrent
+                .subcommand(cmd_torrent_load)
+                .subcommand(cmd_torrent_check)
         )
         .subcommand(
             cmd_load
-                .subcommand(cmd_load_lang)
-                .subcommand(cmd_load_info)
+                .subcommand(cmd_lang_load)
+                .subcommand(cmd_lang_show)
         )
         .get_matches();
     //------------------------------------------------------------------------------------------------------//
@@ -182,20 +190,28 @@ fn main() {
             let database = get_or(&cmd, DB, DB);
             match cmd.subcommand() {
                 (CMD_DB_CLEAN, Some(_)) => db_cleanup(&database),
-
-                (CMD_DB_REGISTER, Some(cmd)) => db_register(&database, &get(&cmd, TORRENT)),
-                (CMD_DB_CHECK, Some(cmd)) => db_check(&database, &get(&cmd, ARCH)),
                 (_, _) => {
                     app.usage();
                     Ok(())
                 }
             }
         }
-        (CMD_LOAD, Some(cmd)) => {
+        (CMD_TORRENT, Some(cmd)) => {
             let database = get_or(&cmd, DB, DB);
             match cmd.subcommand() {
-                (CMD_LOAD_LANG, Some(cmd)) => load_lang(&database, &get(&cmd, ARCH)),
-                (CMD_LOAD_INFO, Some(cmd)) => load_info(&database, &get(&cmd, ARCH)),
+                (CMD_TORRENT_LOAD, Some(cmd)) => torrent_load(&database, &get(&cmd, TORRENT)),
+                (CMD_TORRENT_CHECK, Some(cmd)) => torrent_check(&database, &get(&cmd, ARCH)),
+                (_, _) => {
+                    app.usage();
+                    Ok(())
+                }
+            }
+        }        
+        (CMD_LANG, Some(cmd)) => {
+            let database = get_or(&cmd, DB, DB);
+            match cmd.subcommand() {
+                (CMD_LANG_LOAD, Some(cmd)) => lang_load(&database, &get(&cmd, ARCH)),
+                (CMD_LANG_SHOW, Some(cmd)) => lang_show(&database, &get(&cmd, ARCH)),
                 (_, _) => {
                     app.usage();
                     Ok(())

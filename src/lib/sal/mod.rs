@@ -10,12 +10,13 @@ use std::collections::HashMap;
 pub type HashesByIdx = HashMap<i64, String>;
 
 pub use sal::imp::cleanup_tables;
+pub use sal::imp::insert_language;
 
 pub use sal::imp::get_connection;
 pub use sal::imp::get_archive_sizes;
 pub use sal::imp::register;
 pub use sal::imp::validate;
 pub use sal::imp::get_hash;
-pub use sal::imp::load_languages;
+
 
 

@@ -89,11 +89,14 @@ pub const PIECES: &'static str = "
 
 #[allow(dead_code)]
 pub const LANGUAGES: &'static str = "
-    CREATE TABLE languages (
+    CREATE TABLE IF NOT EXISTS languages (
 	    id  	        INTEGER NOT NULL PRIMARY KEY UNIQUE,
 	    text      	    TEXT NOT NULL UNIQUE
-    );
-	CREATE TRIGGER languages_auto AFTER INSERT ON languages
+    );";
+
+#[allow(dead_code)]
+pub const LANGUAGES_AUTO: &'static str = "
+	CREATE TRIGGER IF NOT EXISTS languages_auto AFTER INSERT ON languages
 	BEGIN
 	    UPDATE	languages
     	SET 	id = (SELECT max(id) + 1 FROM languages)
@@ -102,14 +105,14 @@ pub const LANGUAGES: &'static str = "
 
 #[allow(dead_code)]
 pub const IGNORED_LANGUAGES: &'static str = "
-	CREATE TABLE ignored_languages (
+	CREATE TABLE IF NOT EXISTS ignored_languages (
 	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    language_id         INTEGER    /* FK to languages.id */
     );";
 
 #[allow(dead_code)]
 pub const EXPECTED_LANGUAGES: &'static str = "
-	CREATE VIEW expected_languages
+	CREATE VIEW IF NOT EXISTS expected_languages
 		AS SELECT languages.id, languages.text
 		FROM languages LEFT JOIN ignored_languages ON languages.id = ignored_languages.language_id
 		WHERE ignored_languages.language_id is null;";

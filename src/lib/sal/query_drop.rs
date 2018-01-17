@@ -5,12 +5,11 @@ pub const PIECES: &'static str = "DROP TABLE pieces;";
 
 
 #[allow(dead_code)]
-pub const LANGUAGES: &'static str = "DROP TABLE languages;";
+pub const LANGUAGES: &'static str = "DROP TABLE IF EXISTS languages;";
 #[allow(dead_code)]
-pub const IGNORED_LANGUAGES: &'static str = "DROP TABLE ignored_languages;";
+pub const IGNORED_LANGUAGES: &'static str = "DROP TABLE IF EXISTS ignored_languages;";
 #[allow(dead_code)]
-pub const EXPECTED_LANGUAGES: &'static str = "DROP VIEW expected_languages;";
-
+pub const EXPECTED_LANGUAGES: &'static str = "DROP VIEW IF EXISTS expected_languages;";
 
 /*********************** Untested ***********************/
 
