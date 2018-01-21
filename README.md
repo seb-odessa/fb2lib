@@ -210,13 +210,6 @@ book2.fb2  (Deflated) :   235547/  783762 crc32:    532651912, offset: 241210
 ## fb2lib torrent
 
 
-### Show Book Title and Author(s)
-```
-$ fb2lib data/arch.zip show info book5.fb2
-'Эрагон. Возвращение' - Кристофер  Паолини 
-
-```
-
 ### Performance tests
 ```
 test fb::bench::deserialize_author       ... bench:      10,836 ns/iter (+/- 865)
