@@ -138,3 +138,7 @@ impl error::Error for Fb2Error {
         }
     }
 }
+
+pub fn into<F: Error>(e: F) -> Fb2Error {
+    Fb2Error::Custom(e.description().to_string())
+}
