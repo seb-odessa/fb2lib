@@ -191,11 +191,18 @@ FictionBook {
 }
 ```
 
-### fb2lib archive info book1.fb2
+### fb2lib archive inf book1.fb2
 This command extracts brief book description
 ```
 $ ./fb2lib archive archive.zip inf book2.fb2
 book2.fb2           : Ленка-пенка - Сергей Владимирович Арсеньев
+```
+
+### fb2lib archive zip book1.fb2
+This command extracts phisical description of the book in the archive.zip
+```
+$ ./fb2lib archive archive.zip zip book2.fb2
+book2.fb2  (Deflated) :   235547/  783762 crc32:    532651912, offset: 241210
 ```
 
 ## fb2lib database
