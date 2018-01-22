@@ -1,25 +1,3 @@
-/// Tool for working with archives of fb2 books
-/// Usage:
-///         ./fb2lib archive <archive.zip> <cmd> <subcommand>
-/// Commands <cmd>:
-///
-///     ls - print the list of files in the archive.zip
-/// $ ./fb2lib archive archive.zip ls
-/// book1.fb2
-/// book2.fb2
-///   ...
-/// bookN.fb2
-///
-///     check - checks integrity of files in the archive.zip
-/// $ ./fb2lib archive fb2-000024-030559.zip check
-/// Progress: 100%
-/// Succeeded 22807/22807 (100%)
-///
-///     xml - checks integrity of files in the archive.zip
-/// $ ./fb2lib archive fb2-000024-030559.zip check
-/// Progress: 100%
-/// Succeeded 22807/22807 (100%)
-
 use ui;
 use out;
 use tools;
@@ -30,10 +8,6 @@ use clap::{App, Arg, SubCommand, ArgMatches};
 
 pub const CMD: &'static str = "archive";
 const CMD_HELP: &'static str = "Use to work with archives of FB2 books";
-const ARCH_FILE: &'static str = "archive.zip";
-const ARCH_FILE_HELP: &'static str = "Archive file name with books in FB2 format";
-const BOOK_FILE: &'static str = "book.fb2";
-const BOOK_FILE_HELP: &'static str = "Book's file name in the archive";
 
 const LST: &'static str = "ls";
 const LST_HELP: &'static str = "Print the list of files in the archive";
@@ -51,8 +25,8 @@ const ZIP: &'static str = "zip";
 const ZIP_HELP: &'static str = "Extract book(s) zipped file information from archive";
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
-    let arch = Arg::with_name(ARCH_FILE).help(ARCH_FILE_HELP).required(true);
-    let book = Arg::with_name(BOOK_FILE).help(BOOK_FILE_HELP).required(false);
+    let arch = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true);
+    let book = Arg::with_name(ui::BOOK_FILE).help(ui::BOOK_FILE_HELP).required(false);
     let quiet = Arg::with_name(QUIET).help(QUIET_HELP).required(false);
 
     let cmd = SubCommand::with_name(CMD).about(CMD_HELP).arg(arch);
@@ -75,7 +49,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
 }
 
 pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
-    let archive_name = arg.value_of(ARCH_FILE).unwrap_or("").to_string();
+    let archive_name = arg.value_of(ui::ARCH_FILE).unwrap_or("").to_string();
     match arg.subcommand() {
         (LST, Some(_)) => {
             list_files(&archive_name)
@@ -84,19 +58,19 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
             check_archive(&archive_name, arg.occurrences_of(QUIET) != 0)
         }
         (XML, Some(arg)) => {
-            let book = arg.value_of(BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
             show_xml(&archive_name, book)
         }
         (FB2, Some(arg)) => {
-            let book = arg.value_of(BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
             show_fb2(&archive_name, book)
         }
         (INF, Some(arg)) => {
-            let book = arg.value_of(BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
             show_inf(&archive_name, book)
         }
         (ZIP, Some(arg)) => {
-            let book = arg.value_of(BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
             show_zip(&archive_name, book)
         }
         (_, _) => {
