@@ -18,13 +18,10 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let archive = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true);
     let torrent = Arg::with_name(ui::TORRENT_FILE).help(ui::TORRENT_FILE_HELP).required(true);
 
-    let cmd = SubCommand::with_name(CMD).about(CMD_HELP).arg(db);
-    let load = SubCommand::with_name(LOAD).about(LOAD_HELP).arg(torrent);
-    let check = SubCommand::with_name(CHECK).about(CHECK_HELP).arg(archive);
     app.subcommand(
-        cmd
-        .subcommand(load)
-        .subcommand(check)
+        SubCommand::with_name(CMD).about(CMD_HELP).arg(db)
+        .subcommand(SubCommand::with_name(LOAD).about(LOAD_HELP).arg(torrent))
+        .subcommand(SubCommand::with_name(CHECK).about(CHECK_HELP).arg(archive))
     )
 }
 

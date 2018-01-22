@@ -12,11 +12,9 @@ const RESET_HELP: &'static str = "Re-Initialize database (drop/create tables)";
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let db = Arg::with_name(ui::DB_FILE).help(ui::DB_FILE_HELP).required(false);
-    let cmd = SubCommand::with_name(CMD).about(CMD_HELP).arg(db);
-    let lst = SubCommand::with_name(RESET).about(RESET_HELP);
     app.subcommand(
-        cmd
-        .subcommand(lst)
+        SubCommand::with_name(CMD).about(CMD_HELP).arg(db)
+        .subcommand(SubCommand::with_name(RESET).about(RESET_HELP))
     )
 }
 

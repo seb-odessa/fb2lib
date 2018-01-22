@@ -29,22 +29,14 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let book = Arg::with_name(ui::BOOK_FILE).help(ui::BOOK_FILE_HELP).required(false);
     let quiet = Arg::with_name(QUIET).help(QUIET_HELP).required(false);
 
-    let cmd = SubCommand::with_name(CMD).about(CMD_HELP).arg(arch);
-    let lst = SubCommand::with_name(LST).about(LST_HELP);
-    let chk = SubCommand::with_name(CHECK).about(CHECK_HELP).arg(quiet);
-    let xml = SubCommand::with_name(XML).about(XML_HELP).arg(book.clone());
-    let fb2 = SubCommand::with_name(FB2).about(FB2_HELP).arg(book.clone());
-    let inf = SubCommand::with_name(INF).about(INF_HELP).arg(book.clone());
-    let zip = SubCommand::with_name(ZIP).about(ZIP_HELP).arg(book.clone());
-
     app.subcommand(
-        cmd
-        .subcommand(lst)
-        .subcommand(chk)
-        .subcommand(xml)
-        .subcommand(fb2)
-        .subcommand(inf)
-        .subcommand(zip)
+        SubCommand::with_name(CMD).about(CMD_HELP).arg(arch)
+        .subcommand(SubCommand::with_name(LST).about(LST_HELP))
+        .subcommand(SubCommand::with_name(CHECK).about(CHECK_HELP).arg(quiet))
+        .subcommand(SubCommand::with_name(XML).about(XML_HELP).arg(book.clone()))
+        .subcommand(SubCommand::with_name(FB2).about(FB2_HELP).arg(book.clone()))
+        .subcommand(SubCommand::with_name(INF).about(INF_HELP).arg(book.clone()))
+        .subcommand(SubCommand::with_name(ZIP).about(ZIP_HELP).arg(book.clone()))
     )
 }
 
