@@ -111,15 +111,23 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     let conn = Connection::open(db_file_name)?;
     // conn.execute(query_drop::ARCHIVES, &[])?;
     // conn.execute(query_drop::PIECES, &[])?;
-    conn.execute(query_drop::EXPECTED_LANGUAGES, &[])?;
-    conn.execute(query_drop::LANGUAGES, &[])?;
-    conn.execute(query_drop::IGNORED_LANGUAGES, &[])?;
+    // conn.execute(query_drop::LANGUAGES, &[])?;
+    // conn.execute(query_drop::FILTERS, &[])?;
+    // conn.execute(query_drop::FILTERS_DEF, &[])?;
+    conn.execute(query_drop::LANGUAGES_IGNORED, &[])?;
+    conn.execute(query_drop::LANGUAGES_EXPECTED, &[])?;
+      
     // conn.execute(query_create::ARCHIVES, &[])?;
     // conn.execute(query_create::PIECES, &[])?;    
-    conn.execute(query_create::LANGUAGES, &[])?;
-    conn.execute(query_create::IGNORED_LANGUAGES, &[])?;
-    conn.execute(query_create::EXPECTED_LANGUAGES, &[])?;
-    conn.execute(query_create::LANGUAGES_AUTO, &[])?;
+    // conn.execute(query_create::LANGUAGES, &[])?;
+    // conn.execute(query_create::LANGUAGES_AUTO, &[])?;
+    // conn.execute(query_create::FILTERS, &[])?;
+    // conn.execute(query_create::FILTERS_DEF, &[])?;
+    // conn.execute(query_create::FILL_FILTER, &[&1, &"lang"])?;
+    conn.execute(query_create::LANGUAGES_IGNORED, &[])?;
+    conn.execute(query_create::LANGUAGES_EXPECTED, &[])?;
+  
+    
 
     Ok(())
 }

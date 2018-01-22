@@ -91,7 +91,7 @@ pub const PIECES: &'static str = "
 pub const LANGUAGES: &'static str = "
     CREATE TABLE IF NOT EXISTS languages (
 	    id  	        INTEGER NOT NULL PRIMARY KEY UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
+	    name      	    TEXT NOT NULL UNIQUE
     );";
 
 #[allow(dead_code)]
@@ -104,18 +104,39 @@ pub const LANGUAGES_AUTO: &'static str = "
 	END;";
 
 #[allow(dead_code)]
-pub const IGNORED_LANGUAGES: &'static str = "
-	CREATE TABLE IF NOT EXISTS ignored_languages (
-	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    language_id         INTEGER NOT NULL UNIQUE   /* FK to languages.id */
-    );";
+pub const LANGUAGES_IGNORED: &'static str = "
+	CREATE VIEW IF NOT EXISTS languages_ignored AS 
+		SELECT languages.id, languages.name
+		FROM languages LEFT JOIN filters_def 
+		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
+		WHERE filters_def.filtered_id IS NOT NULL;";
 
 #[allow(dead_code)]
-pub const EXPECTED_LANGUAGES: &'static str = "
-	CREATE VIEW IF NOT EXISTS expected_languages
-		AS SELECT languages.id, languages.text
-		FROM languages LEFT JOIN ignored_languages ON languages.id = ignored_languages.language_id
-		WHERE ignored_languages.language_id is null;";
+pub const LANGUAGES_EXPECTED: &'static str = "
+	CREATE VIEW IF NOT EXISTS languages_expected AS 
+		SELECT languages.id, languages.name
+		FROM languages LEFT JOIN filters_def 
+		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
+		WHERE filters_def.filtered_id IS NULL;";
+
+#[allow(dead_code)]
+pub const FILTERS: &'static str = "
+	CREATE TABLE IF NOT EXISTS filters (
+	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    name      	    TEXT NOT NULL UNIQUE
+	);";
+
+#[allow(dead_code)]
+pub const FILTERS_DEF: &'static str = "
+	CREATE TABLE IF NOT EXISTS filters_def (
+	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    filter_id       INTEGER NOT NULL,  	/* FK to filters.id */
+		filtered_id     INTEGER NOT NULL   	/* FK to id  of the filtered table, e.g. languages.id*/
+	);";
+
+#[allow(dead_code)]
+pub const FILL_FILTER: &'static str = "
+	INSERT OR IGNORE INTO filters VALUES (?, ?);";
 
 
 /*********************** Untested ***********************/

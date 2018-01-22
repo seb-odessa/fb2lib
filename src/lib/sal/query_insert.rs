@@ -9,7 +9,7 @@ pub const PIECE: &'static str = "
 	INSERT INTO pieces (archive_id, piece_idx, hash) VALUES (?, ?, ?)";
 
 pub const LANGUAGES: &'static str = "
-    INSERT OR IGNORE INTO languages (id, text) VALUES (0, ?);";
+    INSERT OR IGNORE INTO languages (id, name) VALUES (0, ?);";
 
 pub const IGNORE_LANGUAGES: &'static str = "
-    INSERT OR IGNORE INTO ignored_languages (language_id) SELECT id FROM languages WHERE text = ?;";
+    INSERT OR IGNORE INTO ignored_languages (language_id) SELECT id FROM languages WHERE name = ?;";

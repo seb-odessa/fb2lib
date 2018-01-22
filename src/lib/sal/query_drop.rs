@@ -7,9 +7,14 @@ pub const PIECES: &'static str = "DROP TABLE pieces;";
 #[allow(dead_code)]
 pub const LANGUAGES: &'static str = "DROP TABLE IF EXISTS languages;";
 #[allow(dead_code)]
-pub const IGNORED_LANGUAGES: &'static str = "DROP TABLE IF EXISTS ignored_languages;";
+
+pub const FILTERS: &'static str = "DROP TABLE IF EXISTS filters;";
 #[allow(dead_code)]
-pub const EXPECTED_LANGUAGES: &'static str = "DROP VIEW IF EXISTS expected_languages;";
+pub const FILTERS_DEF: &'static str = "DROP TABLE IF EXISTS filters_def;";
+#[allow(dead_code)]
+pub const LANGUAGES_IGNORED: &'static str = "DROP VIEW IF EXISTS languages_ignored;";
+#[allow(dead_code)]
+pub const LANGUAGES_EXPECTED: &'static str = "DROP VIEW IF EXISTS languages_expected;";
 
 /*********************** Untested ***********************/
 
