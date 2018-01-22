@@ -118,9 +118,9 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_drop::FILTERS_DEF, &[])?;
     conn.execute(query_drop::LANGUAGES_DISABLED, &[])?;
     conn.execute(query_drop::LANGUAGES_ENABLED, &[])?;
-      
+
     // conn.execute(query_create::ARCHIVES, &[])?;
-    // conn.execute(query_create::PIECES, &[])?;    
+    // conn.execute(query_create::PIECES, &[])?;
     // conn.execute(query_create::LANGUAGES, &[])?;
     // conn.execute(query_create::LANGUAGES_AUTO, &[])?;
     // conn.execute(query_create::FILTERS, &[])?;
@@ -128,18 +128,12 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_create::FILL_FILTER, &[&1, &"lang"])?;
     conn.execute(query_create::LANGUAGES_DISABLED, &[])?;
     conn.execute(query_create::LANGUAGES_ENABLED, &[])?;
-  
-    
 
     Ok(())
 }
 
 pub fn insert_language(tx: &Transaction, lang: &String) -> SalResult<i32> {
     tx.execute(query_insert::LANGUAGES, &[lang])
-}
-
-pub fn insert_ignored_language(conn: &Connection, lang: &String) -> SalResult<i32> {
-    conn.execute(query_insert::IGNORE_LANGUAGES, &[lang])
 }
 
 pub fn get_languages_disabled(conn: &Connection) -> SalResult<Vec<(i32, String)>> {
@@ -162,4 +156,12 @@ pub fn get_languages_enabled(conn: &Connection) -> SalResult<Vec<(i32, String)>>
         result.push(lang);
     }
     Ok(result)
+}
+
+pub fn disable_language(conn: &Connection, lang: &str) -> SalResult<i32> {
+    conn.execute(query_insert::DISABLE_LANGUAGE, &[&lang])
+}
+
+pub fn enable_language(conn: &Connection, lang: &str) -> SalResult<(i32)> {
+    conn.execute(query_insert::ENABLE_LANGUAGE, &[&lang])
 }

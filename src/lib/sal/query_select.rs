@@ -6,6 +6,11 @@ pub const ARCH_SIZES_BY_NAME: &'static str = "SELECT id, total_length, piece_len
 
 pub const HASH_BY_ARCH_ID_AND_INDEX: &'static str = "SELECT hash FROM pieces WHERE archive_id = ?1 AND piece_idx = ?2";
 
-pub const LANGUAGES_DISABLED: &'static str = "SELECT id, name FROM languages_disabled";	
+pub const LANGUAGES_DISABLED: &'static str = "SELECT id, name FROM languages_disabled";
 
-pub const LANGUAGES_ENABLED: &'static str = "SELECT id, name FROM languages_enabled";	
+pub const LANGUAGES_ENABLED: &'static str = "SELECT id, name FROM languages_enabled";
+
+
+
+
+

@@ -37,19 +37,19 @@ pub fn lang_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     tx.commit().map_err(into)
 }
 
-pub fn lang_show(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("lang_show({}, {})", db_file_name, archive_name);
-    let langs = extract_langs(db_file_name, archive_name)?;
-    for lang in &langs {
-        println!("'{}'", lang);
-    }
-    Ok(())
-}
+// pub fn lang_show(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+//     println!("lang_show({}, {})", db_file_name, archive_name);
+//     let langs = extract_langs(db_file_name, archive_name)?;
+//     for lang in &langs {
+//         println!("'{}'", lang);
+//     }
+//     Ok(())
+// }
 
-pub fn lang_ignore(db_file_name: &str, language: &str) -> Fb2Result<()> {
-    println!("lang_ignore({}, {})", db_file_name, language);
-    let conn = sal::get_connection(db_file_name).map_err(into)?;
-    sal::insert_ignored_language(&conn, &String::from(language)).map_err(into)?;
-    Ok(())
-}
+// pub fn lang_ignore(db_file_name: &str, language: &str) -> Fb2Result<()> {
+//     println!("lang_ignore({}, {})", db_file_name, language);
+//     let conn = sal::get_connection(db_file_name).map_err(into)?;
+// //    sal::insert_ignored_language(&conn, &String::from(language)).map_err(into)?;
+//     Ok(())
+// }
 

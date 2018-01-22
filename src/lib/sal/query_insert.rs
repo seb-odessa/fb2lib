@@ -11,5 +11,17 @@ pub const PIECE: &'static str = "
 pub const LANGUAGES: &'static str = "
     INSERT OR IGNORE INTO languages (id, name) VALUES (0, ?);";
 
-pub const IGNORE_LANGUAGES: &'static str = "
-    INSERT OR IGNORE INTO ignored_languages (language_id) SELECT id FROM languages WHERE name = ?;";
+pub const DISABLE_LANGUAGE: &'static str = "
+ 	INSERT INTO filters_def (filter_id, filtered_id)
+	SELECT filters.id, languages.id
+	FROM filters, languages WHERE filters.name = \"lang\" AND languages.name = ?;";
+
+pub const ENABLE_LANGUAGE: &'static str = "
+	DELETE from filters_def WHERE id = (
+ 	SELECT filters_def.id FROM filters_def
+ 		JOIN filters ON filters_def.filter_id = filters.id
+ 		JOIN languages ON filters_def.filtered_id = languages.id
+ 		WHERE filters.name = \"lang\" AND languages.name = ?
+ 	)";
+
+
