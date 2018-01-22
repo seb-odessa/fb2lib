@@ -1,7 +1,6 @@
 use sal;
 use tools;
 use archive;
-use filesystem;
 use algorithm::{apply_and_collect};
 
 use result::Fb2Result;
@@ -13,29 +12,6 @@ use std::collections::HashSet;
 
 fn into<F: Error>(e: F) -> Fb2Error {
     Fb2Error::Custom(e.description().to_string())
-}
-
-
-pub fn db_cleanup(db_file_name: &str) -> Fb2Result<()> {
-    println!("db_cleanup({})", db_file_name);
-    sal::cleanup_tables(db_file_name).map_err(into)
-}
-
-pub fn torrent_load(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
-    println!("torrent_load({}, {})", db_file_name, torrent_name);
-    let metainfo = filesystem::load_torrent(torrent_name)?;
-    println!("file name:     {}", &metainfo.get_file_name());
-    println!("creation date: {}", &metainfo.get_creation_date());
-    println!("info hash:     {}", &metainfo.get_info_hash());
-    println!("total length:  {}", &metainfo.get_length());
-    println!("piece length:  {}", &metainfo.get_piece_length());
-    println!("piece count:   {}", &metainfo.get_piece_count());
-    sal::register(db_file_name, metainfo).map_err(into)
-}
-
-pub fn torrent_check(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("torrent_check({}, {})", db_file_name, archive_name);
-    filesystem::check_integrity(db_file_name, archive_name)
 }
 
 pub fn extract_langs(db_file_name: &str, archive_name: &str) -> Fb2Result<Vec<String>> {
