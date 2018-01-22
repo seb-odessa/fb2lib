@@ -17,4 +17,6 @@ pub use sal::imp::get_archive_sizes;
 pub use sal::imp::register;
 pub use sal::imp::validate;
 pub use sal::imp::get_hash;
+pub use sal::imp::get_languages_disabled;
+pub use sal::imp::get_languages_enabled;
 

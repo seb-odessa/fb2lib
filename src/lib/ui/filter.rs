@@ -23,8 +23,10 @@ const LANG_ARG_HELP: &'static str = "Language name. Use <display> subcommand to 
 
 const LANG_DISPLAY: &'static str = "display";
 const LANG_DISPLAY_HELP: &'static str = "Print list of disabled and allowed languages";
+
 const LANG_ALLOW: &'static str = "allow";
 const LANG_ALLOW_HELP: &'static str = "Remove specified language from filtered (disabled) list";
+
 const LANG_DISABLE: &'static str = "disable";
 const LANG_DISABLE_HELP: &'static str = "Add specified language to filtered (disabled) list";
 
@@ -73,7 +75,7 @@ fn handle_lang<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
 
 
 fn extract_langs(db_file_name: &str, archive_name: &str) -> Fb2Result<Vec<String>> {
-    println!("extract_langs({}, {})", db_file_name, archive_name);
+    println!("extract_langs({}, {})", db_file_name, archive_name);    
     let zip = archive::open(archive_name)?;
     let (sender, receiver) = channel();
     apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
@@ -85,9 +87,21 @@ fn extract_langs(db_file_name: &str, archive_name: &str) -> Fb2Result<Vec<String
 }
 
 fn lang_ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
-    println!("lang_display({}, {})", db_file_name, archive_name);
+    println!("lang_ls({}, {})", db_file_name, archive_name);
     for lang in &extract_langs(db_file_name, archive_name)? {
         println!("'{}'", lang);
     }
     Ok(())
 }
+
+fn lang_display(db_file_name: &str) -> Fb2Result<()> {
+    println!("lang_display({})", db_file_name);
+    let conn = sal::get_connection(db_file_name).map_err(into)?;
+    print!("enabled: ");
+    for lang in &sal::get_languages_disabled(&conn).map_err(into)? {
+        //print!("'{}' ", lang.2);
+    }
+    println!("");
+    Ok(())
+}
+

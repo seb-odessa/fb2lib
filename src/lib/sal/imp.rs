@@ -76,10 +76,11 @@ pub fn get_hash(conn: &Connection, id: i64, index: i64) -> SalResultOption<Strin
 fn get_archive_id(conn: &Connection, metainfo: &Metainfo) -> SalResult<i64> {
     let mut stmt = conn.prepare(query_select::ID_BY_HASH)?;
     let rows = stmt.query_map(&[&metainfo.get_info_hash()], |row| row.get(0))?;
-    for row in rows {
+     for row in rows {
         let id = row?;
         return Ok(id);
-    }
+
+     }
     conn.execute(query_insert::ARCHIVE, &[
         &metainfo.get_file_name(),
         &metainfo.get_creation_date(),
@@ -89,7 +90,8 @@ fn get_archive_id(conn: &Connection, metainfo: &Metainfo) -> SalResult<i64> {
         &(metainfo.get_piece_count() as i64),
     ])?;
     Ok(conn.last_insert_rowid())
-}
+
+ }
 
 pub fn register(db_file_name: &str, metainfo: Metainfo) -> SalResult<()> {
     let mut conn = Connection::open(db_file_name)?;
@@ -114,8 +116,8 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_drop::LANGUAGES, &[])?;
     // conn.execute(query_drop::FILTERS, &[])?;
     // conn.execute(query_drop::FILTERS_DEF, &[])?;
-    conn.execute(query_drop::LANGUAGES_IGNORED, &[])?;
-    conn.execute(query_drop::LANGUAGES_EXPECTED, &[])?;
+    conn.execute(query_drop::LANGUAGES_DISABLED, &[])?;
+    conn.execute(query_drop::LANGUAGES_ENABLED, &[])?;
       
     // conn.execute(query_create::ARCHIVES, &[])?;
     // conn.execute(query_create::PIECES, &[])?;    
@@ -124,8 +126,8 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_create::FILTERS, &[])?;
     // conn.execute(query_create::FILTERS_DEF, &[])?;
     // conn.execute(query_create::FILL_FILTER, &[&1, &"lang"])?;
-    conn.execute(query_create::LANGUAGES_IGNORED, &[])?;
-    conn.execute(query_create::LANGUAGES_EXPECTED, &[])?;
+    conn.execute(query_create::LANGUAGES_DISABLED, &[])?;
+    conn.execute(query_create::LANGUAGES_ENABLED, &[])?;
   
     
 
@@ -138,4 +140,26 @@ pub fn insert_language(tx: &Transaction, lang: &String) -> SalResult<i32> {
 
 pub fn insert_ignored_language(conn: &Connection, lang: &String) -> SalResult<i32> {
     conn.execute(query_insert::IGNORE_LANGUAGES, &[lang])
+}
+
+pub fn get_languages_disabled(conn: &Connection) -> SalResult<Vec<(i32, String)>> {
+    let mut result = Vec::new();
+    let mut stmt = conn.prepare(query_select::LANGUAGES_DISABLED)?;
+    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1)))?;
+    for row in rows {
+        let lang: (i32, String) = row?;
+        result.push(lang);
+    }
+    Ok(result)
+}
+
+pub fn get_languages_enabled(conn: &Connection) -> SalResult<Vec<(i32, String)>> {
+    let mut result = Vec::new();
+    let mut stmt = conn.prepare(query_select::LANGUAGES_ENABLED)?;
+    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1)))?;
+    for row in rows {
+        let lang: (i32, String) = row?;
+        result.push(lang);
+    }
+    Ok(result)
 }

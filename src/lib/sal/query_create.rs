@@ -104,16 +104,16 @@ pub const LANGUAGES_AUTO: &'static str = "
 	END;";
 
 #[allow(dead_code)]
-pub const LANGUAGES_IGNORED: &'static str = "
-	CREATE VIEW IF NOT EXISTS languages_ignored AS 
+pub const LANGUAGES_DISABLED: &'static str = "
+	CREATE VIEW IF NOT EXISTS languages_disabled AS 
 		SELECT languages.id, languages.name
 		FROM languages LEFT JOIN filters_def 
 		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
 		WHERE filters_def.filtered_id IS NOT NULL;";
 
 #[allow(dead_code)]
-pub const LANGUAGES_EXPECTED: &'static str = "
-	CREATE VIEW IF NOT EXISTS languages_expected AS 
+pub const LANGUAGES_ENABLED: &'static str = "
+	CREATE VIEW IF NOT EXISTS languages_enabled AS 
 		SELECT languages.id, languages.name
 		FROM languages LEFT JOIN filters_def 
 		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id

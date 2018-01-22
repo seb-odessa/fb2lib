@@ -12,9 +12,9 @@ pub const FILTERS: &'static str = "DROP TABLE IF EXISTS filters;";
 #[allow(dead_code)]
 pub const FILTERS_DEF: &'static str = "DROP TABLE IF EXISTS filters_def;";
 #[allow(dead_code)]
-pub const LANGUAGES_IGNORED: &'static str = "DROP VIEW IF EXISTS languages_ignored;";
+pub const LANGUAGES_DISABLED: &'static str = "DROP VIEW IF EXISTS languages_disabled;";
 #[allow(dead_code)]
-pub const LANGUAGES_EXPECTED: &'static str = "DROP VIEW IF EXISTS languages_expected;";
+pub const LANGUAGES_ENABLED: &'static str = "DROP VIEW IF EXISTS languages_enabled;";
 
 /*********************** Untested ***********************/
 
