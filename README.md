@@ -33,7 +33,7 @@ This command allows to manage torrent meta information.
 
 | Command | Description |
 | ------- | ----------- |
-| `$ ./fb2lib torrent [db] load file.torrent`  | Load metainfo from the torrent file  into DB |
+| `$ ./fb2lib torrent [db] load archive.torrent`  | Load metainfo from the torrent file  into DB |
 | `$ ./fb2lib torrent [db] check archive.zip`  | Check archive.zip integrity with  compare of the loaded metainfo |
 
 
