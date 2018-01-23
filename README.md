@@ -21,13 +21,23 @@ The *book* argument may be replaced by regexps or wildcards, e.g:
 
 
 ## fb2lib database
+This command allows to manage database.
+
+| Command | Description |
+| ------- | ----------- |
+| `$ ./fb2lib database reset`  | Reinitialize tables and views |
+
 
 ## fb2lib torrent
+This command allows to manage torrent meta information.
 
-## fb2lib filter
-Used to define filters.
+| Command | Description |
+| ------- | ----------- |
+| `$ ./fb2lib torrent [db] load file.torrent`  | Load metainfo from the torrent file  into DB |
+| `$ ./fb2lib torrent [db] check archive.zip`  | Check archive.zip integrity with  compare of the loaded metainfo |
 
-### fb2lib filter lang
+
+## fb2lib filter lang
 This command allows to define language filters.
 
 | Command | Description |
@@ -50,16 +60,6 @@ test tools::bench::get_encoding          ... bench:         200 ns/iter (+/- 19)
 test tools::bench::into_utf8             ... bench:       1,136 ns/iter (+/- 100)
 
 ```
-
-## Work with database
-### Initialize database structure
-```
-$ ./fb2lib database cleanup
-db_cleanup(lib.rus.ec.db)
-```
-### Work with Metainfo (torrent) data
-TODO
-
 ### Links
 - https://en.wikipedia.org/wiki/FictionBook
 - http://fictionbook.org/index.php/FictionBook

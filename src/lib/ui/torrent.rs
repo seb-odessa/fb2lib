@@ -14,7 +14,7 @@ const CHECK: &'static str = "check";
 const CHECK_HELP: &'static str = "Compare existing file's SHA1 hashes with the loaded into DB";
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
-    let db = Arg::with_name(ui::DB_FILE).help(ui::DB_FILE_HELP).required(true);
+    let db = Arg::with_name(ui::DB_FILE).help(ui::DB_FILE_HELP).required(false);
     let archive = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true);
     let torrent = Arg::with_name(ui::TORRENT_FILE).help(ui::TORRENT_FILE_HELP).required(true);
 
