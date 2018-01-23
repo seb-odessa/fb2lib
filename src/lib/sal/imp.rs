@@ -166,3 +166,12 @@ pub fn disable_language(conn: &Connection, lang: &str) -> SalResult<i32> {
 pub fn enable_language(conn: &Connection, lang: &str) -> SalResult<(i32)> {
     conn.execute(query_insert::ENABLE_LANGUAGE, &[&lang])
 }
+
+pub fn get_genre_name(conn: &Connection, genre: &str) -> SalResultOption<String> {
+    let mut stmt = conn.prepare(query_select::GENRE_NAME)?;
+    for row in stmt.query_map(&[&genre], |row| (row.get(0)))? {
+        let genre: String = row?;
+        return Ok(Some(genre));
+    }
+    Ok(None)
+}

@@ -151,8 +151,13 @@ fn lang_ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
 
 fn genre_ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     println!("genre_ls({}, {})", db_file_name, archive_name);
-    for lang in &extract_genres(db_file_name, archive_name)? {
-        println!("'{}'", lang);
+    let conn = sal::get_connection(db_file_name).map_err(into)?;
+    for code in &extract_genres(db_file_name, archive_name)? {
+        if let Some(genre) = sal::get_genre_name(&conn, code)? {
+            println!("'{}' - {}", code, genre);
+        } else {
+            println!("'{}' - !!!!!!!", code);
+        }        
     }
     Ok(())
 }
