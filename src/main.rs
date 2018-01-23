@@ -4,12 +4,6 @@ extern crate clap;
 use clap::{App, AppSettings};
 use lib::ui;
 
-// use lib::ui::archive;
-// use lib::ui::database;
-// use lib::ui::torrent;
-// use lib::ui::filter;
-// use lib::ui::Adapter;
-
 const VERSION: &'static str = "v0.5.5";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ABOUT: &'static str = "FictionBook Library Archive Manager";

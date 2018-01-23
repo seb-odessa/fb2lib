@@ -4,9 +4,9 @@ use tools;
 use archive;
 use result::into;
 use result::Fb2Result;
-use clap::{App, Arg, SubCommand, ArgMatches};
 use algorithm::{apply_and_collect, make_regex};
 
+use clap::{App, Arg, SubCommand, ArgMatches};
 use std::sync::mpsc::channel;
 use std::collections::HashSet;
 
@@ -15,23 +15,24 @@ const CMD_HELP: &'static str = "Use to manage filters";
 
 const LANG: &'static str = "lang";
 const LANG_HELP: &'static str = "Use to manage language filters";
-
 const LANG_LS: &'static str = "ls";
-const LANG_LS_HELP: &'static str = "Print sorted unique list of languages from the specified archive.zip";
+const LANG_LS_HELP: &'static str = "Print list of languages from the specified archive.zip";
 const LANG_ARG: &'static str = "language";
 const LANG_ARG_HELP: &'static str = "Language name. Use */./? as willdcards";
-
 const LANG_DISPLAY: &'static str = "display";
 const LANG_DISPLAY_HELP: &'static str = "Print list of disabled and enabled languages";
-
 const LANG_ENABLE: &'static str = "enable";
 const LANG_ENABLE_HELP: &'static str = "Remove specified language from filtered (disabled) list";
-
 const LANG_DISABLE: &'static str = "disable";
 const LANG_DISABLE_HELP: &'static str = "Add specified language to filtered (disabled) list";
-
 const LANG_LOAD: &'static str = "load";
 const LANG_LOAD_HELP: &'static str = "Load unique languages to the database";
+
+const GENRE: &'static str = "genre";
+const GENRE_HELP: &'static str = "Use to manage genre filters";
+const GENRE_LS: &'static str = "ls";
+const GENRE_LS_HELP: &'static str = "Print list of genres from the specified archive.zip";
+
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let db = Arg::with_name(ui::DB_FILE).help(ui::DB_FILE_HELP).required(false);
@@ -47,6 +48,10 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(LANG_DISABLE).about(LANG_DISABLE_HELP).arg(lang.clone()))
             .subcommand(SubCommand::with_name(LANG_LOAD).about(LANG_LOAD_HELP).arg(archive.clone()))
         )
+        .subcommand(
+            SubCommand::with_name(GENRE).about(GENRE_HELP)
+            .subcommand(SubCommand::with_name(GENRE_LS).about(GENRE_LS_HELP).arg(archive.clone()))
+        )
     )
 }
 
@@ -54,6 +59,18 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
     let database = arg.value_of(ui::DB_FILE).unwrap_or(ui::DB_FILE);
     match arg.subcommand() {
         (LANG, Some(arg)) => handle_lang(&database, &arg),
+        (GENRE, Some(arg)) => handle_genre(&database, &arg),
+        (_, _) => ui::usage(arg)
+    }
+}
+
+fn handle_genre<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
+    match arg.subcommand() {
+        (GENRE_LS, Some(arg)) => {
+            let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
+            genre_ls(db_file_name, archive)
+        }
+
         (_, _) => ui::usage(arg)
     }
 }
@@ -90,9 +107,27 @@ fn extract_langs(db_file_name: &str, archive_name: &str) -> Fb2Result<Vec<String
     apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
     let mut langs = HashSet::new();
     for fb2book in receiver.iter() {
-        langs.insert(fb2book?.get_book_lang());
+        if let Some(fb2) = fb2book.ok() {
+            langs.insert(fb2.get_book_lang());
+        }
     }
     Ok(langs.into_iter().collect())
+}
+
+fn extract_genres(db_file_name: &str, archive_name: &str) -> Fb2Result<Vec<String>> {
+    println!("extract_genres({}, {})", db_file_name, archive_name);
+    let zip = archive::open(archive_name)?;
+    let (sender, receiver) = channel();
+    apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
+    let mut genres = HashSet::new();
+    for fb2book in receiver.iter() {
+        if let Some(fb2) = fb2book.ok() {
+            for genre in fb2.get_book_genres().into_iter() {
+                genres.insert(genre);
+            }
+        }
+    }
+    Ok(genres.into_iter().collect())
 }
 
 fn lang_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
@@ -108,7 +143,15 @@ fn lang_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
 
 fn lang_ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     println!("lang_ls({}, {})", db_file_name, archive_name);
-    for lang in &extract_langs(db_file_name, archive_name)? {
+    for genre in &extract_genres(db_file_name, archive_name)? {
+        println!("'{}'", genre);
+    }
+    Ok(())
+}
+
+fn genre_ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
+    println!("genre_ls({}, {})", db_file_name, archive_name);
+    for lang in &extract_genres(db_file_name, archive_name)? {
         println!("'{}'", lang);
     }
     Ok(())

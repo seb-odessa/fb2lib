@@ -116,8 +116,9 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_drop::LANGUAGES, &[])?;
     // conn.execute(query_drop::FILTERS, &[])?;
     // conn.execute(query_drop::FILTERS_DEF, &[])?;
-    conn.execute(query_drop::LANGUAGES_DISABLED, &[])?;
-    conn.execute(query_drop::LANGUAGES_ENABLED, &[])?;
+    // conn.execute(query_drop::LANGUAGES_DISABLED, &[])?;
+    // conn.execute(query_drop::LANGUAGES_ENABLED, &[])?;
+    conn.execute_batch(query_drop::GENRE_SUBSYSTEM)?;
 
     // conn.execute(query_create::ARCHIVES, &[])?;
     // conn.execute(query_create::PIECES, &[])?;
@@ -126,8 +127,10 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_create::FILTERS, &[])?;
     // conn.execute(query_create::FILTERS_DEF, &[])?;
     // conn.execute(query_create::FILL_FILTER, &[&1, &"lang"])?;
-    conn.execute(query_create::LANGUAGES_DISABLED, &[])?;
-    conn.execute(query_create::LANGUAGES_ENABLED, &[])?;
+    // conn.execute(query_create::LANGUAGES_DISABLED, &[])?;
+    // conn.execute(query_create::LANGUAGES_ENABLED, &[])?;
+    conn.execute_batch(query_create::GENRE_SUBSYSTEM)?;
+    
 
     Ok(())
 }

@@ -138,6 +138,144 @@ pub const FILTERS_DEF: &'static str = "
 pub const FILL_FILTER: &'static str = "
 	INSERT OR IGNORE INTO filters VALUES (?, ?);";
 
+#[allow(dead_code)]
+pub const GENRE_SUBSYSTEM: &'static str = "
+	BEGIN;
+        CREATE TABLE genre_map (
+			id		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    		code	TEXT NOT NULL UNIQUE,
+    		name	TEXT NOT NULL
+		);
+		INSERT INTO genre_map (code, name) VALUES ('sf_history', 	'Альтернативная история');
+		INSERT INTO genre_map (code, name) VALUES ('sf_action', 	'Боевая фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_epic', 		'Эпическая фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_heroic', 	'Героическая фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_detective', 	'Детективная фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_cyberpunk', 	'Киберпанк');
+		INSERT INTO genre_map (code, name) VALUES ('sf_space', 		'Космическая фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_social', 	'Социально-психологическая фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_horror', 	'Ужасы и Мистика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_humor', 		'Юмористическая фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('sf_fantasy', 	'Фэнтези');
+		INSERT INTO genre_map (code, name) VALUES ('sf', 			'Научная Фантастика');
+
+		INSERT INTO genre_map (code, name) VALUES ('det_classic', 	'Классический детектив');
+		INSERT INTO genre_map (code, name) VALUES ('det_police', 	'Полицейский детектив');
+		INSERT INTO genre_map (code, name) VALUES ('det_action', 	'Боевик');
+		INSERT INTO genre_map (code, name) VALUES ('det_irony', 	'Иронический детектив');
+		INSERT INTO genre_map (code, name) VALUES ('det_history', 	'Исторический детектив');
+		INSERT INTO genre_map (code, name) VALUES ('det_espionage', 'Шпионский детектив');
+		INSERT INTO genre_map (code, name) VALUES ('det_crime', 	'Криминальный детектив');
+		INSERT INTO genre_map (code, name) VALUES ('det_political', 'Политический детектив');
+		INSERT INTO genre_map (code, name) VALUES ('det_maniac', 	'Маньяки');
+		INSERT INTO genre_map (code, name) VALUES ('det_hard', 		'Крутой детектив');
+		INSERT INTO genre_map (code, name) VALUES ('thriller', 		'Триллер');
+		INSERT INTO genre_map (code, name) VALUES ('detective', 	'Детектив');
+
+		INSERT INTO genre_map (code, name) VALUES ('prose_classic', 		'Классическая проза');
+		INSERT INTO genre_map (code, name) VALUES ('prose_history', 		'Историческая проза');
+		INSERT INTO genre_map (code, name) VALUES ('prose_contemporary', 	'Современная проза');
+		INSERT INTO genre_map (code, name) VALUES ('prose_counter', 		'Контркультура');
+		INSERT INTO genre_map (code, name) VALUES ('prose_rus_classic', 	'Русская классическая проза');
+		INSERT INTO genre_map (code, name) VALUES ('prose_su_classics', 	'Советская классическая проза');
+
+		INSERT INTO genre_map (code, name) VALUES ('love_contemporary', 'Современные любовные романы');
+		INSERT INTO genre_map (code, name) VALUES ('love_history', 		'Исторические любовные романы');
+		INSERT INTO genre_map (code, name) VALUES ('love_detective', 	'Остросюжетные любовные романы');
+		INSERT INTO genre_map (code, name) VALUES ('love_short', 		'Короткие любовные романы');
+		INSERT INTO genre_map (code, name) VALUES ('love_erotica', 		'Эротика');
+
+		INSERT INTO genre_map (code, name) VALUES ('adv_western', 	'Вестерн');
+		INSERT INTO genre_map (code, name) VALUES ('adv_history', 	'Исторические приключения');
+		INSERT INTO genre_map (code, name) VALUES ('adv_indian', 	'Приключения про индейцев');
+		INSERT INTO genre_map (code, name) VALUES ('adv_maritime', 	'Морские приключения');
+		INSERT INTO genre_map (code, name) VALUES ('adv_geo', 		'Путешествия и география');
+		INSERT INTO genre_map (code, name) VALUES ('adv_animal', 	'Природа и животные');
+		INSERT INTO genre_map (code, name) VALUES ('adventure', 	'Прочие приключения');
+
+		INSERT INTO genre_map (code, name) VALUES ('child_tale', 		'Сказка');
+		INSERT INTO genre_map (code, name) VALUES ('child_verse', 		'Детские стихи');
+		INSERT INTO genre_map (code, name) VALUES ('child_prose', 		'Детскиая проза');
+		INSERT INTO genre_map (code, name) VALUES ('child_sf', 			'Детская фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('child_det',			'Детские остросюжетные');
+		INSERT INTO genre_map (code, name) VALUES ('child_adv', 		'Детские приключения');
+		INSERT INTO genre_map (code, name) VALUES ('child_education', 	'Детская образовательная литература');
+		INSERT INTO genre_map (code, name) VALUES ('children', 			'Прочая детская литература');
+
+		INSERT INTO genre_map (code, name) VALUES ('poetry', 		'Поэзия');
+		INSERT INTO genre_map (code, name) VALUES ('dramaturgy', 	'Драматургия');
+
+		INSERT INTO genre_map (code, name) VALUES ('antique_ant', 		'Античная литература');
+		INSERT INTO genre_map (code, name) VALUES ('antique_european', 	'Европейская старинная литература');
+		INSERT INTO genre_map (code, name) VALUES ('antique_russian', 	'Древнерусская литература');
+		INSERT INTO genre_map (code, name) VALUES ('antique_east', 		'Древневосточная литература');
+		INSERT INTO genre_map (code, name) VALUES ('antique_myths', 	'Мифы. Легенды. Эпос');
+		INSERT INTO genre_map (code, name) VALUES ('antique', 			'Прочая старинная литература');
+
+		INSERT INTO genre_map (code, name) VALUES ('sci_history', 		'История');
+		INSERT INTO genre_map (code, name) VALUES ('sci_psychology', 	'Психология');
+		INSERT INTO genre_map (code, name) VALUES ('sci_culture', 		'Культурология');
+		INSERT INTO genre_map (code, name) VALUES ('sci_religion', 		'Религиоведение');
+		INSERT INTO genre_map (code, name) VALUES ('sci_philosophy',	'Философия');
+		INSERT INTO genre_map (code, name) VALUES ('sci_politics', 		'Политика');
+		INSERT INTO genre_map (code, name) VALUES ('sci_business', 		'Деловая литература');
+		INSERT INTO genre_map (code, name) VALUES ('sci_juris', 		'Юриспруденция');
+		INSERT INTO genre_map (code, name) VALUES ('sci_linguistic', 	'Языкознание');
+		INSERT INTO genre_map (code, name) VALUES ('sci_medicine', 		'Медицина');
+		INSERT INTO genre_map (code, name) VALUES ('sci_phys', 			'Физика');
+		INSERT INTO genre_map (code, name) VALUES ('sci_math', 			'Математика');
+		INSERT INTO genre_map (code, name) VALUES ('sci_chem', 			'Химия');
+		INSERT INTO genre_map (code, name) VALUES ('sci_biology', 		'Биология');
+		INSERT INTO genre_map (code, name) VALUES ('sci_tech', 			'Технические науки');
+		INSERT INTO genre_map (code, name) VALUES ('science', 			'Прочая научная литература');
+    
+		INSERT INTO genre_map (code, name) VALUES ('comp_www', 			'Интернет');
+		INSERT INTO genre_map (code, name) VALUES ('comp_programming', 	'Программирование');
+		INSERT INTO genre_map (code, name) VALUES ('comp_hard', 		'Компьютерное железо (аппаратное обеспечение)');
+		INSERT INTO genre_map (code, name) VALUES ('comp_soft', 		'Программы');
+		INSERT INTO genre_map (code, name) VALUES ('comp_db', 			'Базы данных');
+		INSERT INTO genre_map (code, name) VALUES ('comp_osnet', 		'ОС и Сети');
+		INSERT INTO genre_map (code, name) VALUES ('computers', 		'Прочая околокомпьтерная литература');
+
+		INSERT INTO genre_map (code, name) VALUES ('ref_encyc', 	'Энциклопедии');
+		INSERT INTO genre_map (code, name) VALUES ('ref_dict', 		'Словари');
+		INSERT INTO genre_map (code, name) VALUES ('ref_ref', 		'Справочники');
+		INSERT INTO genre_map (code, name) VALUES ('ref_guide', 	'Руководства');
+		INSERT INTO genre_map (code, name) VALUES ('reference', 	'Прочая справочная литература');
+
+		INSERT INTO genre_map (code, name) VALUES ('nonf_biography', 	'Биографии и Мемуары');
+		INSERT INTO genre_map (code, name) VALUES ('nonf_publicism',	'Публицистика');
+		INSERT INTO genre_map (code, name) VALUES ('nonf_criticism', 	'Критика');
+		INSERT INTO genre_map (code, name) VALUES ('design', 			'Искусство и Дизайн');
+		INSERT INTO genre_map (code, name) VALUES ('nonfiction', 		'Прочая документальная литература');
+
+		INSERT INTO genre_map (code, name) VALUES ('religion_rel', 			'Религия');
+		INSERT INTO genre_map (code, name) VALUES ('religion_esoterics', 	'Эзотерика');
+		INSERT INTO genre_map (code, name) VALUES ('religion_self', 		'Самосовершенствование');
+		INSERT INTO genre_map (code, name) VALUES ('religion', 				'Прочая религионая литература');
+
+		INSERT INTO genre_map (code, name) VALUES ('humor_anecdote', 	'Анекдоты');
+		INSERT INTO genre_map (code, name) VALUES ('humor_prose', 		'Юмористическая проза');
+		INSERT INTO genre_map (code, name) VALUES ('humor_verse', 		'Юмористические стихи');
+		INSERT INTO genre_map (code, name) VALUES ('humor', 			'Прочий юмор');
+
+		INSERT INTO genre_map (code, name) VALUES ('home_cooking', 		'Кулинария');
+		INSERT INTO genre_map (code, name) VALUES ('home_pets', 		'Домашние животные');
+		INSERT INTO genre_map (code, name) VALUES ('home_crafts', 		'Хобби и ремесла');
+		INSERT INTO genre_map (code, name) VALUES ('home_entertain',	'Развлечения');
+		INSERT INTO genre_map (code, name) VALUES ('home_health', 		'Здоровье');
+		INSERT INTO genre_map (code, name) VALUES ('home_garden', 		'Сад и огород');
+		INSERT INTO genre_map (code, name) VALUES ('home_diy', 			'Сделай сам');
+		INSERT INTO genre_map (code, name) VALUES ('home_sport', 		'Спорт');
+		INSERT INTO genre_map (code, name) VALUES ('home_sex', 			'Эротика, Секс');
+		INSERT INTO genre_map (code, name) VALUES ('home', 				'Прочиее домоводство');
+
+		CREATE TABLE genres (
+	    	id  	INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	    	text    TEXT NOT NULL UNIQUE
+    );
+    COMMIT;";
+
 
 /*********************** Untested ***********************/
 #[allow(dead_code)]
@@ -150,13 +288,6 @@ pub const BOOKS: &'static str = "
         packed_size     INTEGER,
         unpacked_size   INTEGER,
         file_offset     INTEGER
-    );";
-
-#[allow(dead_code)]
-pub const GENRES: &'static str = "
-    CREATE TABLE genres (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
     );";
 
 #[allow(dead_code)]
