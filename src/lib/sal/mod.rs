@@ -8,7 +8,7 @@ use std::collections::HashMap;
 
 pub type HashesByIdx = HashMap<i64, String>;
 
-pub use sal::imp::cleanup_tables;
+pub use sal::imp::reset_tables;
 pub use sal::imp::insert_language;
 
 pub use sal::imp::get_connection;

@@ -109,7 +109,7 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> SalResult<()> {
     tx.commit()
 }
 
-pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
+pub fn reset_tables(db_file_name: &str) -> SalResult<()> {
     let conn = Connection::open(db_file_name)?;
     // conn.execute(query_drop::ARCHIVES, &[])?;
     // conn.execute(query_drop::PIECES, &[])?;

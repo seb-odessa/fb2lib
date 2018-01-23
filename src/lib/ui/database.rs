@@ -28,5 +28,5 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
 
 pub fn reset(db_file_name: &str) -> Fb2Result<()> {
     println!("reset({})", db_file_name);
-    sal::cleanup_tables(db_file_name).map_err(into)
+    sal::reset_tables(db_file_name).map_err(into)
 }
