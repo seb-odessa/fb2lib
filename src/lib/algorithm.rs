@@ -81,7 +81,7 @@ where
 }
 
 
-fn make_regex(file_mask: &str) -> Fb2Result<Regex> {
+pub fn make_regex(file_mask: &str) -> Fb2Result<Regex> {
     Regex::new(&wildcards_to_regex(file_mask)).map_err(|e| {
         Fb2Error::Custom(String::from(e.description()))
     })

@@ -5,7 +5,7 @@ use archive;
 use result::into;
 use result::Fb2Result;
 use clap::{App, Arg, SubCommand, ArgMatches};
-use algorithm::apply_and_collect;
+use algorithm::{apply_and_collect, make_regex};
 
 use std::sync::mpsc::channel;
 use std::collections::HashSet;
@@ -19,7 +19,7 @@ const LANG_HELP: &'static str = "Use to manage language filters";
 const LANG_LS: &'static str = "ls";
 const LANG_LS_HELP: &'static str = "Print sorted unique list of languages from the specified archive.zip";
 const LANG_ARG: &'static str = "language";
-const LANG_ARG_HELP: &'static str = "Language name. Use <display> subcommand to show existing languages";
+const LANG_ARG_HELP: &'static str = "Language name. Use */./? as wildcards";
 
 const LANG_DISPLAY: &'static str = "display";
 const LANG_DISPLAY_HELP: &'static str = "Print list of disabled and enabled languages";
@@ -101,7 +101,7 @@ fn lang_load(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     let mut conn = sal::get_connection(db_file_name).map_err(into)?;
     let tx = conn.transaction().map_err(into)?;
     for lang in &langs {
-        sal::insert_language(&tx, lang).map_err(into)?;
+        sal::insert_language(&tx, lang.to_lowercase().as_str().trim()).map_err(into)?;
     }
     tx.commit().map_err(into)
 }
@@ -119,12 +119,12 @@ fn lang_display(db_file_name: &str) -> Fb2Result<()> {
     let conn = sal::get_connection(db_file_name).map_err(into)?;
     print!("disabled languages: ");
     for lang in &sal::get_languages_disabled(&conn).map_err(into)? {
-        print!("'{}' ", lang.1  );
+        print!("'{}' ", lang);
     }
     println!("");
     print!("enabled languages: ");
     for lang in &sal::get_languages_enabled(&conn).map_err(into)? {
-        print!("'{}' ", lang.1  );
+        print!("'{}' ", lang);
     }
     println!("");
     Ok(())
@@ -132,15 +132,29 @@ fn lang_display(db_file_name: &str) -> Fb2Result<()> {
 
 fn lang_enable(db_file_name: &str, lang: &str) -> Fb2Result<()> {
     println!("lang_enable({}, {})", db_file_name, lang);
-    let conn = sal::get_connection(db_file_name).map_err(into)?;
-    sal::enable_language(&conn, lang).map_err(into)?;
+    let conn = sal::get_connection(db_file_name).map_err(into)?;        
+    let re = make_regex(lang)?;
+    for lang in &sal::get_languages_disabled(&conn).map_err(into)? {
+        if re.is_match(lang) {
+            sal::enable_language(&conn, lang).map_err(into)?;
+            println!("{} enabled", lang);
+        }
+    }
+
+
     Ok(())
 }
 
 fn lang_disable(db_file_name: &str, lang: &str) -> Fb2Result<()> {
     println!("lang_disable({}, {})", db_file_name, lang);
     let conn = sal::get_connection(db_file_name).map_err(into)?;
-    sal::disable_language(&conn, lang).map_err(into)?;
+    let re = make_regex(lang)?;
+    for lang in &sal::get_languages_enabled(&conn).map_err(into)? {
+        if re.is_match(lang) {
+            sal::disable_language(&conn, lang).map_err(into)?;
+            println!("{} disabled", lang);
+        }
+    }
     Ok(())
 }
 

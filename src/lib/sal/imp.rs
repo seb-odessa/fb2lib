@@ -132,27 +132,25 @@ pub fn cleanup_tables(db_file_name: &str) -> SalResult<()> {
     Ok(())
 }
 
-pub fn insert_language(tx: &Transaction, lang: &String) -> SalResult<i32> {
-    tx.execute(query_insert::LANGUAGES, &[lang])
+pub fn insert_language(tx: &Transaction, lang: &str) -> SalResult<i32> {
+    tx.execute(query_insert::LANGUAGES, &[&lang])
 }
 
-pub fn get_languages_disabled(conn: &Connection) -> SalResult<Vec<(i32, String)>> {
+pub fn get_languages_disabled(conn: &Connection) -> SalResult<Vec<String>> {
     let mut result = Vec::new();
     let mut stmt = conn.prepare(query_select::LANGUAGES_DISABLED)?;
-    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1)))?;
-    for row in rows {
-        let lang: (i32, String) = row?;
+    for row in stmt.query_map(&[], |row| row.get(0))? {
+        let lang: String = row?;
         result.push(lang);
     }
     Ok(result)
 }
 
-pub fn get_languages_enabled(conn: &Connection) -> SalResult<Vec<(i32, String)>> {
+pub fn get_languages_enabled(conn: &Connection) -> SalResult<Vec<String>> {
     let mut result = Vec::new();
     let mut stmt = conn.prepare(query_select::LANGUAGES_ENABLED)?;
-    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1)))?;
-    for row in rows {
-        let lang: (i32, String) = row?;
+    for row in stmt.query_map(&[], |row| row.get(0))? {
+        let lang: String = row?;
         result.push(lang);
     }
     Ok(result)
