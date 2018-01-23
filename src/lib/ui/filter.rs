@@ -19,7 +19,7 @@ const LANG_HELP: &'static str = "Use to manage language filters";
 const LANG_LS: &'static str = "ls";
 const LANG_LS_HELP: &'static str = "Print sorted unique list of languages from the specified archive.zip";
 const LANG_ARG: &'static str = "language";
-const LANG_ARG_HELP: &'static str = "Language name. Use */./? as wildcards";
+const LANG_ARG_HELP: &'static str = "Language name. Use */./? as willdcards";
 
 const LANG_DISPLAY: &'static str = "display";
 const LANG_DISPLAY_HELP: &'static str = "Print list of disabled and enabled languages";
