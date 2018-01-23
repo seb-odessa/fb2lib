@@ -10,6 +10,14 @@ pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     haystack.windows(sz).position(|window| window == needle)
 }
 
+pub fn capitalize<S: Into<String>>(text: S) -> String {
+    let mut buffer: Vec<char> = text.into().chars().collect();
+    if !buffer.is_empty() {
+        buffer[0] = buffer[0].to_uppercase().nth(0).unwrap();
+    }    
+    buffer.into_iter().collect()
+}
+
 fn drop_leading_bytes(xml: String) -> Result<String, String> {
     if xml.chars().next() != Some('<') {
         return Ok(xml.chars().skip_while(|c| *c != '<').collect());

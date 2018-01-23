@@ -123,7 +123,9 @@ fn extract_genres(db_file_name: &str, archive_name: &str) -> Fb2Result<Vec<Strin
     for fb2book in receiver.iter() {
         if let Some(fb2) = fb2book.ok() {
             for genre in fb2.get_book_genres().into_iter() {
-                genres.insert(genre);
+                for genre in genre.split(",") {
+                    genres.insert(genre.trim().to_string());    
+                }
             }
         }
     }
@@ -153,8 +155,8 @@ fn genre_ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
     println!("genre_ls({}, {})", db_file_name, archive_name);
     let conn = sal::get_connection(db_file_name).map_err(into)?;
     for code in &extract_genres(db_file_name, archive_name)? {
-        if let Some(genre) = sal::get_genre_name(&conn, code)? {
-            println!("'{}' - {}", code, genre);
+        if let Some(genre) = sal::get_genre_name(&conn, code.to_lowercase().as_str())? {
+            //println!("'{}' - {}", code, tools::capitalize(genre));
         } else {
             println!("'{}' - !!!!!!!", code);
         }        
