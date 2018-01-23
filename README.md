@@ -14,7 +14,9 @@ This part may be used for investigating content of the **archive.zip**
 | `$ ./fb2lib archive archive.zip zip <book>`    | Prints compression info and the offset of the book in the archive |
 
 The *book* argument may be replaced by regexps or wildcards, e.g:
+
 `$ ./fb2lib archive archive.zip xml book*`
+
 `$ ./fb2lib archive archive.zip xml b?ok.fb2`
 
 
