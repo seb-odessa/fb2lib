@@ -214,13 +214,14 @@ Used to define filters.
 
 ## fb2lib filter lang
 This command allows to define language filters.
-Command | Description
-------- | -----------
-`$ fb2lib filter [database.db] lang display`              | Print list of disabled and enabled languages
-`$ fb2lib filter [database.db] lang ls **archive.zip**`   | Print sorted unique lowercase list of languages from the specified archive.zip
-`$ fb2lib filter [database.db] lang load **archive.zip**` | Load unique languages to the database from the specified archive.zip
-`$ fb2lib filter [database.db] lang disable lang|regexp`  | Add specified language to filtered (disabled) list. Wildcards (*/./?) alowwed
-`$ fb2lib filter [database.db] lang enable lang|regexp`   | Remove specified language from filtered (disabled) list. Wildcards (*/./?) alowwed
+
+| Command | Description |
+| ------- | ----------- |
+| `$ fb2lib filter [database.db] lang display`              | Print list of disabled and enabled languages |
+| `$ fb2lib filter [database.db] lang ls **archive.zip**`   | Print sorted unique lowercase list of languages from the specified archive.zip |
+| `$ fb2lib filter [database.db] lang load **archive.zip**` | Load unique languages to the database from the specified archive.zip |
+| `$ fb2lib filter [database.db] lang disable lang|regexp`  | Add specified language to filtered (disabled) list. Wildcards (*/./?) alowwed |
+| `$ fb2lib filter [database.db] lang enable lang|regexp`   | Remove specified language from filtered (disabled) list. Wildcards (*/./?) alowwed |
 
 ### Performance tests
 ```
