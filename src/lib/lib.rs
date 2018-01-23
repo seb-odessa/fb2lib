@@ -22,7 +22,6 @@ extern crate rustc_serialize;
 pub mod ui;
 pub mod result;
 pub mod algorithm;
-pub mod subcommands;
 
 mod out;
 mod sal;
