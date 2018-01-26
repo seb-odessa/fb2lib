@@ -105,17 +105,17 @@ pub const LANGUAGES_AUTO: &'static str = "
 
 #[allow(dead_code)]
 pub const LANGUAGES_DISABLED: &'static str = "
-	CREATE VIEW IF NOT EXISTS languages_disabled AS 
+	CREATE VIEW IF NOT EXISTS languages_disabled AS
 		SELECT languages.id, languages.name
-		FROM languages LEFT JOIN filters_def 
+		FROM languages LEFT JOIN filters_def
 		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
 		WHERE filters_def.filtered_id IS NOT NULL;";
 
 #[allow(dead_code)]
 pub const LANGUAGES_ENABLED: &'static str = "
-	CREATE VIEW IF NOT EXISTS languages_enabled AS 
+	CREATE VIEW IF NOT EXISTS languages_enabled AS
 		SELECT languages.id, languages.name
-		FROM languages LEFT JOIN filters_def 
+		FROM languages LEFT JOIN filters_def
 		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
 		WHERE filters_def.filtered_id IS NULL;";
 
@@ -164,7 +164,7 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('sf_litrpg',		'литературное RPG');
 		INSERT INTO genre_map (code, name) VALUES ('love_sf',		'романтическая фантастика');
 		INSERT INTO genre_map (code, name) VALUES ('popadanec',		'попаданцы');
-		
+
 
 		INSERT INTO genre_map (code, name) VALUES ('det_classic', 	'классический детектив');
 		INSERT INTO genre_map (code, name) VALUES ('det_police', 	'полицейский детектив');
@@ -186,7 +186,7 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('prose_military', 		'военная проза');
 		INSERT INTO genre_map (code, name) VALUES ('prose_rus_classic', 	'русская классическая проза');
 		INSERT INTO genre_map (code, name) VALUES ('prose_su_classics', 	'советская классическая проза');
-		INSERT INTO genre_map (code, name) VALUES ('prose_su_classic', 		'советская классическая проза');		
+		INSERT INTO genre_map (code, name) VALUES ('prose_su_classic', 		'советская классическая проза');
 		INSERT INTO genre_map (code, name) VALUES ('prose', 				'прочая проза');
 
 		INSERT INTO genre_map (code, name) VALUES ('love_contemporary', 'современные любовные романы');
@@ -241,7 +241,7 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('sci_popular', 		'научно-популярная литература');
 		INSERT INTO genre_map (code, name) VALUES ('sci_economic', 		'экономика');
 		INSERT INTO genre_map (code, name) VALUES ('science', 			'прочая научная литература');
-    
+
 		INSERT INTO genre_map (code, name) VALUES ('comp_www', 			'интернет');
 		INSERT INTO genre_map (code, name) VALUES ('comp_programming', 	'программирование');
 		INSERT INTO genre_map (code, name) VALUES ('comp_hard', 		'компьютерное железо (аппаратное обеспечение)');
@@ -259,7 +259,7 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 
 		INSERT INTO genre_map (code, name) VALUES ('nonf_biography', 	'биографии и Мемуары');
 		INSERT INTO genre_map (code, name) VALUES ('nonf_publicism',	'публицистика');
-		INSERT INTO genre_map (code, name) VALUES ('nonf_criticism', 	'критика');		
+		INSERT INTO genre_map (code, name) VALUES ('nonf_criticism', 	'критика');
 		INSERT INTO genre_map (code, name) VALUES ('nonfiction', 		'прочая документальная литература');
 
 		INSERT INTO genre_map (code, name) VALUES ('religion_rel', 			'религия');
@@ -290,6 +290,9 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('scenarios', 		'сценарии');
 		INSERT INTO genre_map (code, name) VALUES ('erotica', 			'эротика');
 		INSERT INTO genre_map (code, name) VALUES ('love', 				'любовные романы');
+		INSERT INTO genre_map (code, name) VALUES ('fanfiction',		'фанфики');
+
+
 
 		CREATE TABLE genres (
 	    	id  	INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

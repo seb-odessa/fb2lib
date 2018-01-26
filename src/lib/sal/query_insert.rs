@@ -24,4 +24,3 @@ pub const ENABLE_LANGUAGE: &'static str = "
  		WHERE filters.name = \"lang\" AND languages.name = ?
  	)";
 
-
