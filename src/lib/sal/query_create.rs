@@ -265,7 +265,8 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('religion_rel', 			'религия');
 		INSERT INTO genre_map (code, name) VALUES ('religion_esoterics', 	'эзотерика');
 		INSERT INTO genre_map (code, name) VALUES ('religion_orthodoxy', 	'православие');
-		INSERT INTO genre_map (code, name) VALUES ('religion_protestantism','протестантизм');
+		INSERT INTO genre_map (code, name) VALUES ('religion_islam',		'ислам');
+		INSERT INTO genre_map (code, name) VALUES ('religion_rel', 			'религия');
 		INSERT INTO genre_map (code, name) VALUES ('religion_budda', 		'буддизм');
 		INSERT INTO genre_map (code, name) VALUES ('religion_self', 		'самосовершенствование');
 		INSERT INTO genre_map (code, name) VALUES ('religion', 				'прочая религионая литература');
@@ -291,11 +292,6 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('erotica', 			'эротика');
 		INSERT INTO genre_map (code, name) VALUES ('love', 				'любовные романы');
 		INSERT INTO genre_map (code, name) VALUES ('fanfiction',		'фанфики');
-
-
-
-
-
 
 		CREATE TABLE genres (
 	    	id  	INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

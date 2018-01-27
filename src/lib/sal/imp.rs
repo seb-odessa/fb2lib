@@ -128,7 +128,7 @@ pub fn reset_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_create::FILTERS, &[])?;
     // conn.execute(query_create::FILTERS_DEF, &[])?;
     // conn.execute(query_create::FILL_FILTER, &[&1, &"lang"])?;
-    // conn.execute(query_create::FILL_FILTER, &[&1, &"genre"])?;
+    // conn.execute(query_create::FILL_FILTER, &[&2, &"genre"])?;
     // conn.execute(query_create::LANGUAGES_DISABLED, &[])?;
     // conn.execute(query_create::LANGUAGES_ENABLED, &[])?;
     conn.execute_batch(query_create::GENRE_SUBSYSTEM)?;
