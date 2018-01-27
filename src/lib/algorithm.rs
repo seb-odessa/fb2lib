@@ -1,11 +1,30 @@
+
 use tools;
+use fb2parser::FictionBook;
 use archive;
 use archive::{ZipArchive, ZipFile};
 use regex::Regex;
 use result::{Fb2Result, Fb2Error};
 use std::error::Error;
 use std::sync::mpsc::Sender;
+use std::sync::mpsc::channel;
 use crossbeam;
+
+pub trait Visitor<T> {
+    fn visit(&mut self, target: &T);
+}
+
+pub fn visit(archive_name: &str, visitor: &mut Visitor<FictionBook>) -> Fb2Result<()> {
+    let zip = archive::open(archive_name)?;
+    let (sender, receiver) = channel();
+    apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
+    for fb2 in receiver.iter() {
+        if let Some(book) = fb2.ok() {
+            visitor.visit(&book);
+        }
+    }
+    Ok(())
+}
 
 pub fn apply<F>(mut zip: ZipArchive, file_mask: &str, visitor: F) -> Fb2Result<()>
 where

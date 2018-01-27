@@ -294,6 +294,9 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 
 
 
+
+
+
 		CREATE TABLE genres (
 	    	id  	INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 	    	text    TEXT NOT NULL UNIQUE

@@ -5,6 +5,8 @@ pub mod archive;
 pub mod database;
 pub mod torrent;
 pub mod filter;
+pub mod genre;
+pub mod lang;
 
 pub struct Adapter <'a, 'b>  where 'a: 'b {
     app: App<'a, 'b>
@@ -13,11 +15,11 @@ impl <'a, 'b> Adapter <'a, 'b> {
     pub fn new(app: App<'a, 'b>) -> Self {
         Adapter{ app }
     }
-    
+
     pub fn attach<F>(self, add: F) -> Self where F: Fn(App<'a, 'b>) -> App<'a, 'b> {
         Adapter{ app: add(self.app) }
     }
-    
+
     pub fn unwrap(self) -> App<'a, 'b> {
         self.app
     }
@@ -37,3 +39,5 @@ pub const BOOK_FILE: &'static str = "book.fb2";
 pub const BOOK_FILE_HELP: &'static str = "Book's file name in the archive";
 pub const TORRENT_FILE: &'static str = "file.torrent";
 pub const TORRENT_FILE_HELP: &'static str = "Torrent file name points to the archive.zip";
+
+

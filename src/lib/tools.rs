@@ -10,11 +10,12 @@ pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
     haystack.windows(sz).position(|window| window == needle)
 }
 
+#[allow(dead_code)]
 pub fn capitalize<S: Into<String>>(text: S) -> String {
     let mut buffer: Vec<char> = text.into().chars().collect();
     if !buffer.is_empty() {
         buffer[0] = buffer[0].to_uppercase().nth(0).unwrap();
-    }    
+    }
     buffer.into_iter().collect()
 }
 

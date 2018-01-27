@@ -1,3 +1,4 @@
+use result::{into, Fb2Result};
 use sal::query_create;
 use sal::query_drop;
 use sal::query_insert;
@@ -34,8 +35,8 @@ impl ArchiveSizes {
     }
 }
 
-pub fn get_connection(db_file_name: &str) -> SalResult<Connection> {
-    Connection::open(db_file_name)
+pub fn get_connection(db_file_name: &str) -> Fb2Result<Connection> {
+    Connection::open(db_file_name).map_err(into)
 }
 
 pub fn get_archive_sizes(conn: &Connection, name: &str) -> SalResultOption<ArchiveSizes> {
