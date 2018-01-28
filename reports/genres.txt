@@ -1,0 +1,715 @@
+/home/seb/Библиотека/lib.rus.ec/fb2-000024-030559.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-000065-572310_lost.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-030560-060423.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-060424-074391.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-074392-091839.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-091841-104214.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-104215-113436.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-113437-119690.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-119691-132107.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-132108-141328.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-141329-147517.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-147519-153549.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-153556-158325.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-158328-161830.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-161831-166042.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-166043-168102.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-168103-172702.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-172703-175951.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-175952-182284.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-182285-187147.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-187148-193822.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-193823-199572.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-199573-204903.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-204904-209028.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-209029-212751.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-212752-216641.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-216642-221999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-222000-229999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-230000-241999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-242000-251999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-252000-261999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-262000-274999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-275000-283999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-284000-291999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-292000-299999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-300000-308999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-309000-318999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-319000-326999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-327000-334999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-335000-343999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-344000-348999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-349000-353999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-354000-358999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-359000-364999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-365000-370999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-371000-374999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-375000-381999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-382000-387999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-388000-391999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-392000-392999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-393000-395999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-393072-405875.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-396000-399999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-400000-405999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-406000-410999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-411000-415299.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-415300-419999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-420000-425999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-426000-433000.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-433001-436999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-437000-441999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-442000-445299.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-445300-449399.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-449400-453299.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-453300-458899.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-458900-463399.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-463400-467299.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-467300-471999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-472000-475999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-476000-479999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-480000-484999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-485000-489999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-490000-494999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-492166-492374_lost.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-495000-500999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-501000-505999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-506000-511999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-512000-516999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-517000-520999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-521000-526999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-527000-531999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-532000-535999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-536000-540999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-541000-544999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-545000-549999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-550000-553999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-550243-553777_lost.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-554000-557999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-558000-560999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-561000-564999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-565000-568999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-569000-572999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-573000-575999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-576000-578999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-579000-581999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-582000-585999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-586000-588999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-589000-592999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-593000-596999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-597000-598999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-599000-602999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-603000-605288.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-605289-609999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-605307-608999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-609000-609999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-610000-611999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-612000-614999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-615000-617999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-618000-620999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-621000-624999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-625000-627999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-628000-631999.zip
+/home/seb/Библиотека/lib.rus.ec/fb2-632000-634999.zip
+thriller - 10146
+sf_heroic - 2066
+outdoors_travel - 1
+? - 1
+f_fantasy - 1
+health_psy - 5
+history_middle_east - 1
+adv_western - 479
+outdoors_hunt_fish - 2
+family_pregnancy - 1
+105 - 1
+humor - 1753
+hurt/comfort - 1
+histor_military - 13
+sport - 6
+sf_history_avant - 9
+russian_fantasy - 195
+sf_social - 4625
+roman - 301
+pedagogy_book - 367
+nonfiction_law - 10
+history - 3
+foreign_publicism - 591
+vaudeville - 18
+russian_contemporary - 2932
+det_history - 2507
+literature_short - 105
+sf_horror - 8368
+журналы - 1
+фентези - 1
+comp_db - 18
+religion_orthodoxy - 647
+nonfiction_politics - 12
+health - 3
+historical_fantasy - 219
+poetry_rus_classical - 1
+ангст - 9
+det_hard - 1091
+индейцы - 1
+экология - 1
+foreign_fantasy - 472
+religion_rel - 3473
+foreign_antique - 159
+sci_metal - 1
+home_sex - 3679
+chris_pravoslavie - 11
+modern_tale - 2
+love - 1259
+chris_fiction - 2
+prose_contemporary - 27707
+literature_political - 13
+art - 3
+history_russia - 29
+sf_irony - 112
+sf_space - 4606
+antique_russian - 130
+foreign_story - 2
+biz_life - 1
+nonfiction_true_accounts - 1
+ci_history - 1
+science_archaeology - 1
+cooking - 1
+biogr_leaders - 6
+pov - 35
+paper_work - 36
+prose_classic - 18397
+фентъзи - 1
+love_contemporary - 10825
+music_dancing - 103
+literature_drama - 10
+rel_boddizm - 1
+literature_18 - 54
+thriller_techno - 25
+notes - 1
+sociology_book - 110
+entert_humor - 76
+sf_stimpank - 87
+fable - 2
+ref_encyc - 1297
+literature_antology - 1
+architecture_book - 91
+boys & men - 1
+foreign_humor - 48
+biogr_travel - 1
+боевое фэнтези - 1
+literature_19 - 927
+sf_all - 2
+thriller_legal - 38
+religion_judaism - 16
+health_men - 1
+literature_20 - 759
+thriller_medical - 37
+nonfiction_edu - 1
+folklore - 29
+nonf_military - 284
+outdoors_nature_writing - 11
+det_classic - 3911
+ref_encyclopedia - 1
+fairy_fantasy - 144
+ref_dict - 147
+sf_mystic - 828
+antique_european - 384
+флафф - 1
+narrative - 562
+альтернативная медицина - 1
+nonfiction_philosophy - 8
+romance_multicultural - 7
+даркфик - 3
+people - 7
+beginning_authors - 421
+det_su - 4
+proverbs - 4
+popular_business - 1253
+juvenile fiction - 1
+science & technology - 1
+приключенческое фэнтези - 1
+home - 837
+казки - 1
+dragon_fantasy - 97
+стёб - 11
+война в ираке - 1
+sf_fantasy_city - 1203
+literature_adv - 28
+religion - 1861
+psy_generic - 267
+child_9 - 17
+literature_critic - 2
+prose_su_classics - 4352
+child_det - 1517
+antique - 6827
+sci_popular - 570
+history_ancient - 1
+foreign_love - 1336
+classic_fiction - 1
+hronoopera - 9
+biz_accounting - 1
+home_health - 3466
+literature_erotica - 2
+aphorism_quote - 198
+foreign_psychology - 623
+novel - 1
+приключения - 1
+мифические существа - 11
+palindromes - 1
+health_self_help - 3
+child_people - 1
+philosophy - 1
+health_women - 1
+анархия - 1
+essays - 76
+child_history - 3
+fictionbook.cs - 2
+literature_war - 35
+det_crime - 2505
+antique_ant - 307
+детективы: прочее - 1
+child_education - 1068
+comp_programming - 246
+vers_libre - 7
+драма - 5
+religion_catholicism - 14
+nonfiction_folklor - 2
+literature_women - 4
+newspapers - 2
+theatre - 68
+эксперимент - 2
+sf_litrp - 1
+ref_books - 1
+fantasy_fight - 1100
+nonfiction_sociology - 1
+psy_personal - 1204
+ref_guide - 521
+литрпг - 2
+architecture - 7
+sci_radio - 47
+short_story - 3331
+psy_theraphy - 456
+dystopian - 1
+foreign_business - 611
+sci_linguistic - 1109
+нф - 1
+song_poetry - 23
+unified field theories - 1
+samizdat - 369
+general - 8
+scenarios - 18
+sci_abstract - 1
+nonf_biography - 14725
+romance_contemporary - 9
+child_nature - 2
+songfic - 2
+biography & autobiography - 1
+det_political - 652
+sci_tech - 1492
+det_cozy - 77
+religion_buddhism - 5
+family_parenting - 1
+health_alt_medicine - 2
+other - 3595
+darkfic - 3
+tbg_higher - 1
+saga - 2
+аппаратное обеспечение - 1
+science_earth - 2
+biography - 8
+teens_health - 1
+military_special - 800
+геополитика - 1
+marketing - 777
+travel_guidebook_series - 4
+child_verse - 500
+detective - 13682
+prose_neformatny - 2
+literature_rus_classsic - 6
+erotica - 1
+literature_su_classics - 64
+humor_anecdote - 298
+literature_world - 15
+unrecognised - 201
+greate_story - 1
+оранжевая революций - 1
+religion_east - 1
+prose_abs - 6
+det_espionage - 1866
+home_collecting - 29
+фанфик - 2
+performance - 3
+foreign_edu - 714
+economics_ref - 31
+prose - 3461
+sf_fantasy - 28603
+economics - 520
+physicists - 1
+humor_prose - 3859
+religion_islam - 16
+military_weapon - 806
+sci_orgchem - 1
+альтернативная энергетика - 1
+thriller_mystery - 75
+nonfiction_social_sci - 2
+prose_magic - 98
+sci_medicine - 1427
+proce - 611
+det_police - 2764
+experimental_poetry - 4
+prose_game - 15
+sci_botany - 12
+action & adventure - 1
+prose_military - 4185
+medicine - 2
+child_sf - 2454
+comp_www - 179
+историческая альтернатива - 1
+sci_psychology - 3379
+religion_esoterics - 4029
+religion_earth - 1
+literature_usa - 3
+dissident - 41
+foreign_detective - 777
+борьба за гражданские права - 1
+юмор - 20
+foreign_poetry - 81
+magician_book - 431
+professional_law - 11
+drama - 256
+travel_africa - 8
+this is science - 4
+st - 1
+поезія - 1
+angst - 6
+cine - 76
+geo_guide - 9
+science_psy - 6
+art_criticism - 5
+love_fantasy - 551
+child_folklore - 5
+home_sport - 1111
+visual_arts - 254
+prose_teen - 1
+poetry_rus_modern - 1
+tbg_computers - 1
+hand-book - 1
+пародия - 4
+children - 3847
+sci_religion - 1373
+science_medicine - 2
+unfinished - 71
+astrology - 14
+russian - 1
+comp_soft - 152
+riddles - 2
+religion_bibles - 1
+literature_sea - 3
+travel_notes - 4
+design - 671
+sf_writing - 6
+biogr_arts - 6
+travel_spec - 10
+home_cooking - 1481
+horror - 30
+literature_essay - 8
+prose_rus_classic - 13406
+nonfiction_spec_group - 1
+sci_crib - 2
+экономика дара - 1
+устойчивое развитие - 1
+романы - 1
+comp_hard - 40
+комедия - 1
+gothic_novel - 63
+экономика - 2
+науково- практичний коментар - 1
+management - 892
+(network_literature - 1
+science_biolog - 2
+teens_literature - 6
+literature_history - 32
+epic_poetry - 21
+sf_etc - 540
+foreign_sf - 416
+travel - 2
+policier - 26
+accounting - 143
+sf_cyberpunk - 1455
+sci_juris - 880
+relativity (physics) - 1
+military - 17
+первый раз - 2
+lyrics - 102
+epistolary_fiction - 42
+au - 69
+cinema_theatre - 180
+проза - 4
+psy_alassic - 52
+романтика - 13
+military_history - 478
+health_rel - 2
+fanficion - 1
+sf_epic - 1285
+nonfiction_crime - 1
+sci_culture - 2489
+history_europe - 17
+sci_cosmos - 120
+antique_myths - 614
+history_africa - 1
+antique_east - 394
+poetry - 6341
+history_military_science - 1
+biz_beogr - 3
+literature_british - 3
+computers - 811
+повседневность - 6
+f - 1
+sf_detective - 1958
+adv_indian - 247
+travel_europe - 8
+sagas - 33
+sf_space_opera - 78
+literature_men_advent - 2
+military_arts - 23
+публицистика: прочее - 1
+sci_textbook - 58
+foreign_desc - 32
+sci_economy - 62
+biogr_sports - 1
+home_diy - 288
+sf_litrpg - 82
+love_detective - 2415
+chris_orthodoxy - 2
+literature - 61
+romance_romantic_suspense - 4
+history_australia - 1
+sci_geo - 85
+sf - 42694
+biz_management - 2
+folk_tale - 61
+ - 690
+comedy - 272
+джен - 2
+action - 15
+sci_biology - 814
+maigret - 23
+love_sf - 5946
+child_adv - 1833
+foreign_contemporary - 763
+love_hard - 59
+health_nutrition - 2
+literature_poetry - 6
+teens_sf - 1
+accounting	р‘сѓс…сѓс‡рµс‚ - 2
+femslash - 1
+dramaturgy - 2470
+job_hunting - 120
+религиозная литература - 1
+nonfiction_social_work - 1
+sf_postapocalyptic - 734
+sci_history - 15756
+det_irony - 2259
+aphorisms - 90
+foreign_action - 15
+travel_asia - 4
+short story - 1
+vampire_book - 137
+horror_fantasy - 6
+popadanec - 1896
+фантастика - 12
+painting - 1
+religion_spirituality - 9
+военная документалистика и аналитика - 1
+comp_osnet - 113
+foreign_comp - 33
+screenplays - 120
+prose_rus_classics - 1
+sci_history история - 1
+home_entertain - 217
+literature_religion - 1
+lang:fr - 1
+auto_regulations - 55
+chris_edu - 1
+org_behavior - 117
+travel_lat_am - 7
+det_maniac - 223
+litrpg - 109
+religion_protestantism - 9
+banking - 67
+sci_politics - 3194
+sci_build - 6
+home_pets - 701
+sci_social_studies - 107
+child_characters - 9
+foreign_contemporary_lit - 1
+humor_verse - 235
+folk_songs - 4
+foreign_novel - 4
+literature_western - 6
+romance_historical - 7
+great_story - 394
+family_relations - 1
+religion_budda - 328
+prose_epic - 3
+humor_satire - 95
+geography_book - 89
+історія - 1
+story - 230
+sci_business - 404
+relativity - 1
+prose_sentimental - 43
+sf_action - 10523
+biz_economics - 4
+foreign_prose - 945
+sci_medicine_alternative - 74
+sci_phys - 412
+исторические эпохи - 2
+adv_animal - 1440
+prose_history - 6951
+sci_theories - 8
+foreign_religion - 396
+prose_root - 3
+poem - 1
+sf_humor - 4037
+personal_finance - 149
+psy_sex_and_family - 336
+biogr_historical - 15
+epic - 9
+religion_paganism - 19
+long_story - 1
+science - 3940
+adv_story - 4
+sf_history - 5994
+romance_sf - 294
+limerick - 2
+travel_polar - 1
+ya - 244
+trade - 4
+science fiction - 2
+child_prose - 5654
+religion_self - 2512
+science_measurement - 1
+horror_vampires - 2
+fantasy_alt_hist - 28
+1979 - 1
+sf_technofantasy - 58
+slash - 36
+business - 2
+adv_geo - 2264
+travel_ex_ussr - 1
+sci_philology - 332
+сельское хозяйство - 1
+women_single - 2
+psy_childs - 312
+ref_ref - 746
+literature_books - 2
+deathfic - 1
+sci_math - 167
+horror_usa - 3
+foreign_adventure - 224
+romance_series - 1
+palmistry - 3
+thriller_police - 3
+sf_fantasy_irony - 74
+дружба - 5
+literature_classics - 54
+love_short - 7448
+reference - 694
+biogr_professionals - 3
+sf_cyber_punk - 19
+romance - 45
+crossover - 2
+network_literature - 514
+family - 2
+prose_su_classic - 1
+foreign_language - 192
+adv_history - 3999
+teens_history - 9
+sf_technofantas - 2
+анархизм - 2
+nonf_criticism - 2284
+family_humor - 1
+outdoors_conservation - 4
+small_business - 93
+����� - 32
+poetry_for_modern - 1
+geo_guides - 281
+мистика - 10
+n/k - 3
+утопия - 1
+det_action - 3579
+sci_philosophy - 3398
+child_animals - 16
+music - 88
+sci_zoo - 54
+literature_fairy - 17
+nonfiction - 3094
+nonf_publicism - 11554
+global_economy - 23
+adv_maritime - 1074
+humor_fantasy - 477
+health_sex - 3
+ю - 1
+adv_modern - 1
+биографии и мемуары - 9
+history_world - 8
+істеричний роман - 1
+fanfiction - 612
+adv_history_avant - 1
+foreign_home - 655
+nsf - 63
+sci_ecology - 27
+industries - 74
+adventure - 4053
+religion_occult - 4
+sketch - 115
+етективная фантастика(sf_detective - 1
+sci_social_studies) - 1
+война во вьетнаме - 1
+home_crafts - 950
+religion_christianity - 627
+fantasy - 13
+extravaganza - 6
+women_divorce - 1
+foreign_children - 501
+tragedy - 47
+history_usa - 2
+prose_counter - 1019
+child_4 - 51
+essay - 248
+love_history - 7320
+real_estate - 25
+love_erotica - 2387
+in_verse - 20
+детская литература - 1
+sci_biophys - 9
+history_asia - 3
+фэнтези юмор - 3
+outdoors_fauna - 5
+mystery - 25
+teens_social - 1
+sci_biochem - 8
+parody - 3
+child_tale - 4897
+psy_social - 529
+путеводители - 1
+home_garden - 417
+sci_transport - 678
+physics - 1
+upbringing_book - 415
+sci_physchem - 1
+sci_pedagogy - 124
+religion_hinduism - 68
+экшн (action) - 20
+horror_occult - 4
+foreign_dramaturgy - 125
+science_history_philosophy - 4
+sci_chem - 78
+city_fantasy - 359
+romance_fantasy - 187
+family_health - 1
+учебные заведения - 17
+sci_state - 20
+stock - 150
+periodic - 1398
+Total: 447116
