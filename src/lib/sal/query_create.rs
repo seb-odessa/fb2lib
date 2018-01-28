@@ -156,14 +156,9 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('sf_social', 	'социально-психологическая фантастика');
 		INSERT INTO genre_map (code, name) VALUES ('sf_horror', 	'ужасы и мистика');
 		INSERT INTO genre_map (code, name) VALUES ('sf_humor', 		'юмористическая фантастика');
-		INSERT INTO genre_map (code, name) VALUES ('humor_fantasy',	'юмористическая фэнтези');
 		INSERT INTO genre_map (code, name) VALUES ('sf_fantasy', 	'фэнтези');
-		INSERT INTO genre_map (code, name) VALUES ('fantasy', 		'фэнтези');
 		INSERT INTO genre_map (code, name) VALUES ('sf', 			'научная фантастика');
 		INSERT INTO genre_map (code, name) VALUES ('fantastic',		'фантастика');
-		INSERT INTO genre_map (code, name) VALUES ('sf_litrpg',		'литературное RPG');
-		INSERT INTO genre_map (code, name) VALUES ('love_sf',		'романтическая фантастика');
-		INSERT INTO genre_map (code, name) VALUES ('popadanec',		'попаданцы');
 
 
 		INSERT INTO genre_map (code, name) VALUES ('det_classic', 	'классический детектив');
@@ -176,7 +171,6 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('det_political', 'политический детектив');
 		INSERT INTO genre_map (code, name) VALUES ('det_maniac', 	'маньяки');
 		INSERT INTO genre_map (code, name) VALUES ('det_hard', 		'крутой детектив');
-		INSERT INTO genre_map (code, name) VALUES ('thriller', 		'триллер');
 		INSERT INTO genre_map (code, name) VALUES ('detective', 	'детектив');
 
 		INSERT INTO genre_map (code, name) VALUES ('prose_classic', 		'классическая проза');
@@ -225,7 +219,9 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('sci_history', 		'история');
 		INSERT INTO genre_map (code, name) VALUES ('sci_psychology', 	'психология');
 		INSERT INTO genre_map (code, name) VALUES ('sci_culture', 		'культурология');
+		INSERT INTO genre_map (code, name) VALUES ('sci_cosmos', 		'космология');
 		INSERT INTO genre_map (code, name) VALUES ('sci_religion', 		'религиоведение');
+		INSERT INTO genre_map (code, name) VALUES ('sci_pedagogy',		'педагогика');
 		INSERT INTO genre_map (code, name) VALUES ('sci_philosophy',	'философия');
 		INSERT INTO genre_map (code, name) VALUES ('sci_politics', 		'политика');
 		INSERT INTO genre_map (code, name) VALUES ('sci_business', 		'деловая литература');
@@ -238,6 +234,7 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('sci_biology', 		'биология');
 		INSERT INTO genre_map (code, name) VALUES ('sci_philology',		'филология');
 		INSERT INTO genre_map (code, name) VALUES ('sci_tech', 			'технические науки');
+		INSERT INTO genre_map (code, name) VALUES ('sci_transport', 	'транспортные науки');
 		INSERT INTO genre_map (code, name) VALUES ('sci_popular', 		'научно-популярная литература');
 		INSERT INTO genre_map (code, name) VALUES ('sci_economic', 		'экономика');
 		INSERT INTO genre_map (code, name) VALUES ('science', 			'прочая научная литература');
@@ -248,7 +245,6 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('comp_soft', 		'программы');
 		INSERT INTO genre_map (code, name) VALUES ('comp_db', 			'базы данных');
 		INSERT INTO genre_map (code, name) VALUES ('comp_osnet', 		'ос и сети');
-		INSERT INTO genre_map (code, name) VALUES ('network_literature','сети');
 		INSERT INTO genre_map (code, name) VALUES ('computers', 		'прочая околокомпьтерная литература');
 
 		INSERT INTO genre_map (code, name) VALUES ('ref_encyc', 	'энциклопедии');
@@ -263,13 +259,15 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('nonfiction', 		'прочая документальная литература');
 
 		INSERT INTO genre_map (code, name) VALUES ('religion_rel', 			'религия');
+		INSERT INTO genre_map (code, name) VALUES ('religion_paganism',		'язычество');
 		INSERT INTO genre_map (code, name) VALUES ('religion_esoterics', 	'эзотерика');
 		INSERT INTO genre_map (code, name) VALUES ('religion_orthodoxy', 	'православие');
+		INSERT INTO genre_map (code, name) VALUES ('religion_christianity', 'христианство');
 		INSERT INTO genre_map (code, name) VALUES ('religion_islam',		'ислам');
-		INSERT INTO genre_map (code, name) VALUES ('religion_rel', 			'религия');
 		INSERT INTO genre_map (code, name) VALUES ('religion_budda', 		'буддизм');
 		INSERT INTO genre_map (code, name) VALUES ('religion_self', 		'самосовершенствование');
 		INSERT INTO genre_map (code, name) VALUES ('religion', 				'прочая религионая литература');
+
 
 		INSERT INTO genre_map (code, name) VALUES ('humor_anecdote', 	'анекдоты');
 		INSERT INTO genre_map (code, name) VALUES ('humor_prose', 		'юмористическая проза');
@@ -292,6 +290,13 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		INSERT INTO genre_map (code, name) VALUES ('erotica', 			'эротика');
 		INSERT INTO genre_map (code, name) VALUES ('love', 				'любовные романы');
 		INSERT INTO genre_map (code, name) VALUES ('fanfiction',		'фанфики');
+		INSERT INTO genre_map (code, name) VALUES ('sf_litrpg',		'литературное RPG');
+		INSERT INTO genre_map (code, name) VALUES ('love_sf',		'романтическая фантастика');
+		INSERT INTO genre_map (code, name) VALUES ('popadanec',		'попаданцы');
+		INSERT INTO genre_map (code, name) VALUES ('humor_fantasy',	'юмористическая фэнтези');
+		INSERT INTO genre_map (code, name) VALUES ('fantasy', 		'фэнтези');
+		INSERT INTO genre_map (code, name) VALUES ('thriller', 		'триллер');
+		INSERT INTO genre_map (code, name) VALUES ('network_literature','сети');
 
 		CREATE TABLE genres (
 	    	id  	INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
