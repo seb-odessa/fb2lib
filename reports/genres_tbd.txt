@@ -1,0 +1,58 @@
+accounting - 143
+aphorism_quote - 198
+beginning_authors - 421
+comedy - 272
+drama - 256
+
+economics - 520
+essay - 248
+fairy_fantasy - 144
+
+foreign_adventure - 224
+foreign_antique - 159
+foreign_business - 611
+foreign_children - 501
+foreign_contemporary - 763
+foreign_detective - 777
+foreign_dramaturgy - 125
+foreign_edu - 714
+foreign_fantasy - 472
+foreign_home - 655
+foreign_language - 192
+foreign_prose - 945
+foreign_psychology - 623
+foreign_publicism - 591
+foreign_religion - 396
+foreign_sf - 416
+geo_guides - 281
+great_story - 394
+
+job_hunting - 120
+love_fantasy - 551
+magician_book - 431
+management - 892
+marketing - 777
+
+music_dancing - 103
+narrative - 562
+network_literature - 514
+org_behavior - 117
+personal_finance - 149
+proce - 611
+psy_childs - 312
+psy_generic - 267
+psy_sex_and_family - 336
+psy_social - 529
+psy_theraphy - 456
+
+romance_fantasy - 187
+romance_sf - 294
+
+screenplays - 120
+sketch - 115
+stock - 150
+story - 230
+
+upbringing_book - 415
+visual_arts - 254
+ya - 244

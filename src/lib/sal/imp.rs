@@ -132,7 +132,7 @@ pub fn reset_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_create::LANGUAGES_DISABLED, &[])?;
     // conn.execute(query_create::LANGUAGES_ENABLED, &[])?;
     conn.execute_batch(query_create::GENRE_SUBSYSTEM)?;
-
+    conn.execute_batch(query_insert::INSERT_GENRES)?;
 
     Ok(())
 }
