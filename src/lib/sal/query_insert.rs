@@ -250,27 +250,30 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'ya', 'ya');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'unknown', 'unknown');
 
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('litrpg', 'sf_litrpg');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('literature_short', 'short_story');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('sociology_book', 'sci_sociology');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('sci_social_studies', 'sci_sociology');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('popular_business', 'sci_popular');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('sf_etc', 'sf');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('fantastic', 'sf');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('sf_mystic', 'sf_horror');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('vampire_book', 'sf_horror');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('sf_irony', 'sf_humor');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('story', 'short_story');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('russian_fantasy', 'sf_fantasy');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('fantasy', 'sf_fantasy');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('fantasy_fight', 'sf_fantasy');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('historical_fantasy', 'sf_fantasy');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('pedagogy_book', 'sci_pedagogy');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('military_history', 'nonf_military');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('military_special', 'nonf_military');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('military_weapon', 'nonf_military');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('roman', 'prose');
-	INSERT INTO genre_synonyms (code, synonym) VALUES ('drama', 'dramaturgy');
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'litrpg', id FROM genre_names WHERE code = 'sf_litrpg';
+
+
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'literature_short', id FROM genre_names WHERE code = 'short_story';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sociology_book', id FROM genre_names WHERE code = 'sci_sociology';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sci_social_studies', id FROM genre_names WHERE code = 'sci_sociology';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'popular_business', id FROM genre_names WHERE code = 'sci_popular';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_etc', id FROM genre_names WHERE code = 'sf';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantastic', id FROM genre_names WHERE code = 'sf';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_mystic', id FROM genre_names WHERE code = 'sf_horror';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'vampire_book', id FROM genre_names WHERE code = 'sf_horror';
+
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_irony', id FROM genre_names WHERE code = 'sf_humor';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'story', id FROM genre_names WHERE code = 'short_story';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'russian_fantasy', id FROM genre_names WHERE code = 'sf_fantasy';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantasy', id FROM genre_names WHERE code = 'sf_fantasy';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantasy_fight', id FROM genre_names WHERE code = 'sf_fantasy';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'historical_fantasy', id FROM genre_names WHERE code = 'sf_fantasy';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'pedagogy_book', id FROM genre_names WHERE code = 'sci_pedagogy';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'military_history', id FROM genre_names WHERE code = 'nonf_military';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'military_special', id FROM genre_names WHERE code = 'nonf_military';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'military_weapon', id FROM genre_names WHERE code = 'nonf_military';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'roman', id FROM genre_names WHERE code = 'prose';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'drama', id FROM genre_names WHERE code = 'dramaturgy';
 
 	COMMIT;
 	";

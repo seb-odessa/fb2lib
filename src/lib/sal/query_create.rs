@@ -154,8 +154,9 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		);
 
 		CREATE TABLE genre_synonyms (
+			id			INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			code		TEXT NOT NULL UNIQUE,	/* code */
-			synonym 	TEXT NOT NULL			/* code column from the genre_names table */
+			synonym_id 	INTEGER NOT NULL        /* FK to genre_names.id */
 		);
 
 		CREATE TABLE genres (
