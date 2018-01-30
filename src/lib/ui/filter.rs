@@ -22,8 +22,12 @@ const LANG_LOAD_HELP: &'static str = "Load unique languages to the database";
 
 const GENRE: &'static str = "genre";
 const GENRE_HELP: &'static str = "Use to manage genre filters";
-const GENRE_LS: &'static str = "ls";
-const GENRE_LS_HELP: &'static str = "Print list of genres from the specified archive.zip";
+const GENRE_LS: &'static str = "unknown";
+const GENRE_LS_HELP: &'static str = "Print list of unknown genres from the specified archive.zip";
+const GENRE_ARG: &'static str = "name";
+const GENRE_ARG_HELP: &'static str = "Genre name. Use */./? as willdcards";
+const GENRE_DISPLAY: &'static str = "display";
+const GENRE_DISPLAY_HELP: &'static str = "Print list of disabled and enabled genres";
 
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
@@ -43,6 +47,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
         .subcommand(
             SubCommand::with_name(GENRE).about(GENRE_HELP)
             .subcommand(SubCommand::with_name(GENRE_LS).about(GENRE_LS_HELP).arg(archive.clone()))
+            .subcommand(SubCommand::with_name(GENRE_DISPLAY).about(GENRE_DISPLAY_HELP))
         )
     )
 }
@@ -62,6 +67,9 @@ fn handle_genre<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
                 return ui::genre::ls(db_file_name, &archives.collect::<Vec<&str>>());
             }
+        }
+        (GENRE_DISPLAY, Some(_)) => {
+            return ui::genre::display(db_file_name)
         }
         (_, _) => {}
     }

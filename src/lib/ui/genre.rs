@@ -36,16 +36,35 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
         algorithm::visit(archive, &mut collector)?;
     }
     let mut total = 0;
-    for (code, count) in &collector.genres.clone() {
-        if let Some(ref code) = sal::get_genre_name(&conn, code)? {
-            collector.genres.remove(code);
+    let mut unknown = HashMap::new();    
+    for (code, count) in &collector.genres {
+        if let Some((_, _)) = sal::get_genre_name(&conn, code)? {
             total += count;
+        } else {
+            unknown.insert(code, count);
         }
     }
-    for (code, count) in &collector.genres {
+    for (code, count) in &unknown {
         println!("{} - {}", code, count);
     }
-    println!("Total: {}", total);
+    println!("Total books was processed: {}", total);
+    println!("Total unique genres was found {}", &collector.genres.len());
+    println!("Unknown genres was found {}", &unknown.len());    
     Ok(())
 }
 
+pub fn display(db_file_name: &str) -> Fb2Result<()> {
+    println!("genre_display({})", db_file_name);
+    let conn = sal::get_connection(db_file_name)?;
+    print!("disabled genres: ");
+    // for lang in &sal::get_languages_disabled(&conn).map_err(into)? {
+    //     print!("'{}' ", lang);
+    // }
+    println!("");
+    print!("enabled genres: ");
+    // for lang in &sal::get_languages_enabled(&conn).map_err(into)? {
+    //     print!("'{}' ", lang);
+    // }
+    println!("");
+    Ok(())
+}

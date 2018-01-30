@@ -15,7 +15,9 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_groups (id, name) VALUES (13, 'религия');
 	INSERT INTO genre_groups (id, name) VALUES (14, 'научная и научно-популярная литература');
 	INSERT INTO genre_groups (id, name) VALUES (15, 'юмористическая литература');
-	INSERT INTO genre_groups (id, name) VALUES (16, 'прочее');
+	INSERT INTO genre_groups (id, name) VALUES (16, 'не классифицировано');
+
+    INSERT INTO genre_names (id, group_id, code, name) VALUES (0, 16, 'unknown', 'без жанра');
 
 	INSERT INTO genre_names (group_id, code, name) VALUES (1, 'adv_animal',   'природа и животные');
 	INSERT INTO genre_names (group_id, code, name) VALUES (1, 'adv_geo',      'путешествия и география');
@@ -77,6 +79,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (7, 'home_pets', 'домашние животные');
 	INSERT INTO genre_names (group_id, code, name) VALUES (7, 'home_sex', 'эротика, секс');
 	INSERT INTO genre_names (group_id, code, name) VALUES (7, 'home_sport', 'спорт');
+	INSERT INTO genre_names (group_id, code, name) VALUES (7, 'home_collecting', 'коллекционирование');
 	INSERT INTO genre_names (group_id, code, name) VALUES (7, 'home', 'прочиее домоводство');
 
 	INSERT INTO genre_names (group_id, code, name) VALUES (8, 'love', 'любовные романы');
@@ -113,7 +116,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (10, 'sf_postapocalyptic', 'постапокалиптическая фантастика');
 	INSERT INTO genre_names (group_id, code, name) VALUES (10, 'popadanec', 'попаданцы');
 	INSERT INTO genre_names (group_id, code, name) VALUES (10, 'fanfiction', 'фанфики');
-	INSERT INTO genre_names (group_id, code, name) VALUES (10, 'city_fantasy', 'городское фэнтези');
+	INSERT INTO genre_names (group_id, code, name) VALUES (10, 'sf_fantasy_city', 'городское фэнтези');
 
 	INSERT INTO genre_names (group_id, code, name) VALUES (11, 'prose_classic', 'классическая проза');
 	INSERT INTO genre_names (group_id, code, name) VALUES (11, 'prose_contemporary', 'современная проза');
@@ -136,8 +139,10 @@ pub const INSERT_GENRES: &'static str = "
 
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_budda', 'буддизм');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_christianity', 'христианство');
+	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_catholicism', 'католичество');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_esoterics', 'эзотерика');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_islam', 'ислам');
+	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_judaism', 'иудаизм');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_orthodoxy', 'православие');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_paganism', 'язычество');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_rel', 'религия');
@@ -193,6 +198,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'foreign_home', 'foreign_home');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'foreign_language', 'foreign_language');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'foreign_prose', 'foreign_prose');
+	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'foreign_poetry', 'foreign_poetry');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'foreign_psychology', 'foreign_psychology');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'foreign_publicism', 'foreign_publicism');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'foreign_religion', 'foreign_religion');
@@ -221,8 +227,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'story', 'story');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'upbringing_book', 'upbringing_book');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'visual_arts', 'visual_arts');
-	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'ya', 'ya');
-	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'unknown', 'unknown');
+	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'ya', 'ya');	
 
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'litrpg', id FROM genre_names WHERE code = 'sf_litrpg';
 
@@ -232,6 +237,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sci_social_studies', id FROM genre_names WHERE code = 'sci_sociology';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'popular_business', id FROM genre_names WHERE code = 'sci_popular';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_etc', id FROM genre_names WHERE code = 'sf';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'фантастика', id FROM genre_names WHERE code = 'sf';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantastic', id FROM genre_names WHERE code = 'sf';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_mystic', id FROM genre_names WHERE code = 'sf_horror';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'vampire_book', id FROM genre_names WHERE code = 'sf_horror';
@@ -239,6 +245,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_irony', id FROM genre_names WHERE code = 'sf_humor';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'story', id FROM genre_names WHERE code = 'short_story';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'russian_fantasy', id FROM genre_names WHERE code = 'sf_fantasy';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'фэнтези', id FROM genre_names WHERE code = 'sf_fantasy';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantasy', id FROM genre_names WHERE code = 'sf_fantasy';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantasy_fight', id FROM genre_names WHERE code = 'sf_fantasy';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'historical_fantasy', id FROM genre_names WHERE code = 'sf_fantasy';
@@ -248,13 +255,29 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'military_weapon', id FROM genre_names WHERE code = 'nonf_military';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'roman', id FROM genre_names WHERE code = 'prose';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'drama', id FROM genre_names WHERE code = 'dramaturgy';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'folk_tale', id FROM genre_names WHERE code = 'child_tale';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'сказка', id FROM genre_names WHERE code = 'child_tale';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantasy_alt_hist', id FROM genre_names WHERE code = 'sf_history';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'essays', id FROM genre_names WHERE code = 'essay';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'иронический детектив', id FROM genre_names WHERE code = 'det_irony';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_cyber_punk', id FROM genre_names WHERE code = 'sf_cyberpunk';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'city_fantasy', id FROM genre_names WHERE code = 'sf_fantasy_city';
+
 
 	COMMIT;
 	";
 
 pub const INSERT_FILTER_TYPES: &'static str = "
 	BEGIN;
-
+    INSERT OR IGNORE INTO filters VALUES (1, 'lang');
+    INSERT OR IGNORE INTO filters VALUES (2, 'genre');
+    INSERT OR IGNORE INTO filters VALUES (3, 'genre_group');
 	COMMIT;
 	";
 	
+#[allow(dead_code)]
+pub const FILL_FILTER: &'static str = "
+	";
+    
+// conn.execute(query_create::FILL_FILTER, &[&1, &])?;
+    // conn.execute(query_create::FILL_FILTER, &[&2, &"genre"])?;    

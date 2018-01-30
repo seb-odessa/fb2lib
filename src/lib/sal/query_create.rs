@@ -135,10 +135,6 @@ pub const FILTERS_DEF: &'static str = "
 	);";
 
 #[allow(dead_code)]
-pub const FILL_FILTER: &'static str = "
-	INSERT OR IGNORE INTO filters VALUES (?, ?);";
-
-#[allow(dead_code)]
 pub const GENRE_SUBSYSTEM: &'static str = "
 	BEGIN;
         CREATE TABLE genre_groups (
@@ -158,11 +154,15 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 			code		TEXT NOT NULL UNIQUE,	/* code */
 			synonym_id 	INTEGER NOT NULL        /* FK to genre_names.id */
 		);
-
-		CREATE TABLE genres (
-	    	id  	INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-	    	code    TEXT NOT NULL UNIQUE
-    );
+		
+		CREATE VIEW genres AS
+		SELECT A.id, C.code as code, B.name as class, A.name as name 
+		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id JOIN genre_synonyms C ON A.id = C.synonym_id
+		UNION
+		SELECT A.id, A.code as code, B.name as class, A.name as name 
+		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id 
+		ORDER BY B.name, A.name;
+    		
     COMMIT;";
 
 

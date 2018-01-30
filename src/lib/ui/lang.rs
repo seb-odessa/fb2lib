@@ -47,7 +47,7 @@ pub fn ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
 
 pub fn display(db_file_name: &str) -> Fb2Result<()> {
     println!("lang_display({})", db_file_name);
-    let conn = sal::get_connection(db_file_name).map_err(into)?;
+    let conn = sal::get_connection(db_file_name)?;
     print!("disabled languages: ");
     for lang in &sal::get_languages_disabled(&conn).map_err(into)? {
         print!("'{}' ", lang);

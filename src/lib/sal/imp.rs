@@ -1,5 +1,6 @@
 use result::{into, Fb2Result};
 use sal::query_create;
+use sal::query_init;
 use sal::query_drop;
 use sal::query_insert;
 use sal::query_select;
@@ -115,7 +116,7 @@ pub fn reset_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_drop::ARCHIVES, &[])?;
     // conn.execute(query_drop::PIECES, &[])?;
     // conn.execute(query_drop::LANGUAGES, &[])?;
-    // conn.execute(query_drop::FILTERS, &[])?;
+     conn.execute(query_drop::FILTERS, &[])?;
     // conn.execute(query_drop::FILTERS_DEF, &[])?;
     // conn.execute(query_drop::LANGUAGES_DISABLED, &[])?;
     // conn.execute(query_drop::LANGUAGES_ENABLED, &[])?;
@@ -125,14 +126,15 @@ pub fn reset_tables(db_file_name: &str) -> SalResult<()> {
     // conn.execute(query_create::PIECES, &[])?;
     // conn.execute(query_create::LANGUAGES, &[])?;
     // conn.execute(query_create::LANGUAGES_AUTO, &[])?;
-    // conn.execute(query_create::FILTERS, &[])?;
+    conn.execute(query_create::FILTERS, &[])?;
     // conn.execute(query_create::FILTERS_DEF, &[])?;
-    // conn.execute(query_create::FILL_FILTER, &[&1, &"lang"])?;
-    // conn.execute(query_create::FILL_FILTER, &[&2, &"genre"])?;
     // conn.execute(query_create::LANGUAGES_DISABLED, &[])?;
     // conn.execute(query_create::LANGUAGES_ENABLED, &[])?;
     conn.execute_batch(query_create::GENRE_SUBSYSTEM)?;
-    conn.execute_batch(query_insert::INSERT_GENRES)?;
+    conn.execute_batch(query_init::INSERT_GENRES)?;
+    conn.execute_batch(query_init::INSERT_FILTER_TYPES)?;
+
+    
 
     Ok(())
 }
@@ -169,11 +171,11 @@ pub fn enable_language(conn: &Connection, lang: &str) -> SalResult<(i32)> {
     conn.execute(query_insert::ENABLE_LANGUAGE, &[&lang])
 }
 
-pub fn get_genre_name(conn: &Connection, genre: &str) -> SalResultOption<String> {
+pub fn get_genre_name(conn: &Connection, genre: &str) -> SalResultOption<(i32, String)> {
     let mut stmt = conn.prepare(query_select::GENRE_NAME)?;
-    for row in stmt.query_map(&[&genre], |row| (row.get(0)))? {
-        let genre: String = row?;
-        return Ok(Some(genre));
+    for row in stmt.query_map(&[&genre], |row| (row.get(0), row.get(1)))? {
+        let (id, genre): (i32, String) = row?;
+        return Ok(Some((id, genre)));
     }
     Ok(None)
 }
