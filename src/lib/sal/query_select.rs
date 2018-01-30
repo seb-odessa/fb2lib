@@ -16,5 +16,9 @@ pub const GENRES_DISABLED: &'static str = "SELECT group_name, genre_name FROM ge
 
 pub const GENRES_ENABLED: &'static str = "SELECT group_name, genre_name FROM genres_enabled ORDER BY group_name, genre_name";
 
+pub const GENRES_GROUPS_DISABLED: &'static str = "SELECT  DISTINCT group_name FROM genres_disabled ORDER BY group_name, genre_name";
+
+pub const GENRES_GROUPS_ENABLED: &'static str = "SELECT  DISTINCT group_name FROM genres_enabled ORDER BY group_name, genre_name";
+
 
 

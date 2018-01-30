@@ -1,4 +1,5 @@
-use result::{into, Fb2Result};
+use result::into;
+use result::Fb2Result;
 use sal::query_create;
 use sal::query_init;
 use sal::query_drop;
@@ -7,8 +8,7 @@ use sal::query_select;
 use sal::HashesByIdx;
 use torrent::Metainfo;
 
-use rusqlite;
-use rusqlite::{Connection, Transaction};
+use rusqlite::Connection;
 use rustc_serialize::hex::ToHex;
 
 
@@ -185,6 +185,26 @@ pub fn get_genres_enabled(conn: &Connection) -> Fb2Result<Vec<(String, String)>>
     let mut stmt = conn.prepare(query_select::GENRES_ENABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)? {
         result.push(row.map_err(into)? as (String, String));
+    }
+    Ok(result)
+}
+
+pub fn get_genre_groups_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
+    let mut result = Vec::new();
+    let mut stmt = conn.prepare(query_select::GENRES_GROUPS_DISABLED).map_err(into)?;
+    for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
+        let group: String = row.map_err(into)? ;
+        result.push(group);
+    }
+    Ok(result)
+}
+
+pub fn get_genre_groups_enabled(conn: &Connection) -> Fb2Result<Vec<String>> {
+    let mut result = Vec::new();
+    let mut stmt = conn.prepare(query_select::GENRES_GROUPS_ENABLED).map_err(into)?;
+    for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
+        let group: String = row.map_err(into)? ;
+        result.push(group);
     }
     Ok(result)
 }

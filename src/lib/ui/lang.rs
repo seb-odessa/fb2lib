@@ -4,7 +4,6 @@ use archive;
 use result::Fb2Result;
 use algorithm::{apply_and_collect, make_regex};
 
-//use clap::{App, Arg, SubCommand, ArgMatches};
 use std::sync::mpsc::channel;
 use std::collections::HashSet;
 
@@ -44,12 +43,12 @@ pub fn ls(db_file_name: &str, archive_name: &str) -> Fb2Result<()> {
 pub fn display(db_file_name: &str) -> Fb2Result<()> {
     println!("lang_display({})", db_file_name);
     let conn = sal::get_connection(db_file_name)?;
-    print!("disabled languages: ");
+    println!("======== DISABLED ========");
     for lang in &sal::get_languages_disabled(&conn)? {
         print!("'{}' ", lang);
     }
     println!("");
-    print!("enabled languages: ");
+    println!("======== ENABLED ========");
     for lang in &sal::get_languages_enabled(&conn)? {
         print!("'{}' ", lang);
     }
@@ -58,7 +57,7 @@ pub fn display(db_file_name: &str) -> Fb2Result<()> {
 }
 
 pub fn enable(db_file_name: &str, lang: &str) -> Fb2Result<()> {
-    println!("lang_enable({}, {})", db_file_name, lang);
+    println!("enable({}, {})", db_file_name, lang);
     let conn = sal::get_connection(db_file_name)?;
     let re = make_regex(lang)?;
     for lang in &sal::get_languages_disabled(&conn)? {
@@ -71,7 +70,7 @@ pub fn enable(db_file_name: &str, lang: &str) -> Fb2Result<()> {
 }
 
 pub fn disable(db_file_name: &str, lang: &str) -> Fb2Result<()> {
-    println!("lang_disable({}, {})", db_file_name, lang);
+    println!("disable({}, {})", db_file_name, lang);
     let conn = sal::get_connection(db_file_name)?;
     let re = make_regex(lang)?;
     for lang in &sal::get_languages_enabled(&conn)? {
