@@ -132,7 +132,7 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
 }
 
 pub fn insert_language(conn: &Connection, lang: &str) -> Fb2Result<i32> {
-    conn.execute(query_insert::LANGUAGES, &[&lang]).map_err(into)
+    conn.execute(query_insert::LANGUAGE, &[&lang]).map_err(into)
 }
 
 pub fn get_languages_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {

@@ -75,23 +75,24 @@ fn handle_genre<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
         (GENRE_LS, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                return ui::genre::ls(db_file_name, &archives.collect::<Vec<&str>>());
+                ui::genre::ls(db_file_name, &archives.collect::<Vec<&str>>())
+            } else {
+                ui::usage(arg)
             }
         }
         (GENRE_DISPLAY, Some(_)) => {
-            return ui::genre::display(db_file_name)
+            ui::genre::display(db_file_name)
         }
         (GENRE_ENABLE, Some(arg)) => {
             let name = arg.value_of(GENRE_NAME).unwrap_or("").to_lowercase();
-            return ui::genre::enable(db_file_name, &name, arg.is_present(GENRE_GROUP))
+            ui::genre::enable(db_file_name, &name, arg.is_present(GENRE_GROUP))
         }
         (GENRE_DISABLE, Some(arg)) => {
             let name = arg.value_of(GENRE_NAME).unwrap_or("").to_lowercase();
-            return ui::genre::disable(db_file_name, &name, arg.is_present(GENRE_GROUP))
+            ui::genre::disable(db_file_name, &name, arg.is_present(GENRE_GROUP))
         }
-        (_, _) => {}
-    }
-    ui::usage(arg)
+        (_, _) => ui::usage(arg)
+    }    
 }
 
 fn handle_lang<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {

@@ -8,7 +8,7 @@ pub const ARCHIVE: &'static str = "
 pub const PIECE: &'static str = "
 	INSERT INTO pieces (archive_id, piece_idx, hash) VALUES (?, ?, ?)";
 
-pub const LANGUAGES: &'static str = "
+pub const LANGUAGE: &'static str = "
     INSERT OR IGNORE INTO languages (id, name) VALUES (0, ?);";
 
 pub const DISABLE_LANGUAGE: &'static str = "
