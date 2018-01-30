@@ -12,6 +12,9 @@ pub const LANGUAGES_ENABLED: &'static str = "SELECT name FROM languages_enabled 
 
 pub const GENRE_NAME: &'static str = "SELECT id, name FROM genres WHERE code = :1";
 
+pub const GENRES_DISABLED: &'static str = "SELECT group_name, genre_name FROM genres_disabled ORDER BY group_name, genre_name";
+
+pub const GENRES_ENABLED: &'static str = "SELECT group_name, genre_name FROM genres_enabled ORDER BY group_name, genre_name";
 
 
 

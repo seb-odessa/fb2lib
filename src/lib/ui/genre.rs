@@ -1,6 +1,7 @@
 use sal;
 use result::Fb2Result;
 use fb2parser::FictionBook;
+use tools;
 use algorithm;
 
 use std::collections::HashMap;
@@ -54,17 +55,24 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
 }
 
 pub fn display(db_file_name: &str) -> Fb2Result<()> {
-    println!("genre_display({})", db_file_name);
     let conn = sal::get_connection(db_file_name)?;
-    print!("disabled genres: ");
-    // for lang in &sal::get_languages_disabled(&conn).map_err(into)? {
-    //     print!("'{}' ", lang);
-    // }
-    println!("");
-    print!("enabled genres: ");
-    // for lang in &sal::get_languages_enabled(&conn).map_err(into)? {
-    //     print!("'{}' ", lang);
-    // }
+    println!("disabled genres: ");
+    let mut grp = String::new();
+    for (group, name) in sal::get_genres_disabled(&conn)? {
+        if grp != group {
+            println!("{}", tools::capitalize(group.clone()));
+            grp = group.clone();
+        }
+        println!("\t{}", tools::capitalize(name));
+    }
+    println!("enabled genres: ");
+    for (group, name) in sal::get_genres_enabled(&conn)? {
+        if grp != group {
+            println!("{}", tools::capitalize(group.clone()));
+            grp = group.clone();
+        }
+        println!("\t{}", tools::capitalize(name));
+    }
     println!("");
     Ok(())
 }

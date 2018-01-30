@@ -23,6 +23,8 @@ pub const GENRE_SUBSYSTEM: &'static str = "
         DROP TABLE IF EXISTS genre_groups;
         DROP TABLE IF EXISTS genre_names;        
         DROP VIEW IF EXISTS genres;
+        DROP VIEW IF EXISTS genres_enabled;
+        DROP VIEW IF EXISTS genres_disabled;
     COMMIT;";
 
 /*********************** Untested ***********************/

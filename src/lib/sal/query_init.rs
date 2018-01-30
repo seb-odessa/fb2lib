@@ -145,7 +145,6 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_judaism', 'иудаизм');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_orthodoxy', 'православие');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_paganism', 'язычество');
-	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_rel', 'религия');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'psy_personal', 'самопознание');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion_self', 'самосовершенствование');
 	INSERT INTO genre_names (group_id, code, name) VALUES (13, 'religion', 'прочая религионая литература');
@@ -262,8 +261,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'иронический детектив', id FROM genre_names WHERE code = 'det_irony';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_cyber_punk', id FROM genre_names WHERE code = 'sf_cyberpunk';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'city_fantasy', id FROM genre_names WHERE code = 'sf_fantasy_city';
-
-
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'religion_rel', id FROM genre_names WHERE code = 'religion';
 	COMMIT;
 	";
 

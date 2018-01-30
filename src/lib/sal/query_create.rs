@@ -117,7 +117,8 @@ pub const LANGUAGES_ENABLED: &'static str = "
 		SELECT languages.id, languages.name
 		FROM languages LEFT JOIN filters_def
 		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
-		WHERE filters_def.filtered_id IS NULL;";
+		WHERE filters_def.filtered_id IS NULL;
+		;";
 
 #[allow(dead_code)]
 pub const FILTERS: &'static str = "
@@ -156,13 +157,25 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		);
 		
 		CREATE VIEW genres AS
-		SELECT A.id, C.code as code, B.name as class, A.name as name 
+		SELECT A.id, C.code as code, B.name as type, A.name as name 
 		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id JOIN genre_synonyms C ON A.id = C.synonym_id
 		UNION
-		SELECT A.id, A.code as code, B.name as class, A.name as name 
-		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id 
-		ORDER BY B.name, A.name;
-    		
+		SELECT A.id, A.code as code, B.name as type, A.name as name 
+		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id;
+    
+		CREATE VIEW IF NOT EXISTS genres_enabled AS
+		SELECT genre_names.id, genre_groups.name as group_name, genre_names.name as genre_name
+		FROM genre_names JOIN genre_groups ON genre_names.group_id = genre_groups.id LEFT JOIN filters_def 
+		ON filters_def.filter_id = (select id from filters where name = 'genre') AND genre_names.id = filters_def.filtered_id
+		WHERE filters_def.filtered_id IS NULL;
+
+		CREATE VIEW IF NOT EXISTS genres_disabled AS
+		SELECT genre_names.id, genre_groups.name as group_name, genre_names.name as genre_name
+		FROM genre_names JOIN genre_groups ON genre_names.group_id = genre_groups.id LEFT JOIN filters_def 
+		ON filters_def.filter_id = (select id from filters where name = 'genre') AND genre_names.id = filters_def.filtered_id
+		WHERE filters_def.filtered_id IS NOT NULL;
+
+
     COMMIT;";
 
 
