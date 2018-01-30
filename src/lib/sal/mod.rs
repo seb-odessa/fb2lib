@@ -1,7 +1,8 @@
 mod imp;
 
-mod query_create;
 mod query_drop;
+mod query_create;
+mod query_init;
 mod query_insert;
 mod query_select;
 use std::collections::HashMap;
