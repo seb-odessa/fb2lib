@@ -48,6 +48,18 @@ This command allows to define language filters.
 | `$ fb2lib filter [db] lang disable lang`     | Add specified language to disabled list. Wildcards (*/./?) alowed |
 | `$ fb2lib filter [db] lang enable lang`      | Remove specified language from disabled list. Wildcards (*/./?) alowed |
 
+## fb2lib filter genre
+This command allows to define genre filters.
+
+| Command | Description |
+| ------- | ----------- |
+| `$ fb2lib filter [db] genre display`          | Print list of disabled and enabled genres |
+| `$ fb2lib filter [db] genre unknown archive.zip`   | Print list of unknown genres from the specified archive.zip |
+
+
+fb2lib filter genre display
+
+
 ### Performance tests
 ```
 test fb::bench::deserialize_author       ... bench:      10,836 ns/iter (+/- 865)
