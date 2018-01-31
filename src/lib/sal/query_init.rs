@@ -265,6 +265,7 @@ pub const INSERT_GENRES: &'static str = "
 	COMMIT;
 	";
 
+#[allow(dead_code)]
 pub const INSERT_FILTER_TYPES: &'static str = "
 	BEGIN;
     INSERT OR IGNORE INTO filters VALUES (1, 'lang');
