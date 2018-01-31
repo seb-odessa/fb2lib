@@ -22,9 +22,23 @@ pub fn fb2(file_name: String, xml: String) {
     }
 }
 
+fn make_authors(authors: Vec<(String,String,String,String)>) -> String {
+    let mut result = Vec::new();
+    for author in authors.into_iter() {
+        result.push(format!("{} {} {} {}", author.0, author.1, author.2, author.3));        
+    }
+    result.join(", ")
+}
+
 pub fn info(file_name: String, xml: String) {
     match into_fb2(xml) {
-        Ok(fb2) => println!("{:20}: {}", file_name, fb2),
+        Ok(fb2) => println!("{:12} : {} : {} : {} : {}", 
+            file_name, 
+            fb2.get_book_title(), 
+            make_authors(fb2.get_book_authors()),
+            fb2.get_book_lang(),
+            fb2.get_book_genres().join(", ")
+        ),
         Err(err) => println!("{:20}: {}", file_name, err),
     }
 }
