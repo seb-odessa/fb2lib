@@ -121,19 +121,20 @@ pub const LANGUAGES_ENABLED: &'static str = "
 		;";
 
 #[allow(dead_code)]
-pub const FILTERS: &'static str = "
+pub const FILTER_SUBSYSTEM: &'static str = "
+	BEGIN;
 	CREATE TABLE IF NOT EXISTS filters (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    name      	    TEXT NOT NULL UNIQUE
-	);";
-
-#[allow(dead_code)]
-pub const FILTERS_DEF: &'static str = "
+	);
 	CREATE TABLE IF NOT EXISTS filters_def (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    filter_id       INTEGER NOT NULL,  	/* FK to filters.id */
 		filtered_id     INTEGER NOT NULL   	/* FK to id  of the filtered table, e.g. languages.id*/
-	);";
+	);
+	CREATE INDEX filter_def_index on filters_def (filter_id ASC, filtered_id ASC);
+	COMMIT;";
+
 
 #[allow(dead_code)]
 pub const GENRE_SUBSYSTEM: &'static str = "
@@ -165,17 +166,17 @@ pub const GENRE_SUBSYSTEM: &'static str = "
     
 		CREATE VIEW IF NOT EXISTS genres_enabled AS
 		SELECT genre_names.id, genre_groups.name AS group_name, genre_names.name AS genre_name
-		FROM genre_names JOIN genre_groups ON genre_names.group_id = genre_groups.id 
-		LEFT JOIN filters_def A ON genre_names.id = A.filtered_id AND A.filter_id = (SELECT id FROM filters WHERE name = 'genre') 
-		LEFT JOIN filters_def B ON genre_groups.id = B.filtered_id AND B.filter_id = (SELECT id FROM filters WHERE name = 'genre_group')
-		WHERE (B.filtered_id IS NULL) AND (B.filtered_id IS NULL);
+		FROM genre_names 
+		JOIN genre_groups ON genre_names.group_id = genre_groups.id 
+		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre') 
+		WHERE filtered_id IS NULL;
 
 		CREATE VIEW IF NOT EXISTS genres_disabled AS
 		SELECT genre_names.id, genre_groups.name AS group_name, genre_names.name AS genre_name
-		FROM genre_names JOIN genre_groups ON genre_names.group_id = genre_groups.id 
-		LEFT JOIN filters_def A ON genre_names.id = A.filtered_id AND A.filter_id = (SELECT id FROM filters WHERE name = 'genre') 
-		LEFT JOIN filters_def B ON genre_groups.id = B.filtered_id AND B.filter_id = (SELECT id FROM filters WHERE name = 'genre_group')
-		WHERE (B.filtered_id IS NOT NULL) OR (B.filtered_id IS NOT NULL);
+		FROM genre_names 
+		JOIN genre_groups ON genre_names.group_id = genre_groups.id 
+		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre') 
+		WHERE filtered_id IS NOT NULL;
 
 
     COMMIT;";

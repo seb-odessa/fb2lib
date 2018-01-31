@@ -8,9 +8,13 @@ pub const PIECES: &'static str = "DROP TABLE pieces;";
 pub const LANGUAGES: &'static str = "DROP TABLE IF EXISTS languages;";
 #[allow(dead_code)]
 
-pub const FILTERS: &'static str = "DROP TABLE IF EXISTS filters;";
-#[allow(dead_code)]
-pub const FILTERS_DEF: &'static str = "DROP TABLE IF EXISTS filters_def;";
+pub const FILTER_SUBSYSTEM: &'static str = "
+	BEGIN;
+    DROP INDEX IF EXISTS filter_def_index;
+    DROP TABLE IF EXISTS filters;
+    DROP TABLE IF EXISTS filters_def;
+    COMMIT;";
+
 #[allow(dead_code)]
 pub const LANGUAGES_DISABLED: &'static str = "DROP VIEW IF EXISTS languages_disabled;";
 #[allow(dead_code)]

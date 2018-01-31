@@ -28,6 +28,10 @@ pub use sal::imp::get_genres_disabled;
 pub use sal::imp::get_genres_enabled;
 pub use sal::imp::get_genre_groups_disabled;
 pub use sal::imp::get_genre_groups_enabled;
+pub use sal::imp::disable_genre;
+pub use sal::imp::enable_genre;
+pub use sal::imp::disable_genre_group;
+pub use sal::imp::enable_genre_group;
 
 
 

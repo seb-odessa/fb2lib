@@ -110,21 +110,20 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute(query_drop::ARCHIVES, &[]).map_err(into)?;
     // conn.execute(query_drop::PIECES, &[]).map_err(into)?;
     // conn.execute(query_drop::LANGUAGES, &[]).map_err(into)?;
-     conn.execute(query_drop::FILTERS, &[]).map_err(into)?;
-    // conn.execute(query_drop::FILTERS_DEF, &[]).map_err(into)?;
     // conn.execute(query_drop::LANGUAGES_DISABLED, &[]).map_err(into)?;
     // conn.execute(query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
+    conn.execute_batch(query_drop::FILTER_SUBSYSTEM).map_err(into)?;    
     conn.execute_batch(query_drop::GENRE_SUBSYSTEM).map_err(into)?;
 
     // conn.execute(query_create::ARCHIVES, &[]).map_err(into)?;
     // conn.execute(query_create::PIECES, &[]).map_err(into)?;
     // conn.execute(query_create::LANGUAGES, &[]).map_err(into)?;
     // conn.execute(query_create::LANGUAGES_AUTO, &[]).map_err(into)?;
-    conn.execute(query_create::FILTERS, &[]).map_err(into)?;
-    // conn.execute(query_create::FILTERS_DEF, &[]).map_err(into)?;
     // conn.execute(query_create::LANGUAGES_DISABLED, &[]).map_err(into)?;
     // conn.execute(query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
+    conn.execute_batch(query_create::FILTER_SUBSYSTEM).map_err(into)?;    
     conn.execute_batch(query_create::GENRE_SUBSYSTEM).map_err(into)?;
+    
     conn.execute_batch(query_init::INSERT_GENRES).map_err(into)?;
     conn.execute_batch(query_init::INSERT_FILTER_TYPES).map_err(into)?;
 
@@ -208,3 +207,20 @@ pub fn get_genre_groups_enabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     }
     Ok(result)
 }
+
+pub fn disable_genre(conn: &Connection, name: &str) -> Fb2Result<i32> {
+    conn.execute(query_insert::DISABLE_GENRE, &[&name]).map_err(into)
+}
+
+pub fn enable_genre(conn: &Connection, name: &str) -> Fb2Result<(i32)> {
+    conn.execute(query_insert::ENABLE_GENRE, &[&name]).map_err(into)
+}
+
+pub fn disable_genre_group(conn: &Connection, name: &str) -> Fb2Result<i32> {
+    conn.execute(query_insert::DISABLE_GENRE_GROUP, &[&name]).map_err(into)
+}
+
+pub fn enable_genre_group(conn: &Connection, name: &str) -> Fb2Result<(i32)> {
+    conn.execute(query_insert::ENABLE_GENRE_GROUP, &[&name]).map_err(into)
+}
+

@@ -83,12 +83,14 @@ pub fn enable(db_file_name: &str, name: &str, is_grp: bool) -> Fb2Result<()> {
     if is_grp {
         for group in sal::get_genre_groups_disabled(&conn)? {
             if re.is_match(&group) {
+                sal::enable_genre_group(&conn, &group)?;
                 println!("The genre group '{}' was enabled", tools::capitalize(group));
             }
         }
     } else {
         for (_, genre) in sal::get_genres_disabled(&conn)? {
             if re.is_match(&genre) {
+                sal::enable_genre(&conn, &genre)?;
                 println!("The genre '{}' was enabled", tools::capitalize(genre));
             }
         }
@@ -102,12 +104,14 @@ pub fn disable(db_file_name: &str, name: &str, is_grp: bool) -> Fb2Result<()> {
     if is_grp {
         for group in sal::get_genre_groups_enabled(&conn)? {
             if re.is_match(&group) {
+                sal::disable_genre_group(&conn, &group)?;
                 println!("The genre group '{}' was disabled", tools::capitalize(group));
             }
         }
     } else {
         for (_, genre) in sal::get_genres_enabled(&conn)? {
             if re.is_match(&genre) {
+                sal::disable_genre(&conn, &genre)?;
                 println!("The genre '{}' was disabled", tools::capitalize(genre));
             }
         }
