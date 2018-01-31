@@ -27,5 +27,6 @@ mod out;
 mod sal;
 mod tools;
 mod iconv;
+mod handler;
 mod archive;
 mod filesystem;

@@ -5,8 +5,9 @@ pub mod archive;
 pub mod database;
 pub mod torrent;
 pub mod filter;
-pub mod genre;
-pub mod lang;
+// pub mod genre;
+// pub mod lang;
+pub mod book;
 
 pub struct Adapter <'a, 'b>  where 'a: 'b {
     app: App<'a, 'b>

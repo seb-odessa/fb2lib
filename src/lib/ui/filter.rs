@@ -1,4 +1,5 @@
 use ui;
+use handler;
 use result::Fb2Result;
 use clap::{App, Arg, SubCommand, ArgMatches};
 
@@ -75,21 +76,21 @@ fn handle_genre<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
         (GENRE_LS, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                ui::genre::ls(db_file_name, &archives.collect::<Vec<&str>>())
+                handler::genre::ls(db_file_name, &archives.collect::<Vec<&str>>())
             } else {
                 ui::usage(arg)
             }
         }
         (GENRE_DISPLAY, Some(_)) => {
-            ui::genre::display(db_file_name)
+            handler::genre::display(db_file_name)
         }
         (GENRE_ENABLE, Some(arg)) => {
             let name = arg.value_of(GENRE_NAME).unwrap_or("").to_lowercase();
-            ui::genre::enable(db_file_name, &name, arg.is_present(GENRE_GROUP))
+            handler::genre::enable(db_file_name, &name, arg.is_present(GENRE_GROUP))
         }
         (GENRE_DISABLE, Some(arg)) => {
             let name = arg.value_of(GENRE_NAME).unwrap_or("").to_lowercase();
-            ui::genre::disable(db_file_name, &name, arg.is_present(GENRE_GROUP))
+            handler::genre::disable(db_file_name, &name, arg.is_present(GENRE_GROUP))
         }
         (_, _) => ui::usage(arg)
     }    
@@ -99,22 +100,22 @@ fn handle_lang<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
         (LANG_LS, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
-            ui::lang::ls(db_file_name, archive)
+            handler::lang::ls(db_file_name, archive)
         }
         (LANG_DISPLAY, Some(_)) => {
-            ui::lang::display(db_file_name)
+            handler::lang::display(db_file_name)
         }
         (LANG_ENABLE, Some(arg)) => {
             let lang = arg.value_of(LANG_ARG).unwrap_or("");
-            ui::lang::enable(db_file_name, lang)
+            handler::lang::enable(db_file_name, lang)
         }
         (LANG_DISABLE, Some(arg)) => {
             let lang = arg.value_of(LANG_ARG).unwrap_or("");
-            ui::lang::disable(db_file_name, lang)
+            handler::lang::disable(db_file_name, lang)
         }
         (LANG_LOAD, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
-            ui::lang::load(db_file_name, archive)
+            handler::lang::load(db_file_name, archive)
         }
         (_, _) => ui::usage(arg)
     }
