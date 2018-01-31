@@ -268,14 +268,8 @@ pub const INSERT_GENRES: &'static str = "
 pub const INSERT_FILTER_TYPES: &'static str = "
 	BEGIN;
     INSERT OR IGNORE INTO filters VALUES (1, 'lang');
-    INSERT OR IGNORE INTO filters VALUES (2, 'genre');
-    INSERT OR IGNORE INTO filters VALUES (3, 'genre_group');
+    INSERT OR IGNORE INTO filters VALUES (2, 'genre');    
 	COMMIT;
 	";
 	
-#[allow(dead_code)]
-pub const FILL_FILTER: &'static str = "
-	";
     
-// conn.execute(query_create::FILL_FILTER, &[&1, &])?;
-    // conn.execute(query_create::FILL_FILTER, &[&2, &"genre"])?;    
