@@ -78,7 +78,7 @@ impl algorithm::Visitor<FictionBook> for BookVisitor {
 pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let langs: Vec<String> = sal::get_languages_disabled(&conn)?;
-    let genres: Vec<String> = sal::get_genres_disabled(&conn)?.into_iter().map(|(_, genre)| genre).collect();
+    let genres: Vec<String> = sal::get_genre_codes_disabled(&conn)?;
 
     println!("Disabled genres {}", genres.join(", "));
 

@@ -224,3 +224,12 @@ pub fn enable_genre_group(conn: &Connection, name: &str) -> Fb2Result<(i32)> {
     conn.execute(query_insert::ENABLE_GENRE_GROUP, &[&name]).map_err(into)
 }
 
+pub fn get_genre_codes_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
+    let mut result = Vec::new();
+    let mut stmt = conn.prepare(query_select::GENRE_CODES_DISABLED).map_err(into)?;
+    for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
+        let group: String = row.map_err(into)? ;
+        result.push(group);
+    }
+    Ok(result)
+}

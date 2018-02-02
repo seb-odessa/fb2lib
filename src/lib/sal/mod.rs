@@ -32,6 +32,7 @@ pub use sal::imp::disable_genre;
 pub use sal::imp::enable_genre;
 pub use sal::imp::disable_genre_group;
 pub use sal::imp::enable_genre_group;
+pub use sal::imp::get_genre_codes_disabled;
 
 
 
