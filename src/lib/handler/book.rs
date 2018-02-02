@@ -31,7 +31,7 @@ impl Access {
         for genre in book.get_book_genres().into_iter() {
             for genre in genre.split(",") {
                 let genre = genre.trim().to_lowercase();
-                if !self.disabled_genres.contains(&genre) {
+                if !self.disabled_genres.contains(&genre) || genre.is_empty() {
                     return true;
                 }
             }
@@ -40,7 +40,8 @@ impl Access {
     }
 
     fn is_lang_allowed(&self, book: &FictionBook) -> bool {
-        !self.disabled_langs.contains(book.get_book_lang().as_str())
+        let lang = book.get_book_lang();
+        !self.disabled_langs.contains(lang.as_str()) || lang.is_empty()
     }
 
     fn is_allowed(&self, book: &FictionBook) -> bool {
@@ -49,19 +50,28 @@ impl Access {
 }
 
 struct BookVisitor {
+    count: usize,
     access: Access
 }
 impl BookVisitor {
     fn new(access: Access) -> Self {
         BookVisitor {
+            count: 0,
             access: access
         }
     }
 }
 impl algorithm::Visitor<FictionBook> for BookVisitor {
     fn visit(&mut self, book: &FictionBook) {
-        let allowed = self.access.is_allowed(book);
-        println!("The book is {}, {}", allowed, book);
+        if self.access.is_allowed(book) {
+            self.count += 1;
+            let genres = format!("{}", book.get_book_genres().join(", "));
+            let authors = format!("{}", book.get_book_authors_names().join(", "));
+            let title = book.get_book_title();
+            let sequences = format!("{}", book.get_book_sequences_desc().join(", "));
+            let date = book.get_book_date();
+            println!("{} : {} : {} : {} : {} : {}", self.count, genres, authors, title, sequences, date);
+        }
     }
 }
 
@@ -69,6 +79,9 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let langs: Vec<String> = sal::get_languages_disabled(&conn)?;
     let genres: Vec<String> = sal::get_genres_disabled(&conn)?.into_iter().map(|(_, genre)| genre).collect();
+
+    println!("Disabled genres {}", genres.join(", "));
+
     let mut access = Access::new();
     access.disable_langs(langs);
     access.disable_genres(genres);
