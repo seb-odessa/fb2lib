@@ -23,8 +23,12 @@ const LANG_LOAD_HELP: &'static str = "Load unique languages to the database";
 
 const GENRE: &'static str = "genre";
 const GENRE_HELP: &'static str = "Use to manage genre filters";
-const GENRE_LS: &'static str = "unknown";
-const GENRE_LS_HELP: &'static str = "Print list of unknown genres from the specified archive.zip";
+const GENRE_LS: &'static str = "ls";
+const GENRE_LS_HELP: &'static str = "Print list of genres from the specified archive.zip";
+const ONLY_UNKNOWN: &'static str = "unknown";
+const ONLY_UNKNOWN_HELP: &'static str = "Show only unknown genres from archive";
+
+
 const GENRE_NAME: &'static str = "name";
 const GENRE_NAME_HELP: &'static str = "Genre name. Use */./? as willdcards";
 const GENRE_GROUP: &'static str = "group";
@@ -43,6 +47,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let lang = Arg::with_name(LANG_ARG).help(LANG_ARG_HELP).required(true);
     let name = Arg::with_name(GENRE_NAME).help(GENRE_NAME_HELP).required(true);
     let group = Arg::with_name(GENRE_GROUP).help(GENRE_GROUP_HELP).short("g").required(false);
+    let unknown = Arg::with_name(ONLY_UNKNOWN).help(ONLY_UNKNOWN_HELP).short("u").required(false);
     app.subcommand(
         SubCommand::with_name(CMD).about(CMD_HELP).arg(db)
         .subcommand(
@@ -55,7 +60,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
         )
         .subcommand(
             SubCommand::with_name(GENRE).about(GENRE_HELP)
-            .subcommand(SubCommand::with_name(GENRE_LS).about(GENRE_LS_HELP).arg(archive.clone()))
+            .subcommand(SubCommand::with_name(GENRE_LS).about(GENRE_LS_HELP).arg(unknown).arg(archive.clone()))
             .subcommand(SubCommand::with_name(GENRE_DISPLAY).about(GENRE_DISPLAY_HELP))
             .subcommand(SubCommand::with_name(GENRE_ENABLE).about(GENRE_ENABLE_HELP).arg(group.clone()).arg(name.clone()))
             .subcommand(SubCommand::with_name(GENRE_DISABLE).about(GENRE_DISABLE_HELP).arg(group.clone()).arg(name.clone()))            
@@ -76,7 +81,8 @@ fn handle_genre<'a>(db_file_name: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
         (GENRE_LS, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                handler::genre::ls(db_file_name, &archives.collect::<Vec<&str>>())
+                let only_new = arg.is_present(ONLY_UNKNOWN);
+                handler::genre::ls(db_file_name, only_new, &archives.collect::<Vec<&str>>())
             } else {
                 ui::usage(arg)
             }

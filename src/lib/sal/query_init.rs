@@ -240,7 +240,6 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'fantastic', id FROM genre_names WHERE code = 'sf';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_mystic', id FROM genre_names WHERE code = 'sf_horror';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'vampire_book', id FROM genre_names WHERE code = 'sf_horror';
-
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_irony', id FROM genre_names WHERE code = 'sf_humor';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'story', id FROM genre_names WHERE code = 'short_story';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'russian_fantasy', id FROM genre_names WHERE code = 'sf_fantasy';
@@ -262,6 +261,8 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sf_cyber_punk', id FROM genre_names WHERE code = 'sf_cyberpunk';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'city_fantasy', id FROM genre_names WHERE code = 'sf_fantasy_city';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'religion_rel', id FROM genre_names WHERE code = 'religion';
+	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'попаданцы', id FROM genre_names WHERE code = 'popadanec';
+	
 	COMMIT;
 	";
 

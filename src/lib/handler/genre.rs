@@ -29,28 +29,33 @@ impl algorithm::Visitor<FictionBook> for GenreCollector {
 }
 
 
-pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
+pub fn ls(db: &str, filtered: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let mut collector = GenreCollector::new();
     for archive in archives {
         println!("{}", archive);
         algorithm::visit(archive, &mut collector)?;
     }
-    let mut total = 0;
-    let mut unknown = HashMap::new();    
+    let mut total = 0;    
+    let mut result = HashMap::new();    
     for (code, count) in &collector.genres {
-        if let Some((_, _)) = sal::get_genre_name(&conn, code)? {
-            total += count;
+        total += count;
+        if filtered {
+            if sal::get_genre_name(&conn, code)?.is_none() {
+                result.insert(code, count);
+            }
         } else {
-            unknown.insert(code, count);
+            result.insert(code, count);
         }
     }
-    for (code, count) in &unknown {
+    for (code, count) in &result {
         println!("{} - {}", code, count);
     }
-    println!("Total books was processed: {}", total);
+    println!("Total genres was processed: {}", total);
     println!("Total unique genres was found {}", &collector.genres.len());
-    println!("Unknown genres was found {}", &unknown.len());    
+    if filtered {
+        println!("Unknown genres was found {}", &result.len());
+    }
     Ok(())
 }
 

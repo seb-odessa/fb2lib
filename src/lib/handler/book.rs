@@ -31,12 +31,12 @@ impl Access {
         for genre in book.get_book_genres().into_iter() {
             for genre in genre.split(",") {
                 let genre = genre.trim().to_lowercase();
-                if !self.disabled_genres.contains(&genre) || genre.is_empty() {
-                    return true;
+                if !genre.is_empty() && self.disabled_genres.contains(&genre){
+                    return false;
                 }
             }
         }
-        false
+        true
     }
 
     fn is_lang_allowed(&self, book: &FictionBook) -> bool {
