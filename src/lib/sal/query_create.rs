@@ -156,31 +156,43 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 			code		TEXT NOT NULL UNIQUE,	/* code */
 			synonym_id 	INTEGER NOT NULL        /* FK to genre_names.id */
 		);
-		
+
 		CREATE VIEW genres AS
-		SELECT A.id, C.code as code, B.name as type, A.name as name 
+		SELECT A.id, C.code as code, B.name as type, A.name as name
 		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id JOIN genre_synonyms C ON A.id = C.synonym_id
 		UNION
-		SELECT A.id, A.code as code, B.name as type, A.name as name 
+		SELECT A.id, A.code as code, B.name as type, A.name as name
 		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id;
-    
+
 		CREATE VIEW IF NOT EXISTS genres_enabled AS
 		SELECT genre_names.id, genre_groups.name AS group_name, genre_names.name AS genre_name
-		FROM genre_names 
-		JOIN genre_groups ON genre_names.group_id = genre_groups.id 
-		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre') 
+		FROM genre_names
+		JOIN genre_groups ON genre_names.group_id = genre_groups.id
+		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre')
 		WHERE filtered_id IS NULL;
 
 		CREATE VIEW IF NOT EXISTS genres_disabled AS
 		SELECT genre_names.id, genre_groups.name AS group_name, genre_names.name AS genre_name
-		FROM genre_names 
-		JOIN genre_groups ON genre_names.group_id = genre_groups.id 
-		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre') 
+		FROM genre_names
+		JOIN genre_groups ON genre_names.group_id = genre_groups.id
+		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre')
 		WHERE filtered_id IS NOT NULL;
 
 
     COMMIT;";
 
+#[allow(dead_code)]
+pub const PEOPLE_SUBSYSTEM: &'static str = "
+	BEGIN;
+    CREATE TABLE people (
+	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+        use_id          INTEGER, /* use row with id == this.use_id instead */
+	    first_name 	    TEXT NOT NULL,
+        middle_name	    TEXT NOT NULL,
+        last_name	    TEXT NOT NULL,
+        nickname	    TEXT NOT NULL
+    );
+    COMMIT;";
 
 /*********************** Untested ***********************/
 #[allow(dead_code)]
@@ -195,16 +207,6 @@ pub const BOOKS: &'static str = "
         file_offset     INTEGER
     );";
 
-#[allow(dead_code)]
-pub const PEOPLE: &'static str = "
-    CREATE TABLE people (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        use_id          INTEGER, /* use rew with id == this.use_id instead */
-	    first_name 	    TEXT NOT NULL,
-        middle_name	    TEXT NOT NULL,
-        last_name	    TEXT NOT NULL,
-        nickname	    TEXT NOT NULL
-    );";
 
 #[allow(dead_code)]
 pub const TITLES: &'static str = "

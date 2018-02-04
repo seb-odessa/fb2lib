@@ -31,7 +31,7 @@ pub const DISABLE_GENRE: &'static str = "
 
 pub const DISABLE_GENRE_GROUP: &'static str = "
  	INSERT INTO filters_def (filter_id, filtered_id)
-	SELECT filters.id, genre_names.id FROM genre_groups, filters, genre_names 
+	SELECT filters.id, genre_names.id FROM genre_groups, filters, genre_names
 	WHERE genre_names.group_id = genre_groups.id AND filters.name = 'genre' AND genre_groups.name = ?;";
 
 pub const ENABLE_GENRE: &'static str = "
@@ -45,6 +45,11 @@ pub const ENABLE_GENRE: &'static str = "
 pub const ENABLE_GENRE_GROUP: &'static str = "
 	DELETE from filters_def WHERE id IN (
 		SELECT filters_def.id FROM genre_groups, genre_names, filters_def, filters
-		WHERE genre_names.group_id = genre_groups.id AND genre_names.id = filters_def.filtered_id 
+		WHERE genre_names.group_id = genre_groups.id AND genre_names.id = filters_def.filtered_id
 		AND filters.id = filters_def.filter_id AND filters.name = 'genre' AND genre_groups.name = ?
  	)";
+
+pub const PEOPLE: &'static str = "
+	INSERT INTO people (first_name, middle_name, last_name, nickname) VALUES (?, ?, ?, ?)";
+
+

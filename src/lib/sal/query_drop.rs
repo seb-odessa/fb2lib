@@ -25,11 +25,18 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 	BEGIN;
         DROP TABLE IF EXISTS genre_synonyms;
         DROP TABLE IF EXISTS genre_groups;
-        DROP TABLE IF EXISTS genre_names;        
+        DROP TABLE IF EXISTS genre_names;
         DROP VIEW IF EXISTS genres;
         DROP VIEW IF EXISTS genres_enabled;
         DROP VIEW IF EXISTS genres_disabled;
     COMMIT;";
+
+#[allow(dead_code)]
+pub const PEOPLE_SUBSYSTEM: &'static str = "
+	BEGIN;
+        DROP TABLE IF EXISTS people;
+    COMMIT;";
+
 
 /*********************** Untested ***********************/
 
@@ -37,10 +44,6 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 pub const BOOKS: &'static str = "DROP TABLE books;";
 
 #[allow(dead_code)]
-pub const PEOPLE: &'static str = "DROP TABLE people;";
-
-#[allow(dead_code)]
 pub const TITLES: &'static str = "DROP TABLE titles;";
 
 
-    
