@@ -28,5 +28,6 @@ mod sal;
 mod tools;
 mod iconv;
 mod handler;
+mod visitor;
 mod archive;
 mod filesystem;
