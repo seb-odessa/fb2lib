@@ -40,7 +40,7 @@ impl Book {
             result.push_str(fname.as_str()); // имя
             if !mname.is_empty() {
                 result.push_str(" ");
-            }            
+            }
             result.push_str(mname.as_str()); // отчество
             return result;
         }
@@ -60,9 +60,10 @@ impl Book {
         let mut result = Vec::new();
         let title = book.get_book_title();
         let date = book.get_book_date();
+
         for author_desc in book.get_book_authors() {
             let author = Book::create_author(&author_desc);
-            let mut description = format!("{:40} : {}", author, title);
+            let mut description = format!("{:40} : '{}'", author, title);
             if !date.is_empty() {
                 description.push_str(" (");
                 description.push_str(date.as_str());
@@ -80,7 +81,7 @@ impl Book {
                     } else {
                         description.push_str(format!("{}", sequence.0).as_str());
                     }
-                    
+
                 }
                 description.push_str("]");
             }
