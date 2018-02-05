@@ -7,7 +7,9 @@ mod query_insert;
 mod query_select;
 use std::collections::HashMap;
 
+use rusqlite;
 pub type HashesByIdx = HashMap<i64, String>;
+pub type Connection = rusqlite::Connection;
 
 pub use sal::imp::reset_tables;
 pub use sal::imp::get_connection;
@@ -33,6 +35,6 @@ pub use sal::imp::enable_genre;
 pub use sal::imp::disable_genre_group;
 pub use sal::imp::enable_genre_group;
 pub use sal::imp::get_genre_codes_disabled;
-
+pub use sal::imp::get_genre_codes_and_groups;
 
 

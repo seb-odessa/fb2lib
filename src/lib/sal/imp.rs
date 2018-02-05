@@ -8,8 +8,11 @@ use sal::query_select;
 use sal::HashesByIdx;
 use torrent::Metainfo;
 
-use rusqlite::Connection;
+use rusqlite;
 use rustc_serialize::hex::ToHex;
+use std::collections::HashMap;
+
+pub type Connection = rusqlite::Connection;
 
 
 #[derive(Debug)]
@@ -233,6 +236,16 @@ pub fn get_genre_codes_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let group: String = row.map_err(into)? ;
         result.push(group);
+    }
+    Ok(result)
+}
+
+pub fn get_genre_codes_and_groups(conn: &Connection) -> Fb2Result<HashMap<String, String>> {
+    let mut result = HashMap::new();
+    let mut stmt = conn.prepare(query_select::GENRES_CODES_AND_GROUPS).map_err(into)?;
+    for row in stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)? {
+        let (code, group) = row.map_err(into)? as (String, String);
+        result.insert(code, group);
     }
     Ok(result)
 }

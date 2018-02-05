@@ -2,7 +2,11 @@ use algorithm;
 use visitor::acess::AccessGuard;
 use fb2parser::FictionBook;
 
+use std::iter::FromIterator;
+use std::collections::HashSet;
 use std::collections::HashMap;
+
+pub type GenreMap = HashMap<String, String>;
 
 pub struct Book {
     count: usize,
@@ -11,12 +15,12 @@ pub struct Book {
     genres: HashMap<String, String>,
 }
 impl Book {
-    pub fn new(access: AccessGuard) -> Self {
+    pub fn new(access: AccessGuard, genres: GenreMap) -> Self {
         Book {
             count: 0,
             access: access,
             books: Vec::new(),
-            genres: HashMap::new(),
+            genres: genres,
         }
     }
     pub fn report(&self) {
@@ -42,8 +46,17 @@ impl Book {
         }
     }
 
+    fn create_genres(&self, book: &FictionBook)->Vec<String> {
+        let mut groups = HashSet::new();
+        for genre in book.get_book_genres() {
+            if let Some(group) = self.genres.get(genre.as_str()) {
+                groups.insert(group.clone());
+            }
+        }
+        Vec::from_iter(groups)
+    }
 
-    fn format(book: &FictionBook)->Vec<String> {
+    fn format(&self, book: &FictionBook)->Vec<String> {
         let mut result = Vec::new();
         let title = book.get_book_title();
         let date = book.get_book_date();
@@ -58,7 +71,7 @@ impl Book {
             let sequences = book.get_book_sequences();
             if !sequences.is_empty() {
                 description.push_str(" [");
-                for sequence in  &sequences {
+                for sequence in &sequences {
                     if &sequences[0] != sequence {
                         description.push_str(", ");
                     }
@@ -71,6 +84,18 @@ impl Book {
                 }
                 description.push_str("]");
             }
+
+            let genres = self.create_genres(book);
+            if !genres.is_empty() {
+                description.push_str(" {");
+                for genre in &genres{
+                    if &genres[0] != genre {
+                        description.push_str(", ");
+                    }
+                    description.push_str(format!("{}", genre).as_str());
+                }
+                description.push_str("}");
+            }
             result.push(description);
         }
         result
@@ -80,7 +105,7 @@ impl algorithm::Visitor<FictionBook> for Book {
     fn visit(&mut self, book: &FictionBook) {
         if self.access.is_allowed(book) {
             self.count += 1;
-            for description in Book::format(book) {
+            for description in self.format(book) {
                 self.books.push(description);
             }
         }

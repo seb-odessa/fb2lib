@@ -23,4 +23,4 @@ pub const GENRES_GROUPS_ENABLED: &'static str = "SELECT DISTINCT group_name FROM
 pub const GENRE_CODES_DISABLED: &'static str = "
     SELECT genres.code FROM genres, filters_def WHERE genres.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre')";
 
-
+pub const GENRES_CODES_AND_GROUPS: &'static str = "SELECT code, type FROM genres;";
