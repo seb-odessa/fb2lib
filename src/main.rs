@@ -4,7 +4,7 @@ extern crate clap;
 use clap::{App, AppSettings};
 use lib::ui;
 
-const VERSION: &'static str = "v0.5.5";
+const VERSION: &'static str = "v0.6.1";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ABOUT: &'static str = "FictionBook Library Archive Manager";
 
