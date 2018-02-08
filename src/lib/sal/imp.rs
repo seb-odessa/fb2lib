@@ -11,6 +11,7 @@ use torrent::Metainfo;
 use rusqlite;
 use rustc_serialize::hex::ToHex;
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 pub type Connection = rusqlite::Connection;
 
@@ -248,4 +249,13 @@ pub fn get_genre_codes_and_groups(conn: &Connection) -> Fb2Result<HashMap<String
         result.insert(code, group);
     }
     Ok(result)
+}
+
+pub fn insert_people(conn: &Connection, authors: &HashSet<(String, String, String, String)>) -> Fb2Result<()> {
+    let mut stmt = conn.prepare(query_insert::PEOPLE).map_err(into)?;
+    for author in authors {
+        let &(ref first_name, ref middle_name, ref last_name, ref nick_name) = author;
+        stmt.execute(&[first_name, middle_name, last_name, nick_name]).map_err(into)?;
+    }
+    Ok(())
 }

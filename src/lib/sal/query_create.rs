@@ -190,7 +190,8 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 	    first_name 	    TEXT NOT NULL,
         middle_name	    TEXT NOT NULL,
         last_name	    TEXT NOT NULL,
-        nickname	    TEXT NOT NULL
+        nickname	    TEXT NOT NULL,
+		UNIQUE (first_name, middle_name, last_name, nickname) ON CONFLICT IGNORE
     );
     COMMIT;";
 

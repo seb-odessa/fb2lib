@@ -37,4 +37,6 @@ pub use sal::imp::enable_genre_group;
 pub use sal::imp::get_genre_codes_disabled;
 pub use sal::imp::get_genre_codes_and_groups;
 
+pub use sal::imp::insert_people;
+
 

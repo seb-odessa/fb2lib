@@ -34,7 +34,7 @@ pub fn authors(db: &str, load: bool, archives: &Vec<&str>) -> Fb2Result<()> {
         algorithm::visit(archive, &mut visitor)?;
     }
     if load {
-
+        sal::insert_people(&conn, &visitor.authors)?;
     } else {
         visitor.report();
     }
