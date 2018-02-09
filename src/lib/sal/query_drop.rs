@@ -23,17 +23,18 @@ pub const LANGUAGES_ENABLED: &'static str = "DROP VIEW IF EXISTS languages_enabl
 #[allow(dead_code)]
 pub const GENRE_SUBSYSTEM: &'static str = "
 	BEGIN;
-        DROP TABLE IF EXISTS genre_synonyms;
-        DROP TABLE IF EXISTS genre_groups;
-        DROP TABLE IF EXISTS genre_names;
         DROP VIEW IF EXISTS genres;
         DROP VIEW IF EXISTS genres_enabled;
         DROP VIEW IF EXISTS genres_disabled;
+        DROP TABLE IF EXISTS genre_synonyms;
+        DROP TABLE IF EXISTS genre_groups;
+        DROP TABLE IF EXISTS genre_names;
     COMMIT;";
 
 #[allow(dead_code)]
 pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
+        DROP VIEW IF EXISTS authors;
         DROP TABLE IF EXISTS people;
     COMMIT;";
 
