@@ -217,6 +217,25 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 
     COMMIT;";
 
+#[allow(dead_code)]
+pub const CONFIGURATION: &'static str = "
+	CREATE TABLE configuration (
+    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    	name 	TEXT NOT NULL,
+		path 	TEXT NOT NULL
+	);";
+
+#[allow(dead_code)]
+pub const STORAGE: &'static str = "
+	CREATE TABLE status (
+    	id			INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+		archive_id  INTEGER NOT NULL, /* FK to archives.id */
+		created    	TEXT NOT NULL,
+		base 		TEXT NOT NULL
+	);";
+
+
+
 /*********************** Untested ***********************/
 #[allow(dead_code)]
 pub const BOOKS: &'static str = "
