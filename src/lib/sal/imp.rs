@@ -1,5 +1,7 @@
 use result::into;
 use result::Fb2Result;
+use result::Fb2Error;
+use sal;
 use sal::query_create;
 use sal::query_init;
 use sal::query_drop;
@@ -36,16 +38,81 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute(query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
     // conn.execute_batch(query_create::FILTER_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(query_init::FILTER_SUBSYSTEM).map_err(into)?;
-
-    conn.execute_batch(query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
-   
-
     // conn.execute_batch(query_create::GENRE_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(query_init::INSERT_GENRES).map_err(into)?;
     // conn.execute_batch(query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
 
 
+    Ok(())
+}
+
+fn get_oper_id(oper: sal::LOADING) -> i64 {
+    match oper {
+        sal::LOADING::LANGUAGE => 1,
+        sal::LOADING::GENRE => 2,
+        sal::LOADING::AUTHOR => 3,
+    }
+}
+
+fn get_status_type(code: i64) -> sal::STATUS {
+    match code {
+        1 => sal::STATUS::COMPLETE,
+        2 => sal::STATUS::INCOMPLETE,
+        3 => sal::STATUS::IGNORE,
+        4 => sal::STATUS::FAILURE,
+        _ => sal::STATUS::UNKNOWN,
+    }
+}
+
+fn get_status_id(code: sal::STATUS) -> i64 {
+    match code {
+        sal::STATUS::COMPLETE => 1,
+        sal::STATUS::INCOMPLETE => 2,
+        sal::STATUS::IGNORE => 3,
+        sal::STATUS::FAILURE => 4,
+        sal::STATUS::UNKNOWN => 0,
+    }
+}
+
+pub fn get_archive_status(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<sal::STATUS> {
+    let mut stmt = conn.prepare(query_select::PROGRESS_STATUS).map_err(into)?;
+    let rows = stmt.query_map(&[&archive, &get_oper_id(oper)], |row| { row.get(0) })?;
+    for row in rows {
+        let status: i64 = row.map_err(into)?;
+        return Ok(get_status_type(status))
+    }
+    Ok(sal::STATUS::UNKNOWN)
+}
+
+fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
+    let mut stmt = conn.prepare(query_select::ARCHIVE_ID_BY_NAME).map_err(into)?;
+    let rows = stmt.query_map(&[&archive], |row| { row.get(0) })?;
+    for row in rows {
+        let id: i64 = row.map_err(into)?;
+        return Ok(id)    
+    }
+    Err(Fb2Error::Custom(format!("Archive {} not found in database", archive)))
+}
+
+
+pub fn set_archive_complete(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
+    let archive_id = get_archive_id_by_name(conn, archive)?;
+    conn.execute(
+        query_insert::PROGRESS,
+        &[&archive_id, &get_oper_id(oper), &get_status_id(sal::STATUS::COMPLETE)]).map_err(into)?;
+    Ok(())
+}
+pub fn set_archive_incomplete(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
+    Ok(())
+}
+
+pub fn set_archive_ignore(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
+    Ok(())
+}
+
+pub fn set_archive_failure(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
     Ok(())
 }
 

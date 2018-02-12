@@ -1,69 +1,3 @@
-/*
-Current hierarcy of supported/parsed data
-<description>
-	<title-info> - 1 (один, обязателен);
-		<genre> - 1..n (любое число, один обязaтелен);
-			text: String
-		<author> - 1..n (любое число, один обязaтелен);
-		    <first-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - имя;
-				text: String
-			<middle-name> - 0..1 (один, опционально) - отчество;
-				text: String
-			<last-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - фамилия;
-				text: String
-			<nickname> - 0..1 (один, обязателен при отсутствии <first-name> и <last-name>, иначе опционально);
-				text: String
-		<book-title> - 1 (один, обязателен);
-			text: String
-		<lang> - 1 (один, обязателен);
-			text: String
-		<src-lang> - 0..1 (один, опционально);
-			text: String
-		<translator> - 0..n (любое число, опционально);
-		    <first-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - имя;
-				text: String
-			<middle-name> - 0..1 (один, опционально) - отчество;
-				text: String
-			<last-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - фамилия;
-				text: String
-			<nickname> - 0..1 (один, обязателен при отсутствии <first-name> и <last-name>, иначе опционально);
-				text: String
-		<sequence> - 0..n (любое число, опционально).
-				number: Number
-				name:	String
-    <document-info> - 1 (один, обязателен);
-	    <author> - 1..n (любое число, один обязaтелен);
-		    <first-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - имя;
-				text: String
-			<middle-name> - 0..1 (один, опционально) - отчество;
-				text: String
-			<last-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - фамилия;
-				text: String
-			<nickname> - 0..1 (один, обязателен при отсутствии <first-name> и <last-name>, иначе опционально);
-				text: String
-		<program-used> - 0..1 (один, опционально);
-			text: String
-		<date> - 1 (один, обязателен);
-			value: String
-			text: String
-		<publisher> - 0..n (любое число, опционально) с версии 2.2.
-			text: String
-	<publish-info> - 0..1 (один, опционально);
-		<book-name> - 0..1 (один, опционально) - название;
-			text: String
-		<publisher> - 0..1 (один, опционально) - издательство;
-			text: String
-			... ?
-		<city> - 0..1 (один, опционально)- место издания;
-			text: String
-		<year> - 0..1 (один, опционально) - год издания;
-			text: String
-		<isbn> - 0..1 (один, опционально) - ISBN издания;
-			text: String
-		<sequence> - 0..n (любое число, опционально) - серия (серии) изданий, в которую входит книга.
-			number: Number
-			name:	String
-*/
 
 #[allow(dead_code)]
 pub const ARCHIVES: &'static str = "
@@ -222,12 +156,12 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	BEGIN;
 	CREATE TABLE operation (
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    	name 	TEXT NOT NULL
+    	name 	TEXT NOT NULL UNIQUE
 	);
 
 	CREATE TABLE status (
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    	name 	TEXT NOT NULL
+    	name 	TEXT NOT NULL UNIQUE
 	);
 
 	CREATE TABLE progress (
@@ -235,11 +169,19 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 		archive_id      INTEGER NOT NULL,       /* FK to archives.id */
 		operation_id 	INTEGER NOT NULL,       /* FK to operation.id */
 		status_id 		INTEGER NOT NULL,       /* FK to status.id */
-		registred		TEXT
+		registred		TEXT,
+		UNIQUE (archive_id) ON CONFLICT REPLACE
 	);
+	CREATE INDEX progress_archive_index on progress (archive_id ASC);
+	CREATE TRIGGER progress_on_insert AFTER INSERT ON progress
+	BEGIN
+		UPDATE progress SET registred = datetime('now') WHERE new.id = progress.id;
+	END;
+	CREATE TRIGGER progress_on_update AFTER UPDATE ON progress
+	BEGIN
+		UPDATE progress SET registred = datetime('now') WHERE new.id = progress.id AND new.status_id != old.status_id;
+	END;
     COMMIT;";
-
-
 
 /*********************** Untested ***********************/
 #[allow(dead_code)]

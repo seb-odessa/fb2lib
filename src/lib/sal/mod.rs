@@ -11,6 +11,23 @@ use rusqlite;
 pub type HashesByIdx = HashMap<i64, String>;
 pub type Connection = rusqlite::Connection;
 
+#[derive(Debug)]
+pub enum STATUS {
+    COMPLETE,
+    INCOMPLETE,
+    IGNORE,
+    FAILURE,
+    UNKNOWN // Record not found in table
+}
+
+#[derive(Debug)]
+pub enum LOADING {
+    LANGUAGE,
+    GENRE,
+    AUTHOR
+}
+
+
 pub use sal::imp::reset_tables;
 pub use sal::imp::get_connection;
 
@@ -39,4 +56,9 @@ pub use sal::imp::get_genre_codes_and_groups;
 
 pub use sal::imp::insert_people;
 
+pub use sal::imp::get_archive_status;
+pub use sal::imp::set_archive_complete;
+pub use sal::imp::set_archive_incomplete;
+pub use sal::imp::set_archive_ignore;
+pub use sal::imp::set_archive_failure;
 

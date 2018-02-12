@@ -52,5 +52,5 @@ pub const ENABLE_GENRE_GROUP: &'static str = "
 pub const PEOPLE: &'static str = "
 	INSERT INTO people (first_name, middle_name, last_name, nickname) VALUES (?, ?, ?, ?)";
 
-pub const STATUS: &'static str = "
-	INSERT INTO configuration (name, path) VALUES (?, ?)";
+pub const PROGRESS: &'static str = "
+	INSERT INTO progress (archive_id, operation_id, status_id) VALUES (?, ?, ?)";
