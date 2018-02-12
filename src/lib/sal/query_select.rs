@@ -26,6 +26,6 @@ pub const GENRE_CODES_DISABLED: &'static str = "
 pub const GENRES_CODES_AND_GROUPS: &'static str = "SELECT code, type FROM genres;";
 
 pub const PROGRESS_STATUS: &'static str = "
-	SELECT status_id FROM progress LEFT JOIN archives ON progress.archive_id = archives.id WHERE archives.name = ? AND progress.operation_id = ?;";
+	SELECT status_id FROM progress LEFT JOIN archives ON progress.archive_id = archives.id WHERE archives.name = ? AND progress.task_id = ?;";
 
 pub const ARCHIVE_ID_BY_NAME: &'static str = "SELECT id FROM archives WHERE name = ?1";

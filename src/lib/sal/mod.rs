@@ -21,7 +21,7 @@ pub enum STATUS {
 }
 
 #[derive(Debug)]
-pub enum LOADING {
+pub enum TASK {
     LANGUAGE,
     GENRE,
     AUTHOR

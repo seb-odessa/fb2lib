@@ -42,7 +42,8 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 #[allow(dead_code)]
 pub const PROGRESS_SUBSYSTEM: &'static str = "
 	BEGIN;
-	DROP TABLE IF EXISTS operation;
+    DROP VIEW IF EXISTS progress_log;
+	DROP TABLE IF EXISTS task;
     DROP TABLE IF EXISTS status;
     DROP TABLE IF EXISTS progress;
     COMMIT;";

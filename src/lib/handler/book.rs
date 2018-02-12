@@ -7,7 +7,7 @@ use visitor::list::Book;
 
 use std::path;
 
-use sal::LOADING::AUTHOR;
+use sal::TASK::AUTHOR;
 use sal::STATUS;
 
 fn create_access_guard(conn: &sal::Connection)-> Fb2Result<acess::AccessGuard> {

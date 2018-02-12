@@ -154,7 +154,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 #[allow(dead_code)]
 pub const PROGRESS_SUBSYSTEM: &'static str = "
 	BEGIN;
-	CREATE TABLE operation (
+	CREATE TABLE task (
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     	name 	TEXT NOT NULL UNIQUE
 	);
@@ -167,11 +167,18 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	CREATE TABLE progress (
     	id 				INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,    	
 		archive_id      INTEGER NOT NULL,       /* FK to archives.id */
-		operation_id 	INTEGER NOT NULL,       /* FK to operation.id */
+		task_id 		INTEGER NOT NULL,       /* FK to task.id */
 		status_id 		INTEGER NOT NULL,       /* FK to status.id */
 		registred		TEXT,
 		UNIQUE (archive_id) ON CONFLICT REPLACE
 	);
+	CREATE VIEW progress_log AS
+	SELECT progress.id AS id, archives.name, task.name AS task, status.name AS status, registred
+	FROM progress 
+	LEFT JOIN status ON progress.status_id = status.id 
+	LEFT JOIN task ON progress.task_id = task.id
+	LEFT JOIN archives ON progress.archive_id = archives.id;
+
 	CREATE INDEX progress_archive_index on progress (archive_id ASC);
 	CREATE TRIGGER progress_on_insert AFTER INSERT ON progress
 	BEGIN
