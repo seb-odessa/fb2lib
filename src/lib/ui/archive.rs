@@ -1,9 +1,7 @@
 use ui;
-use out;
-use tools;
-use archive;
-use algorithm;
+use handler;
 use result::Fb2Result;
+
 use clap::{App, Arg, SubCommand, ArgMatches};
 
 pub const CMD: &'static str = "archive";
@@ -44,26 +42,26 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
     let archive_name = arg.value_of(ui::ARCH_FILE).unwrap_or("").to_string();
     match arg.subcommand() {
         (LST, Some(_)) => {
-            list_files(&archive_name)
+            handler::archive::list_files(&archive_name)
         }
         (CHECK, Some(arg)) => {
-            check_archive(&archive_name, arg.occurrences_of(QUIET) != 0)
+            handler::archive::check_archive(&archive_name, arg.occurrences_of(QUIET) != 0)
         }
         (XML, Some(arg)) => {
             let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
-            show_xml(&archive_name, book)
+            handler::archive::show_xml(&archive_name, book)
         }
         (FB2, Some(arg)) => {
             let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
-            show_fb2(&archive_name, book)
+            handler::archive::show_fb2(&archive_name, book)
         }
         (INF, Some(arg)) => {
             let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
-            show_inf(&archive_name, book)
+            handler::archive::show_inf(&archive_name, book)
         }
         (ZIP, Some(arg)) => {
             let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
-            show_zip(&archive_name, book)
+            handler::archive::show_zip(&archive_name, book)
         }
         (_, _) => {
             ui::usage(arg)
@@ -71,67 +69,3 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
     }
 }
 
-fn show_xml(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    algorithm::apply(zip, file_name, out::xml)
-}
-
-fn show_fb2(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    algorithm::apply(zip, file_name, out::fb2)
-}
-
-fn show_inf(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    algorithm::apply(zip, file_name, out::info)
-}
-
-fn show_zip(archive_name: &str, file_name: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive_name)?;
-    algorithm::apply_to_file(zip, file_name, out::zip_info)
-}
-
-fn list_files(archive_name: &str) -> Fb2Result<()> {
-    let mut zip = archive::open(archive_name)?;
-    for i in 0..zip.len() {
-        let file = zip.by_index(i)?;
-        out::file_info(&file);
-    }
-    Ok(())
-}
-
-fn check_archive(archive_name: &str, quiet: bool) -> Fb2Result<()> {
-    use std::io;
-    use std::io::Write;
-    let zip = archive::open(archive_name)?;
-    let count = zip.len();
-    let mut succ = 0;
-    let mut curr = 0;
-    if !quiet {
-        print!("Progress:   %");
-    }
-    algorithm::apply_to_xml(zip, "*", |file_name, xml| {
-        match tools::into_fb2(xml) {
-            Ok(_) => succ += 1,
-            Err(_) => {
-                if !quiet {
-                    println!();
-                }
-                println!(
-                    "The {} file contained unsupported FB2 file {}",
-                    archive_name,
-                    &file_name
-                )
-            }
-        }
-        if !quiet {
-            curr += 1;
-            print!("\rProgress: {:3}%", 100 * (1 + curr) / count);
-            io::stdout().flush().unwrap();
-        }
-    })?;
-    if !quiet {
-        println!("\nSucceeded {}/{} ({}%)", succ, count, 100 * succ / count);
-    }
-    Ok(())
-}

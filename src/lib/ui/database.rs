@@ -1,5 +1,5 @@
 use ui;
-use sal;
+use handler;
 use result::Fb2Result;
 use clap::{App, Arg, SubCommand, ArgMatches};
 
@@ -20,12 +20,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
 pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
     let database = arg.value_of(ui::DB_FILE).unwrap_or(ui::DB_FILE);
     match arg.subcommand() {
-        (RESET, Some(_)) => reset(&database),
+        (RESET, Some(_)) => handler::database::reset(&database),
         (_, _) => ui::usage(arg)
     }
-}
-
-pub fn reset(db_file_name: &str) -> Fb2Result<()> {
-    println!("reset({})", db_file_name);
-    sal::reset_tables(db_file_name)
 }
