@@ -55,6 +55,7 @@ pub use sal::imp::get_genre_codes_disabled;
 pub use sal::imp::get_genre_codes_and_groups;
 
 pub use sal::imp::insert_people;
+pub use sal::imp::select_people;
 
 pub use sal::imp::get_archive_status;
 pub use sal::imp::set_archive_complete;

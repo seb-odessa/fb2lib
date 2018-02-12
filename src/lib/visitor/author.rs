@@ -5,16 +5,19 @@ use fb2parser::FictionBook;
 use std::collections::HashSet;
 
 pub type AuthorVisitor = algorithm::Visitor<FictionBook>;
+pub type AuthorDesc = (String, String, String, String);
 
 pub struct Author {
     access: AccessGuard,
-    pub authors: HashSet<(String, String, String, String)>,
+    pub authors: HashSet<AuthorDesc>,
+    ignore: HashSet<AuthorDesc>,
 }
 impl Author {
-    pub fn new(access: AccessGuard) -> Self {
+    pub fn new(access: AccessGuard, ignore: HashSet<AuthorDesc>) -> Self {
         Author {
             access: access,
             authors: HashSet::new(),
+            ignore: ignore,
         }
     }
     pub fn report(&self) {
@@ -28,20 +31,24 @@ impl Author {
                     print!(" ");
                 }
                 print!("{}", first_name);
-                
+
                 if (!last_name.is_empty() || !first_name.is_empty()) && !middle_name.is_empty() {
                     print!(" ");
                 }
-                println!("{}", middle_name);                
+                println!("{}", middle_name);
             }
         }
+        println!("New authors was found {}", self.authors.len());
+        println!("Authors already added {}", self.ignore.len());
     }
 }
 impl algorithm::Visitor<FictionBook> for Author {
     fn visit(&mut self, book: &FictionBook) {
-        if self.access.is_allowed(book) {            
+        if self.access.is_allowed(book) {
             for author in book.get_book_authors() {
-                self.authors.insert(author);
+                if !self.ignore.contains(&author) {
+                    self.authors.insert(author);
+                }
             }
 
         }

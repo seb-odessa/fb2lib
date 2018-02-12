@@ -91,7 +91,7 @@ fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
     let rows = stmt.query_map(&[&archive], |row| { row.get(0) })?;
     for row in rows {
         let id: i64 = row.map_err(into)?;
-        return Ok(id)    
+        return Ok(id)
     }
     Err(Fb2Error::Custom(format!("Archive {} not found in database", archive)))
 }
@@ -332,4 +332,15 @@ pub fn insert_people(conn: &Connection, authors: &HashSet<(String, String, Strin
         stmt.execute(&[first_name, middle_name, last_name, nick_name]).map_err(into)?;
     }
     Ok(())
+}
+
+pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, String, String)>> {
+    let mut authors = HashSet::new();
+    let mut stmt = conn.prepare(query_select::PEOPLE).map_err(into)?;
+    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3))).map_err(into)?;
+    for row in rows {
+        let author = row.map_err(into)? as (String,String,String,String);
+        authors.insert(author);
+    }
+    Ok(authors)
 }

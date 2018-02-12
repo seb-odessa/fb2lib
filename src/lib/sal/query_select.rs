@@ -29,3 +29,6 @@ pub const PROGRESS_STATUS: &'static str = "
 	SELECT status_id FROM progress LEFT JOIN archives ON progress.archive_id = archives.id WHERE archives.name = ? AND progress.task_id = ?;";
 
 pub const ARCHIVE_ID_BY_NAME: &'static str = "SELECT id FROM archives WHERE name = ?1";
+
+pub const PEOPLE: &'static str = "SELECT first_name, middle_name, last_name, nickname FROM people";
+
