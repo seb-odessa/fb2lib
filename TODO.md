@@ -9,5 +9,6 @@
  
 
 ### archive handlers
+- create subsystem to prevent archive handling more than once
 - loading existing perple into "do not insert" set when collecting authors from archives
 

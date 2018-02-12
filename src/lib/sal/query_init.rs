@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 pub const INSERT_GENRES: &'static str = "
 	BEGIN;
 	INSERT INTO genre_groups (id, name) VALUES (1, 'приключения');
@@ -263,15 +264,24 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'religion_rel', id FROM genre_names WHERE code = 'religion';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'попаданцы', id FROM genre_names WHERE code = 'popadanec';
 	
-	COMMIT;
-	";
+	COMMIT;";
 
 #[allow(dead_code)]
-pub const INSERT_FILTER_TYPES: &'static str = "
+pub const FILTER_SUBSYSTEM: &'static str = "
 	BEGIN;
     INSERT OR IGNORE INTO filters VALUES (1, 'lang');
     INSERT OR IGNORE INTO filters VALUES (2, 'genre');    
-	COMMIT;
-	";
+	COMMIT;";
 	
+#[allow(dead_code)]
+pub const PROGRESS_SUBSYSTEM: &'static str = "
+	BEGIN;
+    INSERT OR IGNORE INTO status VALUES (1, 'операция завершена');
+    INSERT OR IGNORE INTO status VALUES (2, 'заблокировано для выполнения операции');
+	INSERT OR IGNORE INTO status VALUES (3, 'сбой при выполнении операции');
+
+	INSERT OR IGNORE INTO operation VALUES (1, 'загрузка языков');
+	INSERT OR IGNORE INTO operation VALUES (2, 'загрузка жанров');
+	INSERT OR IGNORE INTO operation VALUES (3, 'загрузка авторов');
+	COMMIT;";
     

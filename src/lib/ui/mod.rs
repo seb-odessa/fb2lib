@@ -2,12 +2,12 @@ use result::Fb2Result;
 use clap::{App, ArgMatches};
 
 pub mod archive;
-pub mod database;
-pub mod torrent;
-pub mod filter;
-// pub mod genre;
-// pub mod lang;
 pub mod book;
+pub mod config;
+pub mod database;
+pub mod filter;
+pub mod torrent;
+
 
 pub struct Adapter <'a, 'b>  where 'a: 'b {
     app: App<'a, 'b>

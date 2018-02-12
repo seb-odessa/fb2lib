@@ -15,6 +15,39 @@ use std::collections::HashSet;
 
 pub type Connection = rusqlite::Connection;
 
+pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
+    let conn = Connection::open(db_file_name).map_err(into)?;
+    // conn.execute(query_drop::ARCHIVES, &[]).map_err(into)?;
+    // conn.execute(query_drop::PIECES, &[]).map_err(into)?;
+    // conn.execute(query_drop::LANGUAGES, &[]).map_err(into)?;
+    // conn.execute(query_drop::LANGUAGES_DISABLED, &[]).map_err(into)?;
+    // conn.execute(query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
+    // conn.execute_batch(query_drop::FILTER_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(query_drop::GENRE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
+
+
+    // conn.execute(query_create::ARCHIVES, &[]).map_err(into)?;
+    // conn.execute(query_create::PIECES, &[]).map_err(into)?;
+    // conn.execute(query_create::LANGUAGES, &[]).map_err(into)?;
+    // conn.execute(query_create::LANGUAGES_AUTO, &[]).map_err(into)?;
+    // conn.execute(query_create::LANGUAGES_DISABLED, &[]).map_err(into)?;
+    // conn.execute(query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
+    // conn.execute_batch(query_create::FILTER_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(query_init::FILTER_SUBSYSTEM).map_err(into)?;
+
+    conn.execute_batch(query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
+   
+
+    // conn.execute_batch(query_create::GENRE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(query_init::INSERT_GENRES).map_err(into)?;
+    // conn.execute_batch(query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+
+
+    Ok(())
+}
 
 #[derive(Debug)]
 pub struct ArchiveSizes {
@@ -107,34 +140,6 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> Fb2Result<()> {
         }
     }
     tx.commit().map_err(into)
-}
-
-pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
-    let conn = Connection::open(db_file_name).map_err(into)?;
-    // conn.execute(query_drop::ARCHIVES, &[]).map_err(into)?;
-    // conn.execute(query_drop::PIECES, &[]).map_err(into)?;
-    // conn.execute(query_drop::LANGUAGES, &[]).map_err(into)?;
-    // conn.execute(query_drop::LANGUAGES_DISABLED, &[]).map_err(into)?;
-    // conn.execute(query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
-    // conn.execute_batch(query_drop::FILTER_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(query_drop::GENRE_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
-
-    // conn.execute(query_create::ARCHIVES, &[]).map_err(into)?;
-    // conn.execute(query_create::PIECES, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES_AUTO, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES_DISABLED, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
-    // conn.execute_batch(query_create::FILTER_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(query_init::INSERT_FILTER_TYPES).map_err(into)?;
-
-    conn.execute_batch(query_create::GENRE_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(query_init::INSERT_GENRES).map_err(into)?;
-    conn.execute_batch(query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
-
-
-    Ok(())
 }
 
 pub fn insert_language(conn: &Connection, lang: &str) -> Fb2Result<i32> {

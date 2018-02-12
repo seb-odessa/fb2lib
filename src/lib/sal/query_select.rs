@@ -25,3 +25,5 @@ pub const GENRE_CODES_DISABLED: &'static str = "
 
 pub const GENRES_CODES_AND_GROUPS: &'static str = "SELECT code, type FROM genres;";
 
+pub const STATUS: &'static str = "
+	SELECT id, name, path FROM configuration";
