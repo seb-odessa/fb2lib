@@ -3,8 +3,6 @@ use filesystem;
 use result::into;
 use result::Fb2Result;
 
-
-
 pub fn load(db_file_name: &str, torrent_name: &str) -> Fb2Result<()> {
     println!("torrent_load({}, {})", db_file_name, torrent_name);
     let metainfo = filesystem::load_torrent(torrent_name)?;
