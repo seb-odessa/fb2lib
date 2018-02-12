@@ -4,6 +4,8 @@ use fb2parser::FictionBook;
 
 use std::collections::HashSet;
 
+pub type AuthorVisitor = algorithm::Visitor<FictionBook>;
+
 pub struct Author {
     access: AccessGuard,
     pub authors: HashSet<(String, String, String, String)>,

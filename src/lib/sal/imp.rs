@@ -48,7 +48,7 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     Ok(())
 }
 
-fn get_oper_id(oper: sal::LOADING) -> i64 {
+fn get_operation_id(oper: sal::LOADING) -> i64 {
     match oper {
         sal::LOADING::LANGUAGE => 1,
         sal::LOADING::GENRE => 2,
@@ -78,7 +78,7 @@ fn get_status_id(code: sal::STATUS) -> i64 {
 
 pub fn get_archive_status(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<sal::STATUS> {
     let mut stmt = conn.prepare(query_select::PROGRESS_STATUS).map_err(into)?;
-    let rows = stmt.query_map(&[&archive, &get_oper_id(oper)], |row| { row.get(0) })?;
+    let rows = stmt.query_map(&[&archive, &get_operation_id(oper)], |row| { row.get(0) })?;
     for row in rows {
         let status: i64 = row.map_err(into)?;
         return Ok(get_status_type(status))
@@ -96,24 +96,26 @@ fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
     Err(Fb2Error::Custom(format!("Archive {} not found in database", archive)))
 }
 
-
-pub fn set_archive_complete(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
-    let archive_id = get_archive_id_by_name(conn, archive)?;
-    conn.execute(
-        query_insert::PROGRESS,
-        &[&archive_id, &get_oper_id(oper), &get_status_id(sal::STATUS::COMPLETE)]).map_err(into)?;
+fn set_archive_status(conn: &Connection, archive: &str, operation: i64, status: i64) -> Fb2Result<()> {
+let archive_id = get_archive_id_by_name(conn, archive)?;
+    conn.execute(query_insert::PROGRESS, &[&archive_id, &operation, &status]).map_err(into)?;
     Ok(())
 }
+
+pub fn set_archive_complete(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
+    set_archive_status(conn, archive, get_operation_id(oper), get_status_id(sal::STATUS::COMPLETE))
+}
+
 pub fn set_archive_incomplete(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
-    Ok(())
+    set_archive_status(conn, archive, get_operation_id(oper), get_status_id(sal::STATUS::INCOMPLETE))
 }
 
 pub fn set_archive_ignore(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
-    Ok(())
+    set_archive_status(conn, archive, get_operation_id(oper), get_status_id(sal::STATUS::IGNORE))
 }
 
 pub fn set_archive_failure(conn: &Connection, archive: &str, oper: sal::LOADING) -> Fb2Result<()> {
-    Ok(())
+    set_archive_status(conn, archive, get_operation_id(oper), get_status_id(sal::STATUS::FAILURE))
 }
 
 #[derive(Debug)]
