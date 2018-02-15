@@ -11,7 +11,7 @@ use rusqlite;
 pub type HashesByIdx = HashMap<i64, String>;
 pub type Connection = rusqlite::Connection;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum STATUS {
     COMPLETE,
     INCOMPLETE,
@@ -20,7 +20,7 @@ pub enum STATUS {
     UNKNOWN // Record not found in table
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum TASK {
     LANGUAGE,
     GENRE,

@@ -2,12 +2,13 @@ use sal;
 use algorithm;
 use result::Fb2Result;
 use visitor::acess;
-use visitor::author::{Author, AuthorVisitor};
-use visitor::list::Book;
+use visitor::author::{Author, BookVisitor};
+use visitor::book::Book;
+use visitor::lang::Lang;
 
 use std::path;
 
-use sal::TASK::AUTHOR;
+use sal::TASK::{AUTHOR, LANGUAGE};
 use sal::STATUS;
 
 fn create_access_guard(conn: &sal::Connection)-> Fb2Result<acess::AccessGuard> {
@@ -31,21 +32,32 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     Ok(())
 }
 
-
-fn visit(conn: &sal::Connection, path: &str, name: &str, load: bool, visitor: &mut AuthorVisitor) -> Fb2Result<()> {
-    if load {
-        sal::set_archive_incomplete(conn, name, AUTHOR)?;
+fn visit(conn: &sal::Connection, path: &str, name: &str, save: bool, visitor: &mut BookVisitor, task: sal::TASK) -> Fb2Result<()> {
+    if save {
+        sal::set_archive_incomplete(conn, name, task)?;
         if algorithm::visit(path, visitor).is_err() {
-            sal::set_archive_failure(conn, name, AUTHOR)
+            sal::set_archive_failure(conn, name, task)
         } else {
-            sal::set_archive_complete(conn, name, AUTHOR)
+            sal::set_archive_complete(conn, name, task)
         }
     } else {
         algorithm::visit(path, visitor)
     }
 }
 
-pub fn authors(db: &str, load: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+fn is_visit_required(save: bool, force: bool, status: sal::STATUS) -> bool {
+    !save || 
+    force || 
+    match status {
+            STATUS::COMPLETE => false,
+            STATUS::IGNORE => false,
+            STATUS::FAILURE => true,
+            STATUS::INCOMPLETE => false,
+            STATUS::UNKNOWN => true,
+        }
+}
+
+pub fn authors(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access_guard = create_access_guard(&conn)?;
     let authors = sal::select_people(&conn)?;
@@ -53,23 +65,30 @@ pub fn authors(db: &str, load: bool, force: bool, archives: &Vec<&str>) -> Fb2Re
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
         let status = sal::get_archive_status(&conn, name, AUTHOR)?;
-        let visit_required = !load || force || match status {
-            STATUS::COMPLETE => false,
-            STATUS::IGNORE => false,
-            STATUS::FAILURE => true,
-            STATUS::INCOMPLETE => false,
-            STATUS::UNKNOWN => true,
-        };
-        if visit_required {
-            visit(&conn, archive, name, load, &mut visitor)?;
+        if is_visit_required(save, force, status) {
+            visit(&conn, archive, name, save, &mut visitor, AUTHOR)?;
         }
     }
-
-    if load {
-        sal::insert_people(&conn, &visitor.authors)?;
+    if save {
+        visitor.save(&conn)
     } else {
-        visitor.report();
+        visitor.report()
     }
+}
 
-    Ok(())
+pub fn langs(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let mut visitor = Lang::new();
+    for archive in archives {
+        let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
+        let status = sal::get_archive_status(&conn, name, LANGUAGE)?;
+        if is_visit_required(save, force, status) {
+            visit(&conn, archive, name, save, &mut visitor, LANGUAGE)?;
+        }
+    }
+    if save {
+        visitor.save(&conn)
+    } else {
+        visitor.report()
+    }
 }
