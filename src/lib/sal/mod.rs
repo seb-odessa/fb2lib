@@ -42,7 +42,7 @@ pub use sal::imp::get_languages_enabled;
 pub use sal::imp::disable_language;
 pub use sal::imp::enable_language;
 
-pub use sal::imp::get_genre_name;
+pub use sal::imp::get_genre_codes;
 pub use sal::imp::get_genres_disabled;
 pub use sal::imp::get_genres_enabled;
 pub use sal::imp::get_genre_groups_disabled;

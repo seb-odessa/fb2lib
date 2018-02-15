@@ -1,63 +1,7 @@
 use sal;
 use result::Fb2Result;
-use fb2parser::FictionBook;
 use tools;
 use algorithm;
-
-use std::collections::HashMap;
-
-pub struct GenreCollector {
-    genres: HashMap<String, usize>
-}
-impl GenreCollector {
-    pub fn new() -> Self {
-        GenreCollector{
-            genres: HashMap::new()
-        }
-    }
-}
-impl algorithm::Visitor<FictionBook> for GenreCollector {
-    fn visit(&mut self, book: &FictionBook) {
-        for genre in book.get_book_genres().into_iter() {
-            for genre in genre.split(",") {
-                let genre = genre.trim().to_lowercase();
-                 let counter = self.genres.entry(genre).or_insert(0);
-                *counter += 1;
-            }
-        }
-    }
-}
-
-
-pub fn ls(db: &str, filtered: bool, archives: &Vec<&str>) -> Fb2Result<()> {
-    let conn = sal::get_connection(db)?;
-    let mut collector = GenreCollector::new();
-    for archive in archives {
-        println!("{}", archive);
-        algorithm::visit(archive, &mut collector)?;
-    }
-    let mut total = 0;    
-    let mut result = HashMap::new();    
-    for (code, count) in &collector.genres {
-        total += count;
-        if filtered {
-            if sal::get_genre_name(&conn, code)?.is_none() {
-                result.insert(code, count);
-            }
-        } else {
-            result.insert(code, count);
-        }
-    }
-    for (code, count) in &result {
-        println!("{} - {}", code, count);
-    }
-    println!("Total genres was processed: {}", total);
-    println!("Total unique genres was found {}", &collector.genres.len());
-    if filtered {
-        println!("Unknown genres was found {}", &result.len());
-    }
-    Ok(())
-}
 
 pub fn display(db_file_name: &str) -> Fb2Result<()> {
     let conn = sal::get_connection(db_file_name)?;

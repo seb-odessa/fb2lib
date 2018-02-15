@@ -5,10 +5,11 @@ use visitor::acess;
 use visitor::author::{Author, BookVisitor};
 use visitor::book::Book;
 use visitor::lang::Lang;
+use visitor::genre::Genre;
 
 use std::path;
 
-use sal::TASK::{AUTHOR, LANGUAGE};
+use sal::TASK::{AUTHOR, LANGUAGE, GENRE};
 use sal::STATUS;
 
 fn create_access_guard(conn: &sal::Connection)-> Fb2Result<acess::AccessGuard> {
@@ -32,16 +33,16 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     Ok(())
 }
 
-fn visit(conn: &sal::Connection, path: &str, name: &str, save: bool, visitor: &mut BookVisitor, task: sal::TASK) -> Fb2Result<()> {
+fn visit(conn: &sal::Connection, archive: &str, name: &str, save: bool, visitor: &mut BookVisitor, task: sal::TASK) -> Fb2Result<()> {
     if save {
         sal::set_archive_incomplete(conn, name, task)?;
-        if algorithm::visit(path, visitor).is_err() {
+        if algorithm::visit(archive, visitor).is_err() {
             sal::set_archive_failure(conn, name, task)
         } else {
             sal::set_archive_complete(conn, name, task)
         }
     } else {
-        algorithm::visit(path, visitor)
+        algorithm::visit(archive, visitor)
     }
 }
 
@@ -92,3 +93,14 @@ pub fn langs(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Resu
         visitor.report()
     }
 }
+
+pub fn genres(db: &str, only_unknown: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let genres: Vec<String> = sal::get_genre_codes(&conn)?;
+    let mut visitor = Genre::new(genres);
+    for archive in archives {
+        visit(&conn, archive, "", false, &mut visitor, GENRE)?;
+    }
+    visitor.report(only_unknown)
+}
+

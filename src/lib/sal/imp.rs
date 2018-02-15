@@ -243,12 +243,14 @@ pub fn enable_language(conn: &Connection, lang: &str) -> Fb2Result<(i32)> {
     conn.execute(query_insert::ENABLE_LANGUAGE, &[&lang]).map_err(into)
 }
 
-pub fn get_genre_name(conn: &Connection, genre: &str) -> Fb2Result<Option<(i32, String)>> {
-    let mut stmt = conn.prepare(query_select::GENRE_NAME).map_err(into)?;
-    for row in stmt.query_map(&[&genre], |row| (row.get(0), row.get(1))).map_err(into)? {
-        return Ok(Some(row.map_err(into)? as (i32, String)));
+pub fn get_genre_codes(conn: &Connection) -> Fb2Result<Vec<String>> {
+    let mut result = Vec::new();
+    let mut stmt = conn.prepare(query_select::GENRE_CODES).map_err(into)?;
+    for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
+        let code: String = row.map_err(into)? ;
+        result.push(code);
     }
-    Ok(None)
+    Ok(result)
 }
 
 pub fn get_genres_disabled(conn: &Connection) -> Fb2Result<Vec<(String, String)>> {
