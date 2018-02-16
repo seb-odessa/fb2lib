@@ -5,11 +5,19 @@ mod query_create;
 mod query_init;
 mod query_insert;
 mod query_select;
+
+use result;
+use rusqlite;
 use std::collections::HashMap;
 
-use rusqlite;
 pub type HashesByIdx = HashMap<i64, String>;
 pub type Connection = rusqlite::Connection;
+pub trait Save<T> {
+    fn save(&self, conn: &Connection) -> result::Fb2Result<()>;
+    fn task(&self) -> TASK;
+}
+
+
 
 #[derive(Debug, Clone, Copy)]
 pub enum STATUS {
@@ -24,7 +32,8 @@ pub enum STATUS {
 pub enum TASK {
     LANGUAGE,
     GENRE,
-    AUTHOR
+    AUTHOR,
+    TITLE,
 }
 
 

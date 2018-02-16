@@ -6,7 +6,6 @@ use fb2parser::FictionBook;
 
 use std::collections::HashSet;
 
-pub type BookVisitor = algorithm::Visitor<FictionBook>;
 pub type AuthorDesc = (String, String, String, String);
 
 pub struct Author {
@@ -22,10 +21,27 @@ impl Author {
             ignore: ignore,
         }
     }
-    pub fn save(&self, conn: &sal::Connection) -> Fb2Result<()> {
+}
+impl sal::Save<FictionBook> for Author {
+    fn save(&self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_people(&conn, &self.authors)
     }
-    pub fn report(&self) -> Fb2Result<()>{
+    fn task(&self) -> sal::TASK {
+        sal::TASK::AUTHOR
+    }
+}
+impl algorithm::Visitor<FictionBook> for Author {
+    fn visit(&mut self, book: &FictionBook) {
+        if self.access.is_allowed(book) {
+            for author in book.get_book_authors() {
+                if !self.ignore.contains(&author) {
+                    self.authors.insert(author);
+                }
+            }
+
+        }
+    }
+    fn report(&self){
         for author in &self.authors {
             let (first_name, middle_name, last_name, nick_name) = author.clone();
             if first_name.is_empty() && middle_name.is_empty() && last_name.is_empty() && !nick_name.is_empty() {
@@ -45,18 +61,5 @@ impl Author {
         }
         println!("New authors was found {}", self.authors.len());
         println!("Authors already added {}", self.ignore.len());
-        Ok(())
-    }
-}
-impl algorithm::Visitor<FictionBook> for Author {
-    fn visit(&mut self, book: &FictionBook) {
-        if self.access.is_allowed(book) {
-            for author in book.get_book_authors() {
-                if !self.ignore.contains(&author) {
-                    self.authors.insert(author);
-                }
-            }
-
-        }
     }
 }

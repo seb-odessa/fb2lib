@@ -53,6 +53,7 @@ fn get_task_id(oper: sal::TASK) -> i64 {
         sal::TASK::LANGUAGE => 1,
         sal::TASK::GENRE => 2,
         sal::TASK::AUTHOR => 3,
+        sal::TASK::TITLE => 4,
     }
 }
 

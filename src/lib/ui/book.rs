@@ -18,6 +18,9 @@ const LANGS_HELP: &'static str = "Work with book languages from the archive";
 const GENRES: &'static str = "genres";
 const GENRES_HELP: &'static str = "Work with book genres from the archive";
 
+const TITLES: &'static str = "titles";
+const TITLES_HELP: &'static str = "Work with book titles from the archive";
+
 const SAVE: &'static str = "save";
 const SAVE_HELP: &'static str = "Save data to the database";
 
@@ -48,6 +51,11 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .arg(force.clone())
             .arg(archive.clone())
         )
+        .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP)
+            .arg(load.clone())
+            .arg(force.clone())
+            .arg(archive.clone())
+        )        
         .subcommand(SubCommand::with_name(GENRES).about(GENRES_HELP)
             .arg(unknown.clone())
             .arg(archive.clone())
@@ -79,6 +87,15 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
                 let load = arg.is_present(SAVE);
                 let force = arg.is_present(FORCE);
                 handler::book::langs(database, load, force, &archives.collect::<Vec<&str>>())
+            } else {
+                ui::usage(arg)
+            }
+        }
+        (TITLES, Some(arg)) => {
+            if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
+                let load = arg.is_present(SAVE);
+                let force = arg.is_present(FORCE);
+                handler::book::titles(database, load, force, &archives.collect::<Vec<&str>>())
             } else {
                 ui::usage(arg)
             }

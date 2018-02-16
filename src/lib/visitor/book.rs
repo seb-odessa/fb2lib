@@ -23,11 +23,6 @@ impl Book {
             genres: genres,
         }
     }
-    pub fn report(&self) {
-        for row in &self.books {
-            println!("{}", row);
-        }
-    }
     fn create_author(desc: &(String, String, String, String))->String {
         let (fname, mname, lname, nick) = desc.clone();
         if fname.is_empty() && mname.is_empty() && lname.is_empty() {
@@ -109,6 +104,11 @@ impl algorithm::Visitor<FictionBook> for Book {
             for description in self.format(book) {
                 self.books.push(description);
             }
+        }
+    }
+    fn report(&self) {
+        for book in &self.books {
+            println!("{}", book);
         }
     }
 }
