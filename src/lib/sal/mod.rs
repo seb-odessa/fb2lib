@@ -17,8 +17,6 @@ pub trait Save<T> {
     fn task(&self) -> TASK;
 }
 
-
-
 #[derive(Debug, Clone, Copy)]
 pub enum STATUS {
     COMPLETE,
@@ -65,6 +63,10 @@ pub use sal::imp::get_genre_codes_and_groups;
 
 pub use sal::imp::insert_people;
 pub use sal::imp::select_people;
+
+pub use sal::imp::insert_title;
+pub use sal::imp::select_title;
+
 
 pub use sal::imp::get_archive_status;
 pub use sal::imp::set_archive_complete;

@@ -48,6 +48,12 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
     DROP TABLE IF EXISTS progress;
     COMMIT;";
 
+#[allow(dead_code)]
+pub const TITLES_SUBSYSTEM: &'static str = "
+	BEGIN;
+	DROP TABLE IF EXISTS titles;
+    COMMIT;";
+
 
 /*********************** Untested ***********************/
 

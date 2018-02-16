@@ -281,7 +281,6 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	INSERT OR IGNORE INTO status VALUES (3, 'игнорировать операцию для архива');
     INSERT OR IGNORE INTO status VALUES (4, 'операция завершилась неудачей');
 
-
 	INSERT OR IGNORE INTO task VALUES (1, 'загрузка языков');
 	INSERT OR IGNORE INTO task VALUES (2, 'загрузка жанров');
 	INSERT OR IGNORE INTO task VALUES (3, 'загрузка авторов');

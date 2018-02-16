@@ -190,6 +190,16 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	END;
     COMMIT;";
 
+#[allow(dead_code)]
+pub const TITLES_SUBSYSTEM: &'static str = "
+	BEGIN;
+	CREATE TABLE titles (
+   		id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+        use_id          INTEGER, /* use row with id == this.use_id instead */
+	    title       	TEXT NOT NULL UNIQUE
+    );
+    COMMIT;";
+
 /*********************** Untested ***********************/
 #[allow(dead_code)]
 pub const BOOKS: &'static str = "

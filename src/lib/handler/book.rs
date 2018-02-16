@@ -97,7 +97,7 @@ pub fn langs(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Resu
 
 pub fn titles(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
-    let ignore = Vec::new();
+    let ignore = sal::select_title(&conn)?;
     let visitor = Title::new(ignore);
     handle(&conn, save, force, archives, visitor)
 }

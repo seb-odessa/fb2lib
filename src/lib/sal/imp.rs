@@ -1,17 +1,10 @@
-use result::into;
-use result::Fb2Result;
-use result::Fb2Error;
 use sal;
-use sal::query_create;
-use sal::query_init;
-use sal::query_drop;
-use sal::query_insert;
-use sal::query_select;
-use sal::HashesByIdx;
+use result::{into, Fb2Result, Fb2Error};
 use torrent::Metainfo;
 
 use rusqlite;
 use rustc_serialize::hex::ToHex;
+
 use std::collections::HashMap;
 use std::collections::HashSet;
 
@@ -19,30 +12,33 @@ pub type Connection = rusqlite::Connection;
 
 pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     let conn = Connection::open(db_file_name).map_err(into)?;
-    // conn.execute(query_drop::ARCHIVES, &[]).map_err(into)?;
-    // conn.execute(query_drop::PIECES, &[]).map_err(into)?;
-    // conn.execute(query_drop::LANGUAGES, &[]).map_err(into)?;
-    // conn.execute(query_drop::LANGUAGES_DISABLED, &[]).map_err(into)?;
-    // conn.execute(query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
-    // conn.execute_batch(query_drop::FILTER_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(query_drop::GENRE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
+    // conn.execute(sal::query_drop::ARCHIVES, &[]).map_err(into)?;
+    // conn.execute(sal::query_drop::PIECES, &[]).map_err(into)?;
+    // conn.execute(sal::query_drop::LANGUAGES, &[]).map_err(into)?;
+    // conn.execute(sal::query_drop::LANGUAGES_DISABLED, &[]).map_err(into)?;
+    // conn.execute(sal::query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
+    // conn.execute_batch(sal::query_drop::FILTER_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_drop::GENRE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
 
 
-    // conn.execute(query_create::ARCHIVES, &[]).map_err(into)?;
-    // conn.execute(query_create::PIECES, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES_AUTO, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES_DISABLED, &[]).map_err(into)?;
-    // conn.execute(query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
-    // conn.execute_batch(query_create::FILTER_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(query_init::FILTER_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(query_create::GENRE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(query_init::INSERT_GENRES).map_err(into)?;
-    // conn.execute_batch(query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
+    // conn.execute(sal::query_create::ARCHIVES, &[]).map_err(into)?;
+    // conn.execute(sal::query_create::PIECES, &[]).map_err(into)?;
+    // conn.execute(sal::query_create::LANGUAGES, &[]).map_err(into)?;
+    // conn.execute(sal::query_create::LANGUAGES_AUTO, &[]).map_err(into)?;
+    // conn.execute(sal::query_create::LANGUAGES_DISABLED, &[]).map_err(into)?;
+    // conn.execute(sal::query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
+    // conn.execute_batch(sal::query_create::FILTER_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_init::FILTER_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_create::GENRE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
+    // conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
+
+    conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
 
 
     Ok(())
@@ -78,7 +74,7 @@ fn get_status_id(code: sal::STATUS) -> i64 {
 }
 
 pub fn get_archive_status(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<sal::STATUS> {
-    let mut stmt = conn.prepare(query_select::PROGRESS_STATUS).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::PROGRESS_STATUS).map_err(into)?;
     let rows = stmt.query_map(&[&archive, &get_task_id(oper)], |row| { row.get(0) })?;
     for row in rows {
         let status: i64 = row.map_err(into)?;
@@ -88,7 +84,7 @@ pub fn get_archive_status(conn: &Connection, archive: &str, oper: sal::TASK) -> 
 }
 
 fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
-    let mut stmt = conn.prepare(query_select::ARCHIVE_ID_BY_NAME).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::ARCHIVE_ID_BY_NAME).map_err(into)?;
     let rows = stmt.query_map(&[&archive], |row| { row.get(0) })?;
     for row in rows {
         let id: i64 = row.map_err(into)?;
@@ -99,7 +95,7 @@ fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
 
 fn set_archive_status(conn: &Connection, archive: &str, operation: i64, status: i64) -> Fb2Result<()> {
 let archive_id = get_archive_id_by_name(conn, archive)?;
-    conn.execute(query_insert::PROGRESS, &[&archive_id, &operation, &status]).map_err(into)?;
+    conn.execute(sal::query_insert::PROGRESS, &[&archive_id, &operation, &status]).map_err(into)?;
     Ok(())
 }
 
@@ -142,7 +138,7 @@ pub fn get_connection(db_file_name: &str) -> Fb2Result<Connection> {
 }
 
 pub fn get_archive_sizes(conn: &Connection, name: &str) -> Fb2Result<Option<ArchiveSizes>> {
-    let mut stmt = conn.prepare(query_select::ARCH_SIZES_BY_NAME).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::ARCH_SIZES_BY_NAME).map_err(into)?;
     let rows = stmt.query_map(&[&name], |row| {
         ArchiveSizes::new(row.get(0), row.get(1), row.get(2), row.get(3))
     })?;
@@ -154,8 +150,8 @@ pub fn get_archive_sizes(conn: &Connection, name: &str) -> Fb2Result<Option<Arch
     Ok(None)
 }
 
-pub fn validate(conn: &Connection, id: i64, desc: &HashesByIdx) -> Fb2Result<Option<i64>> {
-    let mut stmt = conn.prepare(query_select::INDEX_AND_HASH_BY_ARCH_ID).map_err(into)?;
+pub fn validate(conn: &Connection, id: i64, desc: &sal::HashesByIdx) -> Fb2Result<Option<i64>> {
+    let mut stmt = conn.prepare(sal::query_select::INDEX_AND_HASH_BY_ARCH_ID).map_err(into)?;
     let rows = stmt.query_map(&[&id], |row| (row.get(0), row.get(1))).map_err(into)?;
     for row in rows {
         let (index, hash): (i64, String) = row.map_err(into)?;
@@ -167,7 +163,7 @@ pub fn validate(conn: &Connection, id: i64, desc: &HashesByIdx) -> Fb2Result<Opt
 }
 
 pub fn get_hash(conn: &Connection, id: i64, index: i64) -> Fb2Result<Option<String>> {
-    let mut stmt = conn.prepare(query_select::HASH_BY_ARCH_ID_AND_INDEX).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::HASH_BY_ARCH_ID_AND_INDEX).map_err(into)?;
     let rows = stmt.query_map(&[&id, &index], |row| (row.get(0))).map_err(into)?;
     for row in rows {
         let hash: String = row.map_err(into)?;
@@ -177,14 +173,14 @@ pub fn get_hash(conn: &Connection, id: i64, index: i64) -> Fb2Result<Option<Stri
 }
 
 fn get_archive_id(conn: &Connection, metainfo: &Metainfo) -> Fb2Result<i64> {
-    let mut stmt = conn.prepare(query_select::ID_BY_HASH).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::ID_BY_HASH).map_err(into)?;
     let rows = stmt.query_map(&[&metainfo.get_info_hash()], |row| row.get(0)).map_err(into)?;
      for row in rows {
         let id = row.map_err(into)?;
         return Ok(id);
 
      }
-    conn.execute(query_insert::ARCHIVE, &[
+    conn.execute(sal::query_insert::ARCHIVE, &[
         &metainfo.get_file_name(),
         &metainfo.get_creation_date(),
         &metainfo.get_info_hash(),
@@ -201,7 +197,7 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> Fb2Result<()> {
     let archive_id = get_archive_id(&conn, &metainfo)?;
     let tx = conn.transaction()?;
     {
-        let mut stmt = tx.prepare(query_insert::PIECE).map_err(into)?;
+        let mut stmt = tx.prepare(sal::query_insert::PIECE).map_err(into)?;
         let pieces: &[u8] = metainfo.info.pieces.as_ref();
         let mut index = 0;
         for sha1 in pieces.chunks(20) {
@@ -213,12 +209,12 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> Fb2Result<()> {
 }
 
 pub fn insert_language(conn: &Connection, lang: &str) -> Fb2Result<i32> {
-    conn.execute(query_insert::LANGUAGE, &[&lang]).map_err(into)
+    conn.execute(sal::query_insert::LANGUAGE, &[&lang]).map_err(into)
 }
 
 pub fn get_languages_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::LANGUAGES_DISABLED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::LANGUAGES_DISABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let lang: String = row.map_err(into)?;
         result.push(lang);
@@ -228,7 +224,7 @@ pub fn get_languages_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
 
 pub fn get_languages_enabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::LANGUAGES_ENABLED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::LANGUAGES_ENABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let lang: String = row.map_err(into)? ;
         result.push(lang);
@@ -237,16 +233,16 @@ pub fn get_languages_enabled(conn: &Connection) -> Fb2Result<Vec<String>> {
 }
 
 pub fn disable_language(conn: &Connection, lang: &str) -> Fb2Result<i32> {
-    conn.execute(query_insert::DISABLE_LANGUAGE, &[&lang]).map_err(into)
+    conn.execute(sal::query_insert::DISABLE_LANGUAGE, &[&lang]).map_err(into)
 }
 
 pub fn enable_language(conn: &Connection, lang: &str) -> Fb2Result<(i32)> {
-    conn.execute(query_insert::ENABLE_LANGUAGE, &[&lang]).map_err(into)
+    conn.execute(sal::query_insert::ENABLE_LANGUAGE, &[&lang]).map_err(into)
 }
 
 pub fn get_genre_codes(conn: &Connection) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::GENRE_CODES).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::GENRE_CODES).map_err(into)?;
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let code: String = row.map_err(into)? ;
         result.push(code);
@@ -256,7 +252,7 @@ pub fn get_genre_codes(conn: &Connection) -> Fb2Result<Vec<String>> {
 
 pub fn get_genres_disabled(conn: &Connection) -> Fb2Result<Vec<(String, String)>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::GENRES_DISABLED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::GENRES_DISABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)? {
         result.push(row.map_err(into)? as (String, String));
     }
@@ -265,7 +261,7 @@ pub fn get_genres_disabled(conn: &Connection) -> Fb2Result<Vec<(String, String)>
 
 pub fn get_genres_enabled(conn: &Connection) -> Fb2Result<Vec<(String, String)>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::GENRES_ENABLED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::GENRES_ENABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)? {
         result.push(row.map_err(into)? as (String, String));
     }
@@ -274,7 +270,7 @@ pub fn get_genres_enabled(conn: &Connection) -> Fb2Result<Vec<(String, String)>>
 
 pub fn get_genre_groups_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::GENRES_GROUPS_DISABLED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::GENRES_GROUPS_DISABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let group: String = row.map_err(into)? ;
         result.push(group);
@@ -284,7 +280,7 @@ pub fn get_genre_groups_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
 
 pub fn get_genre_groups_enabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::GENRES_GROUPS_ENABLED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::GENRES_GROUPS_ENABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let group: String = row.map_err(into)? ;
         result.push(group);
@@ -293,24 +289,24 @@ pub fn get_genre_groups_enabled(conn: &Connection) -> Fb2Result<Vec<String>> {
 }
 
 pub fn disable_genre(conn: &Connection, name: &str) -> Fb2Result<i32> {
-    conn.execute(query_insert::DISABLE_GENRE, &[&name]).map_err(into)
+    conn.execute(sal::query_insert::DISABLE_GENRE, &[&name]).map_err(into)
 }
 
 pub fn enable_genre(conn: &Connection, name: &str) -> Fb2Result<(i32)> {
-    conn.execute(query_insert::ENABLE_GENRE, &[&name]).map_err(into)
+    conn.execute(sal::query_insert::ENABLE_GENRE, &[&name]).map_err(into)
 }
 
 pub fn disable_genre_group(conn: &Connection, name: &str) -> Fb2Result<i32> {
-    conn.execute(query_insert::DISABLE_GENRE_GROUP, &[&name]).map_err(into)
+    conn.execute(sal::query_insert::DISABLE_GENRE_GROUP, &[&name]).map_err(into)
 }
 
 pub fn enable_genre_group(conn: &Connection, name: &str) -> Fb2Result<(i32)> {
-    conn.execute(query_insert::ENABLE_GENRE_GROUP, &[&name]).map_err(into)
+    conn.execute(sal::query_insert::ENABLE_GENRE_GROUP, &[&name]).map_err(into)
 }
 
 pub fn get_genre_codes_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(query_select::GENRE_CODES_DISABLED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::GENRE_CODES_DISABLED).map_err(into)?;
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let group: String = row.map_err(into)? ;
         result.push(group);
@@ -320,7 +316,7 @@ pub fn get_genre_codes_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
 
 pub fn get_genre_codes_and_groups(conn: &Connection) -> Fb2Result<HashMap<String, String>> {
     let mut result = HashMap::new();
-    let mut stmt = conn.prepare(query_select::GENRES_CODES_AND_GROUPS).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::GENRES_CODES_AND_GROUPS).map_err(into)?;
     for row in stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)? {
         let (code, group) = row.map_err(into)? as (String, String);
         result.insert(code, group);
@@ -329,7 +325,7 @@ pub fn get_genre_codes_and_groups(conn: &Connection) -> Fb2Result<HashMap<String
 }
 
 pub fn insert_people(conn: &Connection, authors: &HashSet<(String, String, String, String)>) -> Fb2Result<()> {
-    let mut stmt = conn.prepare(query_insert::PEOPLE).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_insert::PEOPLE).map_err(into)?;
     for author in authors {
         let &(ref first_name, ref middle_name, ref last_name, ref nick_name) = author;
         stmt.execute(&[first_name, middle_name, last_name, nick_name]).map_err(into)?;
@@ -339,11 +335,30 @@ pub fn insert_people(conn: &Connection, authors: &HashSet<(String, String, Strin
 
 pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, String, String)>> {
     let mut authors = HashSet::new();
-    let mut stmt = conn.prepare(query_select::PEOPLE).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::PEOPLE).map_err(into)?;
     let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3))).map_err(into)?;
     for row in rows {
         let author = row.map_err(into)? as (String,String,String,String);
         authors.insert(author);
     }
     Ok(authors)
+}
+
+pub fn insert_title(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
+    let mut stmt = conn.prepare(sal::query_insert::TITLES).map_err(into)?;
+    for title in titles {
+        stmt.execute(&[title]).map_err(into)?;
+    }
+    Ok(())
+}
+
+pub fn select_title(conn: &Connection) -> Fb2Result<HashSet<String>> {
+    let mut titles = HashSet::new();
+    let mut stmt = conn.prepare(sal::query_select::TITLES).map_err(into)?;
+    let rows = stmt.query_map(&[], |row| row.get(0)).map_err(into)?;
+    for row in rows {
+        let title: String = row.map_err(into)?;
+        titles.insert(title);
+    }
+    Ok(titles)
 }

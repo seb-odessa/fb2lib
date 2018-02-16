@@ -54,3 +54,6 @@ pub const PEOPLE: &'static str = "
 
 pub const PROGRESS: &'static str = "
 	INSERT INTO progress (archive_id, task_id, status_id) VALUES (?, ?, ?)";
+
+pub const TITLES: &'static str = "
+	INSERT INTO titles (title) VALUES (?)";

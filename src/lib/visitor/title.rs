@@ -3,7 +3,6 @@ use algorithm;
 use fb2parser::FictionBook;
 use result::Fb2Result;
 
-use std::iter::FromIterator;
 use std::collections::HashSet;
 
 pub struct Title {
@@ -11,18 +10,16 @@ pub struct Title {
     ignore: HashSet<String>,
 }
 impl Title {
-    pub fn new(ignore: Vec<String>) -> Self {
+    pub fn new(ignore: HashSet<String>) -> Self {
         Title {
             titles: HashSet::new(),        
-            ignore: HashSet::from_iter(ignore),
+            ignore: ignore,
         }
     }
 }
 impl sal::Save<FictionBook> for Title {
-    fn save(&self, _conn: &sal::Connection) -> Fb2Result<()> {
-        for _ in &self.titles {
-            //sal::insert_title(&conn, title.as_str().trim())?;
-        }
+    fn save(&self, conn: &sal::Connection) -> Fb2Result<()> {
+        sal::insert_title(&conn, &self.titles)?;
         Ok(())
     }
     fn task(&self) -> sal::TASK {
@@ -31,7 +28,10 @@ impl sal::Save<FictionBook> for Title {
 }
 impl algorithm::Visitor<FictionBook> for Title {
     fn visit(&mut self, book: &FictionBook) {
-        self.titles.insert(book.get_book_title());
+        let title = book.get_book_title();
+        if !self.ignore.contains(&title) {
+            self.titles.insert(title);
+        }        
     }
     fn report(&self) {
         for title in &self.titles {
