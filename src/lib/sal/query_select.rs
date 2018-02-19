@@ -36,4 +36,6 @@ pub const PEOPLE: &'static str = "SELECT first_name, middle_name, last_name, nic
 
 pub const TITLES: &'static str = "SELECT title FROM titles";
 
+pub const SEQUENCES: &'static str = "SELECT sequence FROM sequences";
+
 

@@ -5,9 +5,13 @@ pub const PIECES: &'static str = "DROP TABLE pieces;";
 
 
 #[allow(dead_code)]
-pub const LANGUAGES: &'static str = "DROP TABLE IF EXISTS languages;";
-#[allow(dead_code)]
+pub const LANGUAGES: &'static str = "
+	BEGIN;
+    DROP TABLE IF EXISTS languages;
+    DELETE FROM progress WHERE progress.task_id = 1;
+    COMMIT;";
 
+#[allow(dead_code)]
 pub const FILTER_SUBSYSTEM: &'static str = "
 	BEGIN;
     DROP INDEX IF EXISTS filter_def_index;
@@ -36,6 +40,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
         DROP VIEW IF EXISTS authors;
         DROP TABLE IF EXISTS people;
+        DELETE FROM progress WHERE progress.task_id = 3;
     COMMIT;";
 
 
@@ -52,7 +57,17 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 pub const TITLES_SUBSYSTEM: &'static str = "
 	BEGIN;
 	DROP TABLE IF EXISTS titles;
+    DELETE FROM progress WHERE progress.task_id = 4;
     COMMIT;";
+
+pub const SEQUENCES_SUBSYSTEM: &'static str = "
+	BEGIN;
+	DROP TABLE IF EXISTS sequences;
+    DELETE FROM progress WHERE progress.task_id = 5;
+    COMMIT;";
+
+
+
 
 
 /*********************** Untested ***********************/

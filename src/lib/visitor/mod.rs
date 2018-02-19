@@ -4,3 +4,4 @@ pub mod book;
 pub mod lang;
 pub mod genre;
 pub mod title;
+pub mod sequence;

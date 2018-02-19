@@ -32,6 +32,7 @@ pub enum TASK {
     GENRE,
     AUTHOR,
     TITLE,
+    SEQUENCE,
 }
 
 
@@ -62,16 +63,19 @@ pub use sal::imp::enable_genre_group;
 pub use sal::imp::get_genre_codes_disabled;
 pub use sal::imp::get_genre_codes_and_groups;
 
-pub use sal::imp::insert_people;
-pub use sal::imp::select_people;
-
-pub use sal::imp::insert_titles;
-pub use sal::imp::select_title;
-
-
 pub use sal::imp::get_archive_status;
 pub use sal::imp::set_archive_started;
 pub use sal::imp::set_archive_visited;
 pub use sal::imp::set_archive_complete;
 pub use sal::imp::set_archive_failure;
+
+pub use sal::imp::insert_people;
+pub use sal::imp::select_people;
+
+pub use sal::imp::insert_titles;
+pub use sal::imp::select_titles;
+
+pub use sal::imp::insert_sequences;
+pub use sal::imp::select_sequences;
+
 

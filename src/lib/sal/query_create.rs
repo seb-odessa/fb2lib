@@ -162,6 +162,7 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	INSERT OR IGNORE INTO task VALUES (2, 'загрузка жанров');
 	INSERT OR IGNORE INTO task VALUES (3, 'загрузка авторов');
 	INSERT OR IGNORE INTO task VALUES (4, 'загрузка названий');
+	INSERT OR IGNORE INTO task VALUES (5, 'загрузка циклов');
 
 	CREATE TABLE status (
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -210,6 +211,18 @@ pub const TITLES_SUBSYSTEM: &'static str = "
 		UNIQUE (title) ON CONFLICT IGNORE
     );	
     COMMIT;";
+
+#[allow(dead_code)]
+pub const SEQUENCES_SUBSYSTEM: &'static str = "
+	BEGIN;
+	CREATE TABLE sequences (
+   		id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+        use_id          INTEGER, /* use row with id == this.use_id instead */
+	    sequence       	TEXT NOT NULL,
+		UNIQUE (sequence) ON CONFLICT IGNORE
+    );	
+    COMMIT;";
+
 
 /*********************** Untested ***********************/
 #[allow(dead_code)]

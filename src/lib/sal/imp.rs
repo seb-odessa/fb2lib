@@ -5,6 +5,7 @@ use torrent::Metainfo;
 use rusqlite;
 use rustc_serialize::hex::ToHex;
 
+use std::iter::FromIterator;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
@@ -19,10 +20,10 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute(sal::query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
     // conn.execute_batch(sal::query_drop::FILTER_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_drop::GENRE_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
-
+    // conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_drop::SEQUENCES_SUBSYSTEM).map_err(into)?;
 
     // conn.execute(sal::query_create::ARCHIVES, &[]).map_err(into)?;
     // conn.execute(sal::query_create::PIECES, &[]).map_err(into)?;
@@ -34,10 +35,10 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute_batch(sal::query_init::FILTER_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_create::GENRE_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
-    conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
-
+    // conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
+    // conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_create::SEQUENCES_SUBSYSTEM).map_err(into)?;
 
     Ok(())
 }
@@ -48,6 +49,7 @@ fn get_task_id(oper: sal::TASK) -> i64 {
         sal::TASK::GENRE => 2,
         sal::TASK::AUTHOR => 3,
         sal::TASK::TITLE => 4,
+        sal::TASK::SEQUENCE => 5,
     }
 }
 
@@ -206,13 +208,6 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> Fb2Result<()> {
     tx.commit().map_err(into)
 }
 
-pub fn insert_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {    
-    for lang in langs {
-        conn.execute(sal::query_insert::LANGUAGE, &[&lang.to_lowercase().as_str().trim()]).map_err(into)?;
-    }
-    Ok(())
-}
-
 pub fn get_languages_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
     let mut stmt = conn.prepare(sal::query_select::LANGUAGES_DISABLED).map_err(into)?;
@@ -345,37 +340,47 @@ pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, St
     Ok(authors)
 }
 
-pub fn insert_titles(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
-    let mut stmt = conn.prepare(sal::query_insert::TITLES).map_err(into)?;
-    for title in titles {
-        stmt.execute(&[title]).map_err(into)?;
+fn insert_from_set(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
+    for item in items {
+        conn.execute(sql, &[item]).map_err(into)?;
     }
     Ok(())
 }
 
-fn select_column_as_set(conn: &Connection, sql: &str, col_num: i32) -> Fb2Result<HashSet<String>> {
-    let mut result = HashSet::new();
+pub fn insert_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {    
+    insert_from_set(conn, sal::query_insert::LANGUAGE, langs)
+}
+
+pub fn insert_titles(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
+    insert_from_set(conn, sal::query_insert::TITLES, titles)
+}
+
+pub fn insert_sequences(conn: &Connection, sequences: &HashSet<String>) -> Fb2Result<()> {
+    insert_from_set(conn, sal::query_insert::SEQUENCES, sequences)
+}
+
+fn select_column(conn: &Connection, sql: &str, col_num: i32) -> Fb2Result<Vec<String>> {
+    let mut result = Vec::new();
     let mut stmt = conn.prepare(sql).map_err(into)?;
     let rows = stmt.query_map(&[], |row| row.get(col_num)).map_err(into)?;
     for row in rows {
         let data: String = row.map_err(into)?;
-        result.insert(data);
+        result.push(data);
     }
     Ok(result)
 }
 
-pub fn select_title(conn: &Connection) -> Fb2Result<HashSet<String>> {
-    let mut titles = HashSet::new();
-    let mut stmt = conn.prepare(sal::query_select::TITLES).map_err(into)?;
-    let rows = stmt.query_map(&[], |row| row.get(0)).map_err(into)?;
-    for row in rows {
-        let title: String = row.map_err(into)?;
-        titles.insert(title);
-    }
-    Ok(titles)
+pub fn select_titles(conn: &Connection) -> Fb2Result<HashSet<String>> {
+    let vector = select_column(conn, sal::query_select::TITLES, 0)?;
+    Ok(HashSet::from_iter(vector))
 }
 
-
 pub fn select_languages(conn: &Connection) -> Fb2Result<HashSet<String>> {
-    select_column_as_set(conn, sal::query_select::LANGUAGES, 0)
+    let vector = select_column(conn, sal::query_select::LANGUAGES, 0)?;
+    Ok(HashSet::from_iter(vector))
+}
+
+pub fn select_sequences(conn: &Connection) -> Fb2Result<HashSet<String>> {
+    let vector = select_column(conn, sal::query_select::SEQUENCES, 0)?;
+    Ok(HashSet::from_iter(vector))
 }

@@ -11,6 +11,7 @@ use visitor::book::Book;
 use visitor::lang::Lang;
 use visitor::genre::Genre;
 use visitor::title::Title;
+use visitor::sequence::Sequence;
 
 use std::path;
 
@@ -39,7 +40,7 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
 fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()> 
     where T: Visitor<FictionBook> + Save<FictionBook> + 'static
 {
-    print!("Processing {}", &name);
+    print!("Processing {}.", &name);
     let task = visitor.task();
     let status = sal::get_archive_status(&conn, name, task)?;
     if force || !is_complete(status) {
@@ -120,8 +121,16 @@ pub fn langs(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Resu
 pub fn titles(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
-    let ignore = sal::select_title(&conn)?;
+    let ignore = sal::select_titles(&conn)?;
     let visitor = Title::new(access, ignore);
+    handle(&conn, save, force, archives, visitor)
+}
+
+pub fn sequences(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let access = create_access_guard(&conn)?;
+    let ignore = sal::select_sequences(&conn)?;
+    let visitor = Sequence::new(access, ignore);
     handle(&conn, save, force, archives, visitor)
 }
 
@@ -135,4 +144,5 @@ pub fn genres(db: &str, only_unknown: bool, archives: &Vec<&str>) -> Fb2Result<(
     let visitor = Genre::new(ignore);
     handle(&conn, false, false, archives, visitor)
 }
+
 

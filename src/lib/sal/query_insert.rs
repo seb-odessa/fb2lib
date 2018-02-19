@@ -57,3 +57,6 @@ pub const PROGRESS: &'static str = "
 
 pub const TITLES: &'static str = "
 	INSERT INTO titles (title) VALUES (?)";
+
+pub const SEQUENCES: &'static str = "
+	INSERT INTO sequences (sequence) VALUES (?)";
