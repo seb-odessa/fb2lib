@@ -3,6 +3,7 @@ use fb2parser::FictionBook;
 use std::iter::FromIterator;
 use std::collections::HashSet;
 
+#[derive(Clone)]
 pub struct AccessGuard {
     disabled_genres: HashSet<String>,
     disabled_langs: HashSet<String>

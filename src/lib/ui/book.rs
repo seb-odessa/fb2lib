@@ -6,7 +6,7 @@ use clap::{App, Arg, SubCommand, ArgMatches};
 pub const CMD: &'static str = "book";
 const CMD_HELP: &'static str = "Use to work with books";
 
-const LS: &'static str = "ls";
+const LS: &'static str = "all";
 const LS_HELP: &'static str = "List books from archive into the database";
 
 const AUTHORS: &'static str = "authors";
@@ -55,7 +55,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .arg(load.clone())
             .arg(force.clone())
             .arg(archive.clone())
-        )        
+        )
         .subcommand(SubCommand::with_name(GENRES).about(GENRES_HELP)
             .arg(unknown.clone())
             .arg(archive.clone())

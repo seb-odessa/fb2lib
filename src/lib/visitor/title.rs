@@ -1,18 +1,21 @@
 use sal;
 use algorithm;
 use fb2parser::FictionBook;
+use visitor::acess::AccessGuard;
 use result::Fb2Result;
 
 use std::collections::HashSet;
 
 pub struct Title {
+    access: AccessGuard,
     titles: HashSet<String>,
     ignore: HashSet<String>,
     complete: HashSet<String>,
 }
 impl Title {
-    pub fn new(ignore: HashSet<String>) -> Self {
+    pub fn new(access: AccessGuard, ignore: HashSet<String>) -> Self {
         Title {
+            access: access,
             titles: HashSet::new(),
             ignore: ignore,
             complete: HashSet::new(),
@@ -31,10 +34,12 @@ impl sal::Save<FictionBook> for Title {
 }
 impl algorithm::Visitor<FictionBook> for Title {
     fn visit(&mut self, book: &FictionBook) {
-        let title = book.get_book_title();
-        if !self.ignore.contains(&title) && !self.complete.contains(&title) {
-            self.titles.insert(title);
-        }        
+        if self.access.is_allowed(book) {
+            let title = book.get_book_title();
+            if !self.ignore.contains(&title) && !self.complete.contains(&title) {
+                self.titles.insert(title);
+            }
+        }
     }
     fn report(&self) {
         for title in &self.titles {

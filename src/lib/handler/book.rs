@@ -77,12 +77,12 @@ fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: b
 
 fn is_complete(status: sal::STATUS) -> bool {
     match status {
-            STATUS::STARTED => false,
-            STATUS::VISITED => false,
-            STATUS::COMPLETE => true,
-            STATUS::FAILURE => false,
-            STATUS::UNKNOWN => false,
-        }
+        STATUS::STARTED => false,
+        STATUS::VISITED => false,
+        STATUS::COMPLETE => true,
+        STATUS::FAILURE => false,
+        STATUS::UNKNOWN => false,
+    }
 }
 
 fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()> 
@@ -104,9 +104,9 @@ fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&st
 
 pub fn authors(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
-    let access_guard = create_access_guard(&conn)?;
+    let access = create_access_guard(&conn)?;
     let ignore = sal::select_people(&conn)?;
-    let visitor = Author::new(access_guard, ignore);
+    let visitor = Author::new(access, ignore);
     handle(&conn, save, force, archives, visitor)
 }
 
@@ -119,8 +119,9 @@ pub fn langs(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Resu
 
 pub fn titles(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
+    let access = create_access_guard(&conn)?;
     let ignore = sal::select_title(&conn)?;
-    let visitor = Title::new(ignore);
+    let visitor = Title::new(access, ignore);
     handle(&conn, save, force, archives, visitor)
 }
 
@@ -134,5 +135,4 @@ pub fn genres(db: &str, only_unknown: bool, archives: &Vec<&str>) -> Fb2Result<(
     let visitor = Genre::new(ignore);
     handle(&conn, false, false, archives, visitor)
 }
-
 
