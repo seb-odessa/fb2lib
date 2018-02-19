@@ -273,17 +273,3 @@ pub const FILTER_SUBSYSTEM: &'static str = "
     INSERT OR IGNORE INTO filters VALUES (2, 'genre');    
 	COMMIT;";
 	
-#[allow(dead_code)]
-pub const PROGRESS_SUBSYSTEM: &'static str = "
-	BEGIN;
-    INSERT OR IGNORE INTO status VALUES (1, 'обработка архива начата');
-    INSERT OR IGNORE INTO status VALUES (2, 'обработка архива завершена');
-	INSERT OR IGNORE INTO status VALUES (3, 'операция завершена');
-    INSERT OR IGNORE INTO status VALUES (4, 'операция завершилась неудачей');
-
-	INSERT OR IGNORE INTO task VALUES (1, 'загрузка языков');
-	INSERT OR IGNORE INTO task VALUES (2, 'загрузка жанров');
-	INSERT OR IGNORE INTO task VALUES (3, 'загрузка авторов');
-	INSERT OR IGNORE INTO task VALUES (4, 'загрузка названий');
-	COMMIT;";
-    

@@ -36,7 +36,6 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
     conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
     conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
     conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
 
 
@@ -92,9 +91,9 @@ fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
     Err(Fb2Error::Custom(format!("Archive {} not found in database", archive)))
 }
 
-fn set_archive_status(conn: &Connection, archive: &str, operation: i64, status: i64) -> Fb2Result<()> {
+fn set_archive_status(conn: &Connection, archive: &str, task: i64, status: i64) -> Fb2Result<()> {
 let archive_id = get_archive_id_by_name(conn, archive)?;
-    conn.execute(sal::query_insert::PROGRESS, &[&archive_id, &operation, &status]).map_err(into)?;
+    conn.execute(sal::query_insert::PROGRESS, &[&archive_id, &task, &status]).map_err(into)?;
     Ok(())
 }
 

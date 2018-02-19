@@ -36,22 +36,43 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     Ok(())
 }
 
-fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, visitor: &mut T) -> Fb2Result<()> 
+fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()> 
     where T: Visitor<FictionBook> + Save<FictionBook> + 'static
 {
+    print!("Processing {}", &name);
     let task = visitor.task();
-    sal::set_archive_started(conn, name, task)?;
+    let status = sal::get_archive_status(&conn, name, task)?;
+    if force || !is_complete(status) {
+        sal::set_archive_started(conn, name, task)?;
+        print!(".");
+        match algorithm::visit(archive, visitor) {
+            Ok(()) => {
+                sal::set_archive_visited(conn, name, task)?;
+                print!(".");
+            },
+            Err(e) => {
+                sal::set_archive_failure(conn, name, task)?;
+                println!("{}", e);
+                return Err(e);
+            }
+        }
 
-    if algorithm::visit(archive, visitor).is_ok() {
-        sal::set_archive_visited(conn, name, task)?;
+        match visitor.save(&conn) {
+            Ok(()) => {
+                sal::set_archive_complete(conn, name, task)?;
+                print!(".");
+            },
+            Err(e) => {
+                sal::set_archive_failure(conn, name, task)?;
+                println!("{}", e);
+                return Err(e);
+            }            
+        }
+        println!("Done.");
     } else {
-        return sal::set_archive_failure(conn, name, task);
+        println!("Skiped.");
     }
-    if visitor.save(&conn).is_ok() {
-        sal::set_archive_complete(conn, name, task)
-    } else {
-        sal::set_archive_failure(conn, name, task)
-    }
+    Ok(())
 }
 
 fn is_complete(status: sal::STATUS) -> bool {
@@ -69,18 +90,10 @@ fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&st
 {
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
-        let task = visitor.task();
         if save {
-            print!("{} ", &name);
-        }        
-        let status = sal::get_archive_status(&conn, name, task)?;
-        if save && (force || !is_complete(status)) {
-            visit_and_save(&conn, archive, name, &mut visitor)?;
-            println!("handled.");
-        } else if !save {
-            algorithm::visit(archive, &mut visitor)?;
+            visit_and_save(&conn, archive, name, force, &mut visitor)?;
         } else {
-            println!("skiped.");
+            algorithm::visit(archive, &mut visitor)?;
         }
     }
     if !save {

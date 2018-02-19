@@ -158,11 +158,19 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     	name 	TEXT NOT NULL UNIQUE
 	);
+	INSERT OR IGNORE INTO task VALUES (1, 'загрузка языков');
+	INSERT OR IGNORE INTO task VALUES (2, 'загрузка жанров');
+	INSERT OR IGNORE INTO task VALUES (3, 'загрузка авторов');
+	INSERT OR IGNORE INTO task VALUES (4, 'загрузка названий');
 
 	CREATE TABLE status (
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     	name 	TEXT NOT NULL UNIQUE
 	);
+    INSERT OR IGNORE INTO status VALUES (1, 'обработка архива начата');
+    INSERT OR IGNORE INTO status VALUES (2, 'обработка архива завершена');
+	INSERT OR IGNORE INTO status VALUES (3, 'операция завершена');
+    INSERT OR IGNORE INTO status VALUES (4, 'операция завершилась неудачей');
 
 	CREATE TABLE progress (
     	id 				INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,    	
@@ -170,8 +178,9 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 		task_id 		INTEGER NOT NULL,       /* FK to task.id */
 		status_id 		INTEGER NOT NULL,       /* FK to status.id */
 		registred		TEXT,
-		UNIQUE (archive_id) ON CONFLICT REPLACE
+		UNIQUE (archive_id, task_id) ON CONFLICT REPLACE
 	);
+
 	CREATE VIEW progress_log AS
 	SELECT progress.id AS id, archives.name, task.name AS task, status.name AS status, registred
 	FROM progress 
@@ -180,6 +189,7 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	LEFT JOIN archives ON progress.archive_id = archives.id;
 
 	CREATE INDEX progress_archive_index on progress (archive_id ASC);
+
 	CREATE TRIGGER progress_on_insert AFTER INSERT ON progress
 	BEGIN
 		UPDATE progress SET registred = datetime('now') WHERE new.id = progress.id;
@@ -196,8 +206,9 @@ pub const TITLES_SUBSYSTEM: &'static str = "
 	CREATE TABLE titles (
    		id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
         use_id          INTEGER, /* use row with id == this.use_id instead */
-	    title       	TEXT NOT NULL UNIQUE
-    );
+	    title       	TEXT NOT NULL,
+		UNIQUE (title) ON CONFLICT IGNORE
+    );	
     COMMIT;";
 
 /*********************** Untested ***********************/
