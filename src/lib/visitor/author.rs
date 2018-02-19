@@ -10,8 +10,9 @@ pub type AuthorDesc = (String, String, String, String);
 
 pub struct Author {
     access: AccessGuard,
-    pub authors: HashSet<AuthorDesc>,
+    authors: HashSet<AuthorDesc>,
     ignore: HashSet<AuthorDesc>,
+    complete: HashSet<AuthorDesc>,
 }
 impl Author {
     pub fn new(access: AccessGuard, ignore: HashSet<AuthorDesc>) -> Self {
@@ -19,12 +20,17 @@ impl Author {
             access: access,
             authors: HashSet::new(),
             ignore: ignore,
+            complete: HashSet::new(),
         }
     }
 }
 impl sal::Save<FictionBook> for Author {
-    fn save(&self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::insert_people(&conn, &self.authors)
+    fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
+        sal::insert_people(&conn, &self.authors)?;
+        self.complete = self.complete.union(&self.authors)
+            .map(|a| (a.0.clone(), a.1.clone(), a.2.clone(), a.3.clone()))
+            .collect();
+        Ok(())        
     }
     fn task(&self) -> sal::TASK {
         sal::TASK::AUTHOR
@@ -34,7 +40,7 @@ impl algorithm::Visitor<FictionBook> for Author {
     fn visit(&mut self, book: &FictionBook) {
         if self.access.is_allowed(book) {
             for author in book.get_book_authors() {
-                if !self.ignore.contains(&author) {
+                if !self.ignore.contains(&author) && !self.complete.contains(&author){
                     self.authors.insert(author);
                 }
             }

@@ -276,9 +276,9 @@ pub const FILTER_SUBSYSTEM: &'static str = "
 #[allow(dead_code)]
 pub const PROGRESS_SUBSYSTEM: &'static str = "
 	BEGIN;
-    INSERT OR IGNORE INTO status VALUES (1, 'операция завершена');
-    INSERT OR IGNORE INTO status VALUES (2, 'операция не завершена');
-	INSERT OR IGNORE INTO status VALUES (3, 'игнорировать операцию для архива');
+    INSERT OR IGNORE INTO status VALUES (1, 'обработка архива начата');
+    INSERT OR IGNORE INTO status VALUES (2, 'обработка архива завершена');
+	INSERT OR IGNORE INTO status VALUES (3, 'операция завершена');
     INSERT OR IGNORE INTO status VALUES (4, 'операция завершилась неудачей');
 
 	INSERT OR IGNORE INTO task VALUES (1, 'загрузка языков');

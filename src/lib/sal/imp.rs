@@ -19,8 +19,8 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute(sal::query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
     // conn.execute_batch(sal::query_drop::FILTER_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_drop::GENRE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
     conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
 
 
@@ -34,10 +34,9 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute_batch(sal::query_init::FILTER_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_create::GENRE_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
-    // conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
-
+    conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_init::PROGRESS_SUBSYSTEM).map_err(into)?;
     conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
 
 
@@ -55,19 +54,19 @@ fn get_task_id(oper: sal::TASK) -> i64 {
 
 fn get_status_type(code: i64) -> sal::STATUS {
     match code {
-        1 => sal::STATUS::COMPLETE,
-        2 => sal::STATUS::INCOMPLETE,
-        3 => sal::STATUS::IGNORE,
-        4 => sal::STATUS::FAILURE,
+        1 => sal::STATUS::STARTED,
+        2 => sal::STATUS::VISITED,
+        3 => sal::STATUS::COMPLETE,
+        5 => sal::STATUS::FAILURE,
         _ => sal::STATUS::UNKNOWN,
     }
 }
 
 fn get_status_id(code: sal::STATUS) -> i64 {
     match code {
-        sal::STATUS::COMPLETE => 1,
-        sal::STATUS::INCOMPLETE => 2,
-        sal::STATUS::IGNORE => 3,
+        sal::STATUS::STARTED => 1,
+        sal::STATUS::VISITED => 2,
+        sal::STATUS::COMPLETE => 3,
         sal::STATUS::FAILURE => 4,
         sal::STATUS::UNKNOWN => 0,
     }
@@ -99,16 +98,16 @@ let archive_id = get_archive_id_by_name(conn, archive)?;
     Ok(())
 }
 
+pub fn set_archive_started(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
+    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::STARTED))
+}
+
+pub fn set_archive_visited(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
+    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::VISITED))
+}
+
 pub fn set_archive_complete(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
     set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::COMPLETE))
-}
-
-pub fn set_archive_incomplete(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
-    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::INCOMPLETE))
-}
-
-pub fn set_archive_ignore(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
-    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::IGNORE))
 }
 
 pub fn set_archive_failure(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
@@ -208,8 +207,11 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> Fb2Result<()> {
     tx.commit().map_err(into)
 }
 
-pub fn insert_language(conn: &Connection, lang: &str) -> Fb2Result<i32> {
-    conn.execute(sal::query_insert::LANGUAGE, &[&lang]).map_err(into)
+pub fn insert_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {    
+    for lang in langs {
+        conn.execute(sal::query_insert::LANGUAGE, &[&lang.to_lowercase().as_str().trim()]).map_err(into)?;
+    }
+    Ok(())
 }
 
 pub fn get_languages_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
@@ -344,12 +346,23 @@ pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, St
     Ok(authors)
 }
 
-pub fn insert_title(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
+pub fn insert_titles(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
     let mut stmt = conn.prepare(sal::query_insert::TITLES).map_err(into)?;
     for title in titles {
         stmt.execute(&[title]).map_err(into)?;
     }
     Ok(())
+}
+
+fn select_column_as_set(conn: &Connection, sql: &str, col_num: i32) -> Fb2Result<HashSet<String>> {
+    let mut result = HashSet::new();
+    let mut stmt = conn.prepare(sql).map_err(into)?;
+    let rows = stmt.query_map(&[], |row| row.get(col_num)).map_err(into)?;
+    for row in rows {
+        let data: String = row.map_err(into)?;
+        result.insert(data);
+    }
+    Ok(result)
 }
 
 pub fn select_title(conn: &Connection) -> Fb2Result<HashSet<String>> {
@@ -361,4 +374,9 @@ pub fn select_title(conn: &Connection) -> Fb2Result<HashSet<String>> {
         titles.insert(title);
     }
     Ok(titles)
+}
+
+
+pub fn select_languages(conn: &Connection) -> Fb2Result<HashSet<String>> {
+    select_column_as_set(conn, sal::query_select::LANGUAGES, 0)
 }

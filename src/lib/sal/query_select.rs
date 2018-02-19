@@ -10,6 +10,8 @@ pub const LANGUAGES_DISABLED: &'static str = "SELECT name FROM languages_disable
 
 pub const LANGUAGES_ENABLED: &'static str = "SELECT name FROM languages_enabled ORDER BY name";
 
+pub const LANGUAGES: &'static str = "SELECT name FROM languages";
+
 pub const GENRE_CODES: &'static str = "SELECT code FROM genres";
 
 pub const GENRES_DISABLED: &'static str = "SELECT group_name, genre_name FROM genres_disabled ORDER BY group_name, genre_name";
