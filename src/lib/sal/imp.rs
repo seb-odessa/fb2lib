@@ -22,7 +22,7 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute_batch(sal::query_drop::GENRE_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
     conn.execute_batch(sal::query_drop::SEQUENCES_SUBSYSTEM).map_err(into)?;
 
     // conn.execute(sal::query_create::ARCHIVES, &[]).map_err(into)?;
@@ -37,7 +37,7 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
     // conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
+    conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
     conn.execute_batch(sal::query_create::SEQUENCES_SUBSYSTEM).map_err(into)?;
 
     Ok(())

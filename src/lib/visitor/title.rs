@@ -7,25 +7,27 @@ use result::Fb2Result;
 use std::collections::HashSet;
 
 pub struct Title {
+    counter: usize,
     access: AccessGuard,
     titles: HashSet<String>,
-    ignore: HashSet<String>,
-    complete: HashSet<String>,
+    handled: HashSet<String>,
 }
 impl Title {
-    pub fn new(access: AccessGuard, ignore: HashSet<String>) -> Self {
+    pub fn new(access: AccessGuard, handled: HashSet<String>) -> Self {
         Title {
+            counter: 0,
             access: access,
             titles: HashSet::new(),
-            ignore: ignore,
-            complete: HashSet::new(),
+            handled: handled,
         }
     }
 }
 impl sal::Save<FictionBook> for Title {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_titles(&conn, &self.titles)?;
-        self.complete = self.complete.union(&self.titles).map(|s| s.clone()).collect();
+        self.handled = self.handled.union(&self.titles).map(|s| s.clone()).collect();
+        self.titles.clear();
+        self.counter = 0;
         Ok(())
     }
     fn task(&self) -> sal::TASK {
@@ -34,12 +36,22 @@ impl sal::Save<FictionBook> for Title {
 }
 impl algorithm::Visitor<FictionBook> for Title {
     fn visit(&mut self, book: &FictionBook) {
+        self.counter += 1;
         if self.access.is_allowed(book) {
             let title = book.get_book_title();
-            if !self.ignore.contains(&title) && !self.complete.contains(&title) {
+            if !self.handled.contains(&title) {
                 self.titles.insert(title);
             }
         }
+    }
+    fn get_total_count(&self) -> usize {
+        self.counter
+    }
+    fn get_new_count(&self) -> usize {
+        self.titles.len()
+    }
+    fn get_stored_count(&self) -> usize {
+        self.handled.len()
     }
     fn report(&self) {
         for title in &self.titles {

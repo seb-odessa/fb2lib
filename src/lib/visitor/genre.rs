@@ -8,14 +8,16 @@ use std::collections::HashSet;
 use std::collections::HashMap;
 
 pub struct Genre {
+    counter: usize,
     genres: HashMap<String, usize>,
-    ignore: HashSet<String>,
+    handled: HashSet<String>,
 }
 impl Genre {
-    pub fn new(ignore: Vec<String>) -> Self {
+    pub fn new(handled: Vec<String>) -> Self {
         Genre {
+            counter: 0,
             genres: HashMap::new(),
-            ignore: HashSet::from_iter(ignore),
+            handled: HashSet::from_iter(handled),
         }
     }
 }
@@ -31,23 +33,34 @@ impl algorithm::Visitor<FictionBook> for Genre {
     fn visit(&mut self, book: &FictionBook) {
         for genre in book.get_book_genres().into_iter() {
             for genre in genre.split(",") {
+                self.counter += 1;
                 let genre = genre.trim().to_lowercase();
                  let counter = self.genres.entry(genre).or_insert(0);
                 *counter += 1;
             }
         }
     }
+    fn get_total_count(&self) -> usize {
+        self.counter
+    }
+    fn get_new_count(&self) -> usize {
+        self.genres.len()
+    }
+    fn get_stored_count(&self) -> usize {
+        self.handled.len()
+    }
+
     fn report(&self) {
         let mut total = 0;
         let mut unknown = 0;
         for (code, count) in &self.genres {
             total += count;
-            if !self.ignore.contains(code) {
+            if !self.handled.contains(code) {
                 unknown += 1;
                 println!("{} - {}", code, count);
             }
         }
-        if !self.ignore.is_empty() {
+        if !self.handled.is_empty() {
             println!("Total unknown genres was found {}", unknown);
         }
         println!("Total genres was processed: {}", total);

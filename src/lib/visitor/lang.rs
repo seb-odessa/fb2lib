@@ -6,24 +6,25 @@ use fb2parser::FictionBook;
 use std::collections::HashSet;
 
 pub struct Lang {
+    counter: usize,
     langs: HashSet<String>,
-    ignore: HashSet<String>,
-    complete: HashSet<String>,
+    handled: HashSet<String>,
 }
 impl Lang {
-    pub fn new(ignore: HashSet<String>) -> Self {
+    pub fn new(handled: HashSet<String>) -> Self {
         Lang {
+            counter: 0,
             langs: HashSet::new(),
-            ignore: ignore,
-            complete: HashSet::new(),            
+            handled: handled,
         }
     }
 }
 impl sal::Save<FictionBook> for Lang {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_languages(&conn, &self.langs)?;
-        let complete: HashSet<String> = self.complete.union(&self.langs).map(|s| s.clone()).collect();
-        self.complete = complete;
+        self.handled = self.handled.union(&self.langs).map(|s| s.clone()).collect();
+        self.langs.clear();
+        self.counter = 0;
         Ok(())
     }
     fn task(&self) -> sal::TASK {
@@ -32,10 +33,20 @@ impl sal::Save<FictionBook> for Lang {
 }
 impl algorithm::Visitor<FictionBook> for Lang {
     fn visit(&mut self, book: &FictionBook) {
+        self.counter += 1;
         let lang = book.get_book_lang().to_lowercase().as_str().trim().to_string();
-        if !self.ignore.contains(&lang) && !self.complete.contains(&lang) {
+        if !self.handled.contains(&lang) {
             self.langs.insert(lang);
         }
+    }
+    fn get_total_count(&self) -> usize {
+        self.counter
+    }
+    fn get_new_count(&self) -> usize {
+        self.langs.len()
+    }
+    fn get_stored_count(&self) -> usize {
+        self.handled.len()
     }
     fn report(&self) {
         for lang in &self.langs {

@@ -9,7 +9,7 @@ use std::collections::HashMap;
 pub type GenreMap = HashMap<String, String>;
 
 pub struct Book {
-    count: usize,
+    counter: usize,
     access: AccessGuard,
     books: Vec<String>,
     genres: HashMap<String, String>,
@@ -17,7 +17,7 @@ pub struct Book {
 impl Book {
     pub fn new(access: AccessGuard, genres: GenreMap) -> Self {
         Book {
-            count: 0,
+            counter: 0,
             access: access,
             books: Vec::new(),
             genres: genres,
@@ -99,12 +99,21 @@ impl Book {
 }
 impl algorithm::Visitor<FictionBook> for Book {
     fn visit(&mut self, book: &FictionBook) {
+        self.counter += 1;        
         if self.access.is_allowed(book) {
-            self.count += 1;
             for description in self.format(book) {
                 self.books.push(description);
             }
         }
+    }
+    fn get_total_count(&self) -> usize {
+        self.counter
+    }
+    fn get_new_count(&self) -> usize {
+        self.books.len()
+    }
+    fn get_stored_count(&self) -> usize {
+        0
     }
     fn report(&self) {
         for book in &self.books {

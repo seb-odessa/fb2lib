@@ -40,7 +40,7 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
 fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()> 
     where T: Visitor<FictionBook> + Save<FictionBook> + 'static
 {
-    print!("Processing {}.", &name);
+    print!("Processing {}", &name);
     let task = visitor.task();
     let status = sal::get_archive_status(&conn, name, task)?;
     if force || !is_complete(status) {
@@ -57,7 +57,7 @@ fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: b
                 return Err(e);
             }
         }
-
+        let (added, total) = (visitor.get_new_count(), visitor.get_total_count());
         match visitor.save(&conn) {
             Ok(()) => {
                 sal::set_archive_complete(conn, name, task)?;
@@ -69,9 +69,10 @@ fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: b
                 return Err(e);
             }            
         }
-        println!("Done.");
+        let added = format!("{}/{}", added, total);
+        println!("Done.\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
     } else {
-        println!("Skiped.");
+        println!("...Skiped.");
     }
     Ok(())
 }
