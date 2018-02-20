@@ -1,6 +1,6 @@
 [package]
 name = "fb2lib"
-version = "0.6.2"
+version = "0.6.5"
 authors = ["seb-odessa <seb@ukr.net>"]
 
 [lib]
