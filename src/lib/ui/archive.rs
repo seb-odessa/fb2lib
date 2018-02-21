@@ -12,8 +12,6 @@ const CHECK: &'static str = "check";
 const CHECK_HELP: &'static str = "Try parse all books in archive.";
 const SHOW: &'static str = "show";
 const SHOW_HELP: &'static str = "Extract and print book description in specified format.";
-const LOAD: &'static str = "load";
-const LOAD_HELP: &'static str = "Load data from the archive to the database";
 
 const QUIET: &'static str = "quiet";
 const QUIET_HELP: &'static str = "Perform operation in QUIET mode";

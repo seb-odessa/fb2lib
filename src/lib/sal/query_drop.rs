@@ -60,14 +60,12 @@ pub const TITLES_SUBSYSTEM: &'static str = "
     DELETE FROM progress WHERE progress.task_id = 4;
     COMMIT;";
 
+#[allow(dead_code)]
 pub const SEQUENCES_SUBSYSTEM: &'static str = "
 	BEGIN;
 	DROP TABLE IF EXISTS sequences;
     DELETE FROM progress WHERE progress.task_id = 5;
     COMMIT;";
-
-
-
 
 
 /*********************** Untested ***********************/

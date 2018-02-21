@@ -89,7 +89,7 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
             } else {
                 ui::usage(arg)
             }
-        }        
+        }
         (LANGS, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
                 let load = arg.is_present(SAVE);
