@@ -6,12 +6,12 @@ This part may be used for investigating content of the **archive.zip**
 
 | Command | Description |
 | ------- | ----------- |
-| `$ ./fb2lib archive archive.zip ls`          | Print list of files in the **archive.zip** |
-| `$ ./fb2lib archive archive.zip check`       | Checks that books in the **archive.zip** are FB2 convertable. |
-| `$ ./fb2lib archive archive.zip xml <book>`    | Prints book description in XML format |
-| `$ ./fb2lib archive archive.zip fb2 <book>`    | Prints book description into FictionBook structure |
-| `$ ./fb2lib archive archive.zip inf <book>`    | Prints book brief description |
-| `$ ./fb2lib archive archive.zip zip <book>`    | Prints compression info and the offset of the book in the archive |
+| `$ ./fb2lib archive ls <archive.zip>`          | Print list of files in the **archive.zip** |
+| `$ ./fb2lib archive check <archive.zip>`       | Checks that books in the **archive.zip** are FB2 convertable. |
+| `$ ./fb2lib archive show xml <archive.zip> [book]`    | Prints book description in XML format |
+| `$ ./fb2lib archive show fb2 <archive.zip> [book]`    | Prints book description into FictionBook structure |
+| `$ ./fb2lib archive show inf <archive.zip> [book]`    | Prints book brief description |
+| `$ ./fb2lib archive show zip <archive.zip> [book]`    | Prints compression info and the offset of the book in the archive |
 
 The *book* argument may be replaced by regexps or wildcards, e.g:
 
@@ -25,7 +25,7 @@ This command allows to manage database.
 
 | Command | Description |
 | ------- | ----------- |
-| `$ ./fb2lib database reset`  | Reinitialize tables and views |
+| `$ ./fb2lib database [db] reset`  | Reinitialize tables and views |
 
 
 ## fb2lib torrent
@@ -33,8 +33,8 @@ This command allows to manage torrent meta information.
 
 | Command | Description |
 | ------- | ----------- |
-| `$ ./fb2lib torrent [db] load archive.torrent`  | Load metainfo from the torrent file  into DB |
-| `$ ./fb2lib torrent [db] check archive.zip`  | Check archive.zip integrity with  compare of the loaded metainfo |
+| `$ ./fb2lib torrent [db] load <archive.torrent>`  | Load metainfo from the torrent file  into DB |
+| `$ ./fb2lib torrent [db] check <archive.zip>`  | Check archive.zip integrity with  compare of the loaded metainfo |
 
 
 ## fb2lib filter lang
@@ -43,10 +43,10 @@ This command allows to define language filters.
 | Command | Description |
 | ------- | ----------- |
 | `$ fb2lib filter [db] lang display`          | Print list of disabled and enabled languages |
-| `$ fb2lib filter [db] lang ls archive.zip`   | Print sorted list of languages from the specified archive.zip |
-| `$ fb2lib filter [db] lang load archive.zip` | Load languages to the database from the specified archive.zip |
-| `$ fb2lib filter [db] lang disable lang`     | Add specified language to disabled list. Wildcards (*/./?) alowed |
-| `$ fb2lib filter [db] lang enable lang`      | Remove specified language from disabled list. Wildcards (*/./?) alowed |
+| `$ fb2lib filter [db] lang ls <archive.zip>`   | Print sorted list of languages from the specified archive.zip |
+| `$ fb2lib filter [db] lang load <archive.zip>` | Load languages to the database from the specified archive.zip |
+| `$ fb2lib filter [db] lang disable <lang>`     | Add specified language to disabled list. Wildcards (*/./?) alowed |
+| `$ fb2lib filter [db] lang enable <lang>`      | Remove specified language from disabled list. Wildcards (*/./?) alowed |
 
 ## fb2lib filter genre
 This command allows to define genre filters.
@@ -54,7 +54,7 @@ This command allows to define genre filters.
 | Command | Description |
 | ------- | ----------- |
 | `$ fb2lib filter [db] genre display`          | Print list of disabled and enabled genres |
-| `$ fb2lib filter [db] genre unknown archive.zip`   | Print list of unknown genres from the specified archive.zip |
+| `$ fb2lib filter [db] genre [unknown] <archive.zip>`   | Print list of unknown genres from the specified archive.zip |
 
 
 fb2lib filter genre display
