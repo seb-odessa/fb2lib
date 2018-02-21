@@ -26,6 +26,18 @@ const INF_HELP: &'static str = "Show book's brief description";
 const ZIP: &'static str = "zip";
 const ZIP_HELP: &'static str = "Show book's offet, size and compression method in the rachive";
 
+const AUTHORS: &'static str = "authors";
+const AUTHORS_HELP: &'static str = "Work with authors from the archive";
+const LANGS: &'static str = "langs";
+const LANGS_HELP: &'static str = "Work with book languages from the archive";
+const GENRES: &'static str = "genres";
+const GENRES_HELP: &'static str = "Work with book genres from the archive";
+const TITLES: &'static str = "titles";
+const TITLES_HELP: &'static str = "Work with book titles from the archive";
+const SEQUENCES: &'static str = "sequences";
+const SEQUENCES_HELP: &'static str = "Work with book sequences from the archive";
+
+
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let arch = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true);
     let book = Arg::with_name(ui::BOOK_FILE).help(ui::BOOK_FILE_HELP).required(false);
@@ -40,6 +52,11 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(FB2).about(FB2_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(INF).about(INF_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(ZIP).about(ZIP_HELP).arg(arch.clone()).arg(book.clone()))
+            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(GENRES).about(GENRES_HELP).arg(arch.clone()))
         )
     )
 }
