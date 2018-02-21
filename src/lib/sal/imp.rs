@@ -347,7 +347,7 @@ fn insert_from_set(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2
     Ok(())
 }
 
-pub fn insert_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {    
+pub fn insert_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {
     insert_from_set(conn, sal::query_insert::LANGUAGE, langs)
 }
 
@@ -383,4 +383,15 @@ pub fn select_languages(conn: &Connection) -> Fb2Result<HashSet<String>> {
 pub fn select_sequences(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let vector = select_column(conn, sal::query_select::SEQUENCES, 0)?;
     Ok(HashSet::from_iter(vector))
+}
+
+pub fn select_authors(conn: &Connection) -> Fb2Result<Vec<(i64,Option<i64>,String)>> {
+    let mut result = Vec::new();
+    let mut stmt = conn.prepare(sal::query_select::AUTHORS).map_err(into)?;
+    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2))).map_err(into)?;
+    for row in rows {
+        let record = row.map_err(into)?;
+        result.push(record);
+    }
+    Ok(result)
 }

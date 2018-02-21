@@ -50,15 +50,43 @@ pub fn load_sequences(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<
     handle(&conn, force, archives, visitor)
 }
 /************************************* SHOW HANDLERS *******************************************/
-pub fn show_genres(db: &str, pattern: &str) -> Fb2Result<()> {
+pub fn show_authors(db: &str, pattern: &str) -> Fb2Result<()> {
     let re = algorithm::make_regex(pattern)?;
     let conn = sal::get_connection(db)?;
-    let genres = sal::get_genre_codes(&conn)?;
-    for genre in genres {
-        if re.is_match(&genre) {
-            println!("{}", genre);
+    let authors = sal::select_authors(&conn)?;
+    for (id, use_id, name) in authors {
+        if re.is_match(&name) {
+            println!("{:>6} {:?} {}", id, use_id, name);
         }
     }
+    Ok(())
+}
+pub fn show_titles(db: &str, pattern: &str) -> Fb2Result<()> {
+    let re = algorithm::make_regex(pattern)?;
+    let conn = sal::get_connection(db)?;
+    let authors = sal::select_authors(&conn)?;
+    for (id, use_id, name) in authors {
+        if re.is_match(&name) {
+            println!("{:>6} {:?} {}", id, use_id, name);
+        }
+    }
+    Ok(())
+}
+pub fn show_sequences(db: &str, pattern: &str) -> Fb2Result<()> {
+    let re = algorithm::make_regex(pattern)?;
+    let conn = sal::get_connection(db)?;
+    let authors = sal::select_authors(&conn)?;
+    for (id, use_id, name) in authors {
+        if re.is_match(&name) {
+            println!("{:>6} {:?} {}", id, use_id, name);
+        }
+    }
+    Ok(())
+}
+/************************************ PRIVATE HANDLERS *****************************************/
+pub fn alias_authors(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    println!("{} -> {}", src, dst);
     Ok(())
 }
 /************************************ PRIVATE HANDLERS *****************************************/
@@ -81,7 +109,7 @@ fn is_complete(status: sal::STATUS) -> bool {
     }
 }
 
-fn visit<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()> 
+fn visit<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
     where T: Visitor<FictionBook> + Save<FictionBook> + 'static
 {
     print!("Processing {}", &name);
@@ -111,7 +139,7 @@ fn visit<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visi
                 sal::set_archive_failure(conn, name, task)?;
                 println!("{}", e);
                 return Err(e);
-            }            
+            }
         }
         let added = format!("{}/{}", added, total);
         println!("Done.\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
@@ -121,7 +149,7 @@ fn visit<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visi
     Ok(())
 }
 
-fn handle<T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()> 
+fn handle<T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
     where T: Visitor<FictionBook> + Save<FictionBook> + 'static
 {
     for archive in archives {

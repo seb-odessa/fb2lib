@@ -127,7 +127,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
         nickname	    TEXT NOT NULL,
 		UNIQUE (first_name, middle_name, last_name, nickname) ON CONFLICT IGNORE
     );
-	CREATE VIEW IF NOT EXISTS authors AS
+	CREATE VIEW IF NOT EXISTS authors_view AS
 		SELECT id, use_id, nickname AS name, last_name, first_name, middle_name, nickname
 		FROM people WHERE last_name =='' AND first_name =='' AND middle_name == ''
 		UNION
@@ -174,7 +174,7 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
     INSERT OR IGNORE INTO status VALUES (4, 'операция завершилась неудачей');
 
 	CREATE TABLE progress (
-    	id 				INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,    	
+    	id 				INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 		archive_id      INTEGER NOT NULL,       /* FK to archives.id */
 		task_id 		INTEGER NOT NULL,       /* FK to task.id */
 		status_id 		INTEGER NOT NULL,       /* FK to status.id */
@@ -184,8 +184,8 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 
 	CREATE VIEW progress_log AS
 	SELECT progress.id AS id, archives.name, task.name AS task, status.name AS status, registred
-	FROM progress 
-	LEFT JOIN status ON progress.status_id = status.id 
+	FROM progress
+	LEFT JOIN status ON progress.status_id = status.id
 	LEFT JOIN task ON progress.task_id = task.id
 	LEFT JOIN archives ON progress.archive_id = archives.id;
 
@@ -209,7 +209,7 @@ pub const TITLES_SUBSYSTEM: &'static str = "
         use_id          INTEGER, /* use row with id == this.use_id instead */
 	    title       	TEXT NOT NULL,
 		UNIQUE (title) ON CONFLICT IGNORE
-    );	
+    );
     COMMIT;";
 
 #[allow(dead_code)]
@@ -220,7 +220,7 @@ pub const SEQUENCES_SUBSYSTEM: &'static str = "
         use_id          INTEGER, /* use row with id == this.use_id instead */
 	    sequence       	TEXT NOT NULL,
 		UNIQUE (sequence) ON CONFLICT IGNORE
-    );	
+    );
     COMMIT;";
 
 

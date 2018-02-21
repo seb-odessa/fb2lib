@@ -78,4 +78,4 @@ pub use sal::imp::select_titles;
 pub use sal::imp::insert_sequences;
 pub use sal::imp::select_sequences;
 
-
+pub use sal::imp::select_authors;
