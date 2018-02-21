@@ -3,7 +3,6 @@ use algorithm;
 use result::Fb2Result;
 use fb2parser::FictionBook;
 
-use std::iter::FromIterator;
 use std::collections::HashSet;
 use std::collections::HashMap;
 
@@ -13,11 +12,11 @@ pub struct Genre {
     handled: HashSet<String>,
 }
 impl Genre {
-    pub fn new(handled: Vec<String>) -> Self {
+    pub fn new(handled: HashSet<String>) -> Self {
         Genre {
             counter: 0,
             genres: HashMap::new(),
-            handled: HashSet::from_iter(handled),
+            handled: handled,
         }
     }
 }

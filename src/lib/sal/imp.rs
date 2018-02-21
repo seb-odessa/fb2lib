@@ -236,12 +236,12 @@ pub fn enable_language(conn: &Connection, lang: &str) -> Fb2Result<(i32)> {
     conn.execute(sal::query_insert::ENABLE_LANGUAGE, &[&lang]).map_err(into)
 }
 
-pub fn get_genre_codes(conn: &Connection) -> Fb2Result<Vec<String>> {
-    let mut result = Vec::new();
+pub fn get_genre_codes(conn: &Connection) -> Fb2Result<HashSet<String>> {
+    let mut result = HashSet::new();
     let mut stmt = conn.prepare(sal::query_select::GENRE_CODES).map_err(into)?;
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let code: String = row.map_err(into)? ;
-        result.push(code);
+        result.insert(code);
     }
     Ok(result)
 }

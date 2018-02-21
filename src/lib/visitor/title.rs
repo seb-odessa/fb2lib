@@ -57,5 +57,8 @@ impl algorithm::Visitor<FictionBook> for Title {
         for title in &self.titles {
             println!("'{}'", title);
         }
+        println!("=============================================");
+        println!("Unique book titles was found {}", self.titles.len());
+        println!("Total titles was found {}", self.counter);        
     }
 }

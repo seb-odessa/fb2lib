@@ -14,6 +14,7 @@ use visitor::title::Title;
 use visitor::sequence::Sequence;
 
 use std::path;
+use std::collections::HashSet;
 
 
 fn create_access_guard(conn: &sal::Connection)-> Fb2Result<acess::AccessGuard> {
@@ -137,10 +138,10 @@ pub fn sequences(db: &str, save: bool, force: bool, archives: &Vec<&str>) -> Fb2
 
 pub fn genres(db: &str, only_unknown: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
-    let ignore: Vec<String> = if only_unknown {
+    let ignore = if only_unknown {
         sal::get_genre_codes(&conn)?
     } else {
-        Vec::new()
+        HashSet::new()
     };
     let visitor = Genre::new(ignore);
     handle(&conn, false, false, archives, visitor)

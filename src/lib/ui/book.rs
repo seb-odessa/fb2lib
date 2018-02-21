@@ -124,7 +124,7 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
             } else {
                 ui::usage(arg)
             }
-        }        
+        }
         (_, _) => ui::usage(arg)
     }
 }

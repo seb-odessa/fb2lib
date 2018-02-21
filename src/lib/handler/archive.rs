@@ -2,7 +2,17 @@ use out;
 use tools;
 use archive;
 use algorithm;
+use fb2parser::FictionBook;
 use result::Fb2Result;
+
+use visitor::acess::AccessGuard;
+use visitor::author::Author;
+use visitor::lang::Lang;
+use visitor::genre::Genre;
+use visitor::title::Title;
+use visitor::sequence::Sequence;
+
+use std::collections::HashSet;
 
 pub fn show_xml(archive: &str, book: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
@@ -68,3 +78,31 @@ pub fn check_archive(archive: &str, quiet: bool) -> Fb2Result<()> {
     }
     Ok(())
 }
+
+fn handle<T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()> 
+    where T: algorithm::Visitor<FictionBook> + 'static
+{
+    for archive in archives {
+        algorithm::visit(archive, &mut visitor)?;
+    }
+    visitor.report();
+    Ok(())
+}
+
+pub fn authors(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Author::new(AccessGuard::new(), HashSet::new()))
+}
+pub fn langs(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Lang::new(HashSet::new()))
+}
+pub fn titles(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Title::new(AccessGuard::new(), HashSet::new()))
+}
+pub fn sequences(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Sequence::new(AccessGuard::new(), HashSet::new()))
+}
+pub fn genres(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Genre::new(HashSet::new()))
+}
+
+

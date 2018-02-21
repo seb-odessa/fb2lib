@@ -76,7 +76,8 @@ impl algorithm::Visitor<FictionBook> for Author {
                 println!("{}", middle_name);
             }
         }
-        println!("New authors was found {}", self.authors.len());
-        println!("Authors already added {}", self.handled.len());
+        println!("=============================================");
+        println!("Unique authors was found {}", self.authors.len());
+        println!("Total authors was found {}", self.counter);
     }
 }

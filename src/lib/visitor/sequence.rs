@@ -60,5 +60,8 @@ impl algorithm::Visitor<FictionBook> for Sequence {
         for name in &self.names {
             println!("'{}'", name);
         }
+        println!("=============================================");
+        println!("Unique book sequences was found {}", self.names.len());
+        println!("Total sequences was found {}", self.counter);                
     }
 }
