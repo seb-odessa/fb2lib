@@ -5,6 +5,7 @@ mod query_create;
 mod query_init;
 mod query_insert;
 mod query_select;
+mod query_update;
 
 use result;
 use rusqlite;
@@ -79,3 +80,4 @@ pub use sal::imp::insert_sequences;
 pub use sal::imp::select_sequences;
 
 pub use sal::imp::select_authors;
+pub use sal::imp::link_authors;

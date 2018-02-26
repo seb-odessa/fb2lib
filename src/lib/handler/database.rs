@@ -86,7 +86,9 @@ pub fn show_sequences(db: &str, pattern: &str) -> Fb2Result<()> {
 /************************************ PRIVATE HANDLERS *****************************************/
 pub fn alias_authors(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
-    println!("{} -> {}", src, dst);
+    let source: i64 = src.trim().parse().ok().unwrap_or_default();
+    let destination: i64 = dst.trim().parse().unwrap_or_default();
+    println!("{} -> {} : {:?}", src, dst, sal::link_authors(&conn, source, destination));
     Ok(())
 }
 /************************************ PRIVATE HANDLERS *****************************************/

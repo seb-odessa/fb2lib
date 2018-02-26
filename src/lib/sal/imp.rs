@@ -395,3 +395,7 @@ pub fn select_authors(conn: &Connection) -> Fb2Result<Vec<(i64,Option<i64>,Strin
     }
     Ok(result)
 }
+
+pub fn link_authors(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
+    conn.execute(sal::query_update::AUTHOR_LINK, &[&src, &dst]).map_err(into)
+}

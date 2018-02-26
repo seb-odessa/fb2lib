@@ -127,7 +127,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
         nickname	    TEXT NOT NULL,
 		UNIQUE (first_name, middle_name, last_name, nickname) ON CONFLICT IGNORE
     );
-	CREATE VIEW IF NOT EXISTS authors_view AS
+	CREATE VIEW IF NOT EXISTS authors AS
 		SELECT id, use_id, nickname AS name, last_name, first_name, middle_name, nickname
 		FROM people WHERE last_name =='' AND first_name =='' AND middle_name == ''
 		UNION

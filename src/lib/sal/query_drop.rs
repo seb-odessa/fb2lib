@@ -39,7 +39,7 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
         DROP VIEW IF EXISTS authors;
-        DROP TABLE IF EXISTS people;
+        DROP TABLE IF EXISTS people;        
         DELETE FROM progress WHERE progress.task_id = 3;
     COMMIT;";
 
