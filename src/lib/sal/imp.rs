@@ -13,6 +13,8 @@ pub type Connection = rusqlite::Connection;
 
 pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     let conn = Connection::open(db_file_name).map_err(into)?;
+    conn.execute_batch(sal::query_drop::VERSION_SUBSYSTEM).map_err(into)?;
+    
     // conn.execute(sal::query_drop::ARCHIVES, &[]).map_err(into)?;
     // conn.execute(sal::query_drop::PIECES, &[]).map_err(into)?;
     // conn.execute(sal::query_drop::LANGUAGES, &[]).map_err(into)?;
@@ -31,6 +33,7 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     // conn.execute(sal::query_create::LANGUAGES_AUTO, &[]).map_err(into)?;
     // conn.execute(sal::query_create::LANGUAGES_DISABLED, &[]).map_err(into)?;
     // conn.execute(sal::query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
+    conn.execute_batch(sal::query_create::VERSION_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_create::FILTER_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_init::FILTER_SUBSYSTEM).map_err(into)?;
     // conn.execute_batch(sal::query_create::GENRE_SUBSYSTEM).map_err(into)?;
@@ -397,5 +400,5 @@ pub fn select_authors(conn: &Connection) -> Fb2Result<Vec<(i64,Option<i64>,Strin
 }
 
 pub fn link_authors(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
-    conn.execute(sal::query_update::AUTHOR_LINK, &[&src, &dst]).map_err(into)
+    conn.execute(sal::query_insert::AUTHOR_LINK, &[&src, &dst]).map_err(into)
 }

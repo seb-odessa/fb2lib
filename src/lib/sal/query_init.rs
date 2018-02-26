@@ -230,8 +230,6 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'ya', 'ya');	
 
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'litrpg', id FROM genre_names WHERE code = 'sf_litrpg';
-
-
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'literature_short', id FROM genre_names WHERE code = 'short_story';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sociology_book', id FROM genre_names WHERE code = 'sci_sociology';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'sci_social_studies', id FROM genre_names WHERE code = 'sci_sociology';

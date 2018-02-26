@@ -39,7 +39,9 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
         DROP VIEW IF EXISTS authors;
-        DROP TABLE IF EXISTS people;        
+        DROP VIEW IF EXISTS authors_fixed;
+        DROP TABLE IF EXISTS people;
+        DROP TABLE IF EXISTS people_links; 
         DELETE FROM progress WHERE progress.task_id = 3;
     COMMIT;";
 
@@ -67,6 +69,12 @@ pub const SEQUENCES_SUBSYSTEM: &'static str = "
     DELETE FROM progress WHERE progress.task_id = 5;
     COMMIT;";
 
+#[allow(dead_code)]
+pub const VERSION_SUBSYSTEM: &'static str = "
+	BEGIN;
+	DROP TABLE IF EXISTS versions;
+    /*DELETE FROM progress WHERE progress.task_id = 5;*/
+    COMMIT;";
 
 /*********************** Untested ***********************/
 

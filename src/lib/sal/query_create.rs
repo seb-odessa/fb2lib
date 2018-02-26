@@ -127,6 +127,14 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
         nickname	    TEXT NOT NULL,
 		UNIQUE (first_name, middle_name, last_name, nickname) ON CONFLICT IGNORE
     );
+
+	CREATE TABLE people_links (
+		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    	src_id 		INTEGER NOT NULL,	/* FK to people.id */
+    	dst_id 		INTEGER NOT NULL,	/* FK to people.id */
+    	version_id 	INTEGER NOT NULL /* FK to versions.id */
+	);
+
 	CREATE VIEW IF NOT EXISTS authors AS
 		SELECT id, use_id, nickname AS name, last_name, first_name, middle_name, nickname
 		FROM people WHERE last_name =='' AND first_name =='' AND middle_name == ''
@@ -148,6 +156,10 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 		UNION
 		SELECT id, use_id, middle_name AS name, last_name, first_name, middle_name, nickname
 		FROM people WHERE last_name =='' AND first_name =='' AND middle_name != '';
+
+	CREATE VIEW authors_fixed AS
+		SELECT A.id, ifnull(B.name, A.name) AS name FROM authors A LEFT JOIN people_links ON src_id = A.id LEFT JOIN authors B ON dst_id = B.id
+		WHERE dst_id IS NULL;
 
     COMMIT;";
 
@@ -221,6 +233,22 @@ pub const SEQUENCES_SUBSYSTEM: &'static str = "
 	    sequence       	TEXT NOT NULL,
 		UNIQUE (sequence) ON CONFLICT IGNORE
     );
+    COMMIT;";
+
+
+#[allow(dead_code)]
+pub const VERSION_SUBSYSTEM: &'static str = "
+	BEGIN;
+	CREATE TABLE versions (
+    	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    	name TEXT NOT NULL,
+		date TEXT NOT NULL,
+    	description TEXT
+	);
+	CREATE TRIGGER versions_on_insert AFTER INSERT ON versions
+	BEGIN
+		UPDATE versions SET date = datetime('now') WHERE new.id = versions.id;
+	END;
     COMMIT;";
 
 
