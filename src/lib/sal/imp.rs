@@ -388,7 +388,7 @@ pub fn select_sequences(conn: &Connection) -> Fb2Result<HashSet<String>> {
     Ok(HashSet::from_iter(vector))
 }
 
-pub fn select_authors(conn: &Connection) -> Fb2Result<Vec<(i64,Option<i64>,String)>> {
+pub fn select_authors(conn: &Connection) -> Fb2Result<Vec<(i64, String, String)>> {
     let mut result = Vec::new();
     let mut stmt = conn.prepare(sal::query_select::AUTHORS).map_err(into)?;
     let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2))).map_err(into)?;

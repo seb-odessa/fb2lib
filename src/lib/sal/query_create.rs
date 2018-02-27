@@ -127,6 +127,10 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
         nickname	    TEXT NOT NULL,
 		UNIQUE (first_name, middle_name, last_name, nickname) ON CONFLICT IGNORE
     );
+	CREATE INDEX first_name_idx on people (first_name ASC);
+	CREATE INDEX middle_name_idx on people (middle_name ASC);
+	CREATE INDEX last_name_idx on people (last_name ASC);
+	CREATE INDEX nick_name_idx on people (nickname ASC);
 
 	CREATE TABLE people_links (
 		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -136,30 +140,19 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 	);
 
 	CREATE VIEW IF NOT EXISTS authors AS
-		SELECT id, use_id, nickname AS name, last_name, first_name, middle_name, nickname
-		FROM people WHERE last_name =='' AND first_name =='' AND middle_name == ''
-		UNION
-		SELECT id, use_id, last_name AS name, last_name, first_name, middle_name, nickname
-		FROM people WHERE last_name !='' AND first_name =='' AND middle_name == ''
-		UNION
-		SELECT id, use_id, last_name ||' '|| first_name AS name, last_name, first_name, middle_name, nickname
-		FROM people WHERE last_name !='' AND first_name !='' AND middle_name == ''
-		UNION
-		SELECT id, use_id, last_name ||' '|| first_name ||' '|| middle_name AS name, last_name, first_name, middle_name, nickname
-		FROM people WHERE last_name !='' AND first_name !='' AND middle_name != ''
-		UNION
-		SELECT id, use_id, first_name ||' '|| middle_name AS name, last_name, first_name, middle_name, nickname
-		FROM people WHERE last_name =='' AND first_name !='' AND middle_name != ''
-		UNION
-		SELECT id, use_id, last_name ||' '|| middle_name AS name, last_name, first_name, middle_name, nickname
-		FROM people WHERE last_name !='' AND first_name =='' AND middle_name != ''
-		UNION
-		SELECT id, use_id, middle_name AS name, last_name, first_name, middle_name, nickname
-		FROM people WHERE last_name =='' AND first_name =='' AND middle_name != '';
+		SELECT 
+			id, 
+			use_id, 
+			trim(trim(last_name) || ' ' || trim(first_name) || ' ' || trim(middle_name) || ' ' || trim(nickname)) AS name, 
+			last_name, 
+			first_name, 
+			middle_name, 
+			nickname
+		FROM people;
 
-	CREATE VIEW authors_fixed AS
-		SELECT A.id, ifnull(B.name, A.name) AS name FROM authors A LEFT JOIN people_links ON src_id = A.id LEFT JOIN authors B ON dst_id = B.id
-		WHERE dst_id IS NULL;
+	CREATE VIEW authors_joined AS
+		SELECT A.id, A.name AS src_name, ifnull(B.name, A.name) AS dst_name 
+		FROM authors A LEFT JOIN people_links ON src_id = A.id LEFT JOIN authors B ON dst_id = B.id;
 
     COMMIT;";
 

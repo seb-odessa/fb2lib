@@ -54,9 +54,9 @@ pub fn show_authors(db: &str, pattern: &str) -> Fb2Result<()> {
     let re = algorithm::make_regex(pattern)?;
     let conn = sal::get_connection(db)?;
     let authors = sal::select_authors(&conn)?;
-    for (id, use_id, name) in authors {
-        if re.is_match(&name) {
-            println!("{:>6} {:?} {}", id, use_id, name);
+    for (id, src_name, dst_name) in authors {
+        if re.is_match(&src_name) {
+            println!("{:>6} {:>32} <= {}", id, dst_name, src_name);
         }
     }
     Ok(())
