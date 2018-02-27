@@ -221,7 +221,7 @@ pub const TITLES_SUBSYSTEM: &'static str = "
 	);
 	CREATE VIEW titles_joined AS
 		SELECT A.id, A.title AS src_title, ifnull(B.title, A.title) AS dst_title 
-		FROM titles A LEFT JOIN title_links ON src_id = A.id LEFT JOIN titles B ON dst_id = B.id;
+		FROM titles A LEFT JOIN titles_links ON src_id = A.id LEFT JOIN titles B ON dst_id = B.id;
 
     COMMIT;";
 
@@ -234,6 +234,16 @@ pub const SEQUENCES_SUBSYSTEM: &'static str = "
 	    sequence       	TEXT NOT NULL,
 		UNIQUE (sequence) ON CONFLICT IGNORE
     );
+	CREATE TABLE sequences_links (
+		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    	src_id 		INTEGER NOT NULL,	/* FK to sequences.id */
+    	dst_id 		INTEGER NOT NULL,	/* FK to sequences.id */
+    	version_id 	INTEGER NOT NULL /* FK to versions.id */
+	)
+	CREATE VIEW sequences_joined AS
+		SELECT A.id, A.sequence AS src_sequence, ifnull(B.sequence, A.sequence) AS dst_sequence
+		FROM sequences A LEFT JOIN sequences_links ON src_id = A.id LEFT JOIN sequences B ON dst_id = B.id;
+
     COMMIT;";
 
 

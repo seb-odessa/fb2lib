@@ -399,10 +399,6 @@ pub fn select_authors_joined(conn: &Connection) -> Fb2Result<Vec<(i64, String, S
     Ok(result)
 }
 
-pub fn link_authors(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
-    conn.execute(sal::query_insert::AUTHOR_LINK, &[&src, &dst]).map_err(into)
-}
-
 pub fn select_titles_joined(conn: &Connection) -> Fb2Result<Vec<(i64, String, String)>> {
     let mut result = Vec::new();
     let mut stmt = conn.prepare(sal::query_select::TITLES_JOINED).map_err(into)?;
@@ -414,13 +410,9 @@ pub fn select_titles_joined(conn: &Connection) -> Fb2Result<Vec<(i64, String, St
     Ok(result)
 }
 
-pub fn link_titles(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
-    conn.execute(sal::query_insert::TITLE_LINK, &[&src, &dst]).map_err(into)
-}
-
 pub fn select_sequences_joined(conn: &Connection) -> Fb2Result<Vec<(i64, String, String)>> {
     let mut result = Vec::new();
-    let mut stmt = conn.prepare(sal::query_select::TITLES_JOINED).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::SEQUENCES_JOINED).map_err(into)?;
     let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2))).map_err(into)?;
     for row in rows {
         let record = row.map_err(into)?;
@@ -429,8 +421,26 @@ pub fn select_sequences_joined(conn: &Connection) -> Fb2Result<Vec<(i64, String,
     Ok(result)
 }
 
-pub fn link_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
+pub fn link_authors(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
+    conn.execute(sal::query_insert::AUTHOR_LINK, &[&src, &dst]).map_err(into)
+}
+
+pub fn link_titles(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
     conn.execute(sal::query_insert::TITLE_LINK, &[&src, &dst]).map_err(into)
 }
 
+pub fn link_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
+    conn.execute(sal::query_insert::SEQUENCES_LINK, &[&src, &dst]).map_err(into)
+}
 
+pub fn unlink_authors(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
+    conn.execute(sal::query_delete::AUTHOR_LINK, &[&src, &dst]).map_err(into)
+}
+
+pub fn unlink_titles(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
+    conn.execute(sal::query_delete::TITLE_LINK, &[&src, &dst]).map_err(into)
+}
+
+pub fn unlink_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
+    conn.execute(sal::query_delete::SEQUENCES_LINK, &[&src, &dst]).map_err(into)
+}

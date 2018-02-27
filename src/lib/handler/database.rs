@@ -83,26 +83,47 @@ pub fn show_sequences(db: &str, pattern: &str) -> Fb2Result<()> {
     }
     Ok(())
 }
-/************************************ PRIVATE HANDLERS *****************************************/
-pub fn alias_authors(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+/********************************* LINK MANAGEMENT **************************************/
+pub fn mk_link_authors(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let source: i64 = src.trim().parse().ok().unwrap_or_default();
     let destination: i64 = dst.trim().parse().unwrap_or_default();
     println!("{} -> {} : {:?}", src, dst, sal::link_authors(&conn, source, destination));
     Ok(())
 }
-pub fn alias_titles(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+pub fn mk_link_titles(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let source: i64 = src.trim().parse().ok().unwrap_or_default();
     let destination: i64 = dst.trim().parse().unwrap_or_default();
     println!("{} -> {} : {:?}", src, dst, sal::link_titles(&conn, source, destination));
     Ok(())
 }
-pub fn alias_sequences(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+pub fn mk_link_sequences(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let source: i64 = src.trim().parse().ok().unwrap_or_default();
     let destination: i64 = dst.trim().parse().unwrap_or_default();
     println!("{} -> {} : {:?}", src, dst, sal::link_sequences(&conn, source, destination));
+    Ok(())
+}
+pub fn rm_link_authors(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let source: i64 = src.trim().parse().ok().unwrap_or_default();
+    let destination: i64 = dst.trim().parse().unwrap_or_default();
+    println!("{} -> {} : {:?}", src, dst, sal::unlink_authors(&conn, source, destination));
+    Ok(())
+}
+pub fn rm_link_titles(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let source: i64 = src.trim().parse().ok().unwrap_or_default();
+    let destination: i64 = dst.trim().parse().unwrap_or_default();
+    println!("{} -> {} : {:?}", src, dst, sal::unlink_titles(&conn, source, destination));
+    Ok(())
+}
+pub fn rm_link_sequences(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let source: i64 = src.trim().parse().ok().unwrap_or_default();
+    let destination: i64 = dst.trim().parse().unwrap_or_default();
+    println!("{} -> {} : {:?}", src, dst, sal::unlink_sequences(&conn, source, destination));
     Ok(())
 }
 /************************************ PRIVATE HANDLERS *****************************************/

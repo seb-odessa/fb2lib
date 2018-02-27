@@ -5,6 +5,7 @@ mod query_create;
 mod query_init;
 mod query_insert;
 mod query_select;
+mod query_delete;
 mod query_update;
 
 use result;
@@ -74,14 +75,17 @@ pub use sal::imp::insert_people;
 pub use sal::imp::select_people;
 pub use sal::imp::select_authors_joined;
 pub use sal::imp::link_authors;
+pub use sal::imp::unlink_authors;
 
 pub use sal::imp::insert_titles;
 pub use sal::imp::select_titles;
 pub use sal::imp::select_titles_joined;
 pub use sal::imp::link_titles;
+pub use sal::imp::unlink_titles;
 
 pub use sal::imp::insert_sequences;
 pub use sal::imp::select_sequences;
 pub use sal::imp::select_sequences_joined;
 pub use sal::imp::link_sequences;
+pub use sal::imp::unlink_sequences;
 

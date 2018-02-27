@@ -12,8 +12,10 @@ const LOAD: &'static str = "load";
 const LOAD_HELP: &'static str = "Load data to the database from the archive";
 const SHOW: &'static str = "show";
 const SHOW_HELP: &'static str = "Show data from the database";
-const ALIAS: &'static str = "alias";
-const ALIAS_HELP: &'static str = "Make alias in the database";
+const LINK: &'static str = "link";
+const LINK_HELP: &'static str = "Make link between records in the database";
+const UNLINK: &'static str = "unlink";
+const UNLINK_HELP: &'static str = "Drop link between records in the database";
 
 const AUTHORS: &'static str = "authors";
 const AUTHORS_HELP: &'static str = "Work with authors from the archive";
@@ -30,10 +32,10 @@ const FORCE: &'static str = "force";
 const FORCE_HELP: &'static str = "Force save data to the database";
 const PATTERN: &'static str = "pattern";
 const PATTERN_HELP: &'static str = "Show records from database by pattern";
-const ALIAS_SRC: &'static str = "aliace_src";
-const ALIAS_SRC_HELP: &'static str = "Make aliace for this source";
-const ALIAS_DST: &'static str = "aliace_dst";
-const ALIAS_DST_HELP: &'static str = "Make target known as destination";
+const LINK_SRC: &'static str = "source";
+const LINK_SRC_HELP: &'static str = "The source of the link";
+const LINK_DST: &'static str = "destination";
+const LINK_DST_HELP: &'static str = "The destination of the link";
 
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
@@ -42,8 +44,8 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let all = Arg::with_name(ALL).help(ALL_HELP).long(ALL).required(false);
     let force = Arg::with_name(FORCE).help(FORCE_HELP).long(FORCE).short("f").required(false);
     let pattern = Arg::with_name(PATTERN).help(PATTERN_HELP).required(false);
-    let src = Arg::with_name(ALIAS_SRC).help(ALIAS_SRC_HELP).required(true);
-    let dst = Arg::with_name(ALIAS_DST).help(ALIAS_DST_HELP).required(true);
+    let src = Arg::with_name(LINK_SRC).help(LINK_SRC_HELP).required(true);
+    let dst = Arg::with_name(LINK_DST).help(LINK_DST_HELP).required(true);
     app.subcommand(
         SubCommand::with_name(CMD).about(CMD_HELP).arg(database)
         .subcommand(
@@ -63,10 +65,17 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(pattern.clone()))
         )
         .subcommand(
-            SubCommand::with_name(ALIAS).about(ALIAS_HELP)
+            SubCommand::with_name(LINK).about(LINK_HELP)
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(src.clone()).arg(dst.clone()))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(src.clone()).arg(dst.clone()))
+            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(src.clone()).arg(dst.clone()))
         )
+        .subcommand(
+            SubCommand::with_name(UNLINK).about(UNLINK_HELP)
+            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(src.clone()).arg(dst.clone()))
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(src.clone()).arg(dst.clone()))
+            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(src.clone()).arg(dst.clone()))
+        )        
     )
 }
 
@@ -76,7 +85,8 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (RESET, Some(arg)) => handle_reset(database, arg),
         (LOAD, Some(arg)) => handle_load(database, arg),
         (SHOW, Some(arg)) => handle_show(database, arg),
-        (ALIAS, Some(arg)) => handle_alias(database, arg),
+        (LINK, Some(arg)) => handle_link(database, arg),
+        (UNLINK, Some(arg)) => handle_unlink(database, arg),
         (_, _) => ui::usage(arg)
     }
 }
@@ -144,22 +154,43 @@ fn handle_show<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     }
 }
 
-fn handle_alias<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
+fn handle_link<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
          (AUTHORS, Some(arg)) => {
-            let src = arg.value_of(ALIAS_SRC).unwrap_or("");
-            let dst = arg.value_of(ALIAS_DST).unwrap_or("");
-            handler::database::alias_authors(database, src, dst)
+            let src = arg.value_of(LINK_SRC).unwrap_or("");
+            let dst = arg.value_of(LINK_DST).unwrap_or("");
+            handler::database::mk_link_authors(database, src, dst)
         }
         (TITLES, Some(arg)) => {
-            let src = arg.value_of(ALIAS_SRC).unwrap_or("");
-            let dst = arg.value_of(ALIAS_DST).unwrap_or("");
-            handler::database::alias_titles(database, src, dst)
+            let src = arg.value_of(LINK_SRC).unwrap_or("");
+            let dst = arg.value_of(LINK_DST).unwrap_or("");
+            handler::database::mk_link_titles(database, src, dst)
         }
         (SEQUENCES, Some(arg)) => {
-            let src = arg.value_of(ALIAS_SRC).unwrap_or("");
-            let dst = arg.value_of(ALIAS_DST).unwrap_or("");
-            handler::database::alias_sequences(database, src, dst)
+            let src = arg.value_of(LINK_SRC).unwrap_or("");
+            let dst = arg.value_of(LINK_DST).unwrap_or("");
+            handler::database::mk_link_sequences(database, src, dst)
+        }
+        (_, _) => ui::usage(arg)
+    }
+}
+
+fn handle_unlink<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
+    match arg.subcommand() {
+         (AUTHORS, Some(arg)) => {
+            let src = arg.value_of(LINK_SRC).unwrap_or("");
+            let dst = arg.value_of(LINK_DST).unwrap_or("");
+            handler::database::rm_link_authors(database, src, dst)
+        }
+        (TITLES, Some(arg)) => {
+            let src = arg.value_of(LINK_SRC).unwrap_or("");
+            let dst = arg.value_of(LINK_DST).unwrap_or("");
+            handler::database::rm_link_titles(database, src, dst)
+        }
+        (SEQUENCES, Some(arg)) => {
+            let src = arg.value_of(LINK_SRC).unwrap_or("");
+            let dst = arg.value_of(LINK_DST).unwrap_or("");
+            handler::database::rm_link_sequences(database, src, dst)
         }
         (_, _) => ui::usage(arg)
     }
