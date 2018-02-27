@@ -38,4 +38,6 @@ pub const TITLES: &'static str = "SELECT title FROM titles";
 
 pub const SEQUENCES: &'static str = "SELECT sequence FROM sequences";
 
-pub const AUTHORS: &'static str = "SELECT id, src_name, dst_name FROM authors_joined";
+pub const AUTHORS_JOINED: &'static str = "SELECT id, src_name, dst_name FROM authors_joined";
+
+pub const TITLES_JOINED: &'static str = "SELECT id, src_title, dst_title FROM titles_joined";

@@ -53,10 +53,10 @@ pub fn load_sequences(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<
 pub fn show_authors(db: &str, pattern: &str) -> Fb2Result<()> {
     let re = algorithm::make_regex(pattern)?;
     let conn = sal::get_connection(db)?;
-    let authors = sal::select_authors(&conn)?;
+    let authors = sal::select_authors_joined(&conn)?;
     for (id, src_name, dst_name) in authors {
         if re.is_match(&src_name) {
-            println!("{:>6} {:>32} <= {}", id, dst_name, src_name);
+            println!("{:>6} {} [{}]", id, dst_name, src_name);
         }
     }
     Ok(())
@@ -64,10 +64,10 @@ pub fn show_authors(db: &str, pattern: &str) -> Fb2Result<()> {
 pub fn show_titles(db: &str, pattern: &str) -> Fb2Result<()> {
     let re = algorithm::make_regex(pattern)?;
     let conn = sal::get_connection(db)?;
-    let authors = sal::select_authors(&conn)?;
-    for (id, use_id, name) in authors {
-        if re.is_match(&name) {
-            println!("{:>6} {:?} {}", id, use_id, name);
+    let titles = sal::select_titles_joined(&conn)?;
+    for (id, src_name, dst_name) in titles {
+        if re.is_match(&src_name) {
+            println!("{:>6} {} [{}]", id, dst_name, src_name);
         }
     }
     Ok(())
@@ -75,10 +75,10 @@ pub fn show_titles(db: &str, pattern: &str) -> Fb2Result<()> {
 pub fn show_sequences(db: &str, pattern: &str) -> Fb2Result<()> {
     let re = algorithm::make_regex(pattern)?;
     let conn = sal::get_connection(db)?;
-    let authors = sal::select_authors(&conn)?;
-    for (id, use_id, name) in authors {
-        if re.is_match(&name) {
-            println!("{:>6} {:?} {}", id, use_id, name);
+    let titles = sal::select_sequences_joined(&conn)?;
+    for (id, src_name, dst_name) in titles {
+        if re.is_match(&src_name) {
+            println!("{:>6} {} [{}]", id, dst_name, src_name);
         }
     }
     Ok(())
@@ -89,6 +89,20 @@ pub fn alias_authors(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
     let source: i64 = src.trim().parse().ok().unwrap_or_default();
     let destination: i64 = dst.trim().parse().unwrap_or_default();
     println!("{} -> {} : {:?}", src, dst, sal::link_authors(&conn, source, destination));
+    Ok(())
+}
+pub fn alias_titles(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let source: i64 = src.trim().parse().ok().unwrap_or_default();
+    let destination: i64 = dst.trim().parse().unwrap_or_default();
+    println!("{} -> {} : {:?}", src, dst, sal::link_titles(&conn, source, destination));
+    Ok(())
+}
+pub fn alias_sequences(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let source: i64 = src.trim().parse().ok().unwrap_or_default();
+    let destination: i64 = dst.trim().parse().unwrap_or_default();
+    println!("{} -> {} : {:?}", src, dst, sal::link_sequences(&conn, source, destination));
     Ok(())
 }
 /************************************ PRIVATE HANDLERS *****************************************/

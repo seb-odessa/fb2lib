@@ -49,16 +49,18 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 #[allow(dead_code)]
 pub const PROGRESS_SUBSYSTEM: &'static str = "
 	BEGIN;
-    DROP VIEW IF EXISTS progress_log;
 	DROP TABLE IF EXISTS task;
     DROP TABLE IF EXISTS status;
     DROP TABLE IF EXISTS progress;
+    DROP VIEW IF EXISTS progress_log;    
     COMMIT;";
 
 #[allow(dead_code)]
 pub const TITLES_SUBSYSTEM: &'static str = "
 	BEGIN;
 	DROP TABLE IF EXISTS titles;
+    DROP TABLE IF EXISTS titles_links;
+    DROP VIEW IF EXISTS titles_joined;
     DELETE FROM progress WHERE progress.task_id = 4;
     COMMIT;";
 

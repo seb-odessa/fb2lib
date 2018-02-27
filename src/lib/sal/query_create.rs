@@ -120,7 +120,6 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
     CREATE TABLE people (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        use_id          INTEGER, /* use row with id == this.use_id instead */
 	    first_name 	    TEXT NOT NULL,
         middle_name	    TEXT NOT NULL,
         last_name	    TEXT NOT NULL,
@@ -142,7 +141,6 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 	CREATE VIEW IF NOT EXISTS authors AS
 		SELECT 
 			id, 
-			use_id, 
 			trim(trim(last_name) || ' ' || trim(first_name) || ' ' || trim(middle_name) || ' ' || trim(nickname)) AS name, 
 			last_name, 
 			first_name, 
@@ -215,6 +213,16 @@ pub const TITLES_SUBSYSTEM: &'static str = "
 	    title       	TEXT NOT NULL,
 		UNIQUE (title) ON CONFLICT IGNORE
     );
+	CREATE TABLE titles_links (
+		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    	src_id 		INTEGER NOT NULL,	/* FK to titles.id */
+    	dst_id 		INTEGER NOT NULL,	/* FK to titles.id */
+    	version_id 	INTEGER NOT NULL /* FK to versions.id */
+	);
+	CREATE VIEW titles_joined AS
+		SELECT A.id, A.title AS src_title, ifnull(B.title, A.title) AS dst_title 
+		FROM titles A LEFT JOIN title_links ON src_id = A.id LEFT JOIN titles B ON dst_id = B.id;
+
     COMMIT;";
 
 #[allow(dead_code)]

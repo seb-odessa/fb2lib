@@ -62,3 +62,5 @@ pub const SEQUENCES: &'static str = "
 	INSERT INTO sequences (sequence) VALUES (?)";
 
 pub const AUTHOR_LINK: &'static str = "INSERT INTO people_links VALUES (NULL, ?, ?, 0);";
+
+pub const TITLE_LINK: &'static str = "INSERT INTO titles_links VALUES (NULL, ?, ?, 0);";

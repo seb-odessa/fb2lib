@@ -65,6 +65,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
         .subcommand(
             SubCommand::with_name(ALIAS).about(ALIAS_HELP)
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(src.clone()).arg(dst.clone()))
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(src.clone()).arg(dst.clone()))
         )
     )
 }
@@ -131,14 +132,14 @@ fn handle_show<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
             let pattern = arg.value_of(PATTERN).unwrap_or("*");
             handler::database::show_authors(database, pattern)
         }
-        // (TITLES, Some(arg)) => {
-        //     let pattern = arg.value_of(PATTERN).unwrap_or("*");
-        //     handler::database::show_titles(database, pattern)
-        // }
-        // (SEQUENCES, Some(arg)) => {
-        //     let pattern = arg.value_of(PATTERN).unwrap_or("*");
-        //     handler::database::show_sequences(database, pattern)
-        // }
+        (TITLES, Some(arg)) => {
+            let pattern = arg.value_of(PATTERN).unwrap_or("*");
+            handler::database::show_titles(database, pattern)
+        }
+        (SEQUENCES, Some(arg)) => {
+            let pattern = arg.value_of(PATTERN).unwrap_or("*");
+            handler::database::show_sequences(database, pattern)
+        }
         (_, _) => ui::usage(arg)
     }
 }
@@ -150,14 +151,16 @@ fn handle_alias<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
             let dst = arg.value_of(ALIAS_DST).unwrap_or("");
             handler::database::alias_authors(database, src, dst)
         }
-        // (TITLES, Some(arg)) => {
-        //     let pattern = arg.value_of(PATTERN).unwrap_or("*");
-        //     handler::database::show_titles(database, pattern)
-        // }
-        // (SEQUENCES, Some(arg)) => {
-        //     let pattern = arg.value_of(PATTERN).unwrap_or("*");
-        //     handler::database::show_sequences(database, pattern)
-        // }
+        (TITLES, Some(arg)) => {
+            let src = arg.value_of(ALIAS_SRC).unwrap_or("");
+            let dst = arg.value_of(ALIAS_DST).unwrap_or("");
+            handler::database::alias_titles(database, src, dst)
+        }
+        (SEQUENCES, Some(arg)) => {
+            let src = arg.value_of(ALIAS_SRC).unwrap_or("");
+            let dst = arg.value_of(ALIAS_DST).unwrap_or("");
+            handler::database::alias_sequences(database, src, dst)
+        }
         (_, _) => ui::usage(arg)
     }
 }
