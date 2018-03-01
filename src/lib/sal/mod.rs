@@ -17,6 +17,8 @@ pub type Connection = rusqlite::Connection;
 pub trait Save<T> {
     fn save(&mut self, conn: &Connection) -> result::Fb2Result<()>;
     fn task(&self) -> TASK;
+    fn get_new_count(&self) -> usize;
+    fn get_stored_count(&self) -> usize;
 }
 
 #[derive(Debug, Clone, Copy)]

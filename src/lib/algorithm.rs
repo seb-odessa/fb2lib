@@ -10,15 +10,11 @@ use std::sync::mpsc::Sender;
 use std::sync::mpsc::channel;
 use crossbeam;
 
-pub type BookVisitor = Visitor<FictionBook>;
 pub trait Visitor<T> {
     fn visit(&mut self, target: &T);
-    fn get_total_count(&self) -> usize;
-    fn get_new_count(&self) -> usize;
-    fn get_stored_count(&self) -> usize;
-    fn report(&self);
+    fn get_count(&self) -> usize;
+    fn report(&self) { }
 }
-
 
 pub fn visit(archive_name: &str, visitor: &mut Visitor<FictionBook>) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;

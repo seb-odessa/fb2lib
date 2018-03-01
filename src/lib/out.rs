@@ -1,6 +1,26 @@
 use zip::ZipFile;
 use result::Fb2Result;
 use tools::into_fb2;
+use algorithm;
+
+pub struct ZipVisitor{
+    counter: usize,
+}
+impl <'a> algorithm::Visitor<ZipFile<'a>> for ZipVisitor {
+    fn visit(&mut self, zip: &ZipFile) {
+        self.counter += 1;
+        println!("{:16}{:10}{:10}",zip.name(),zip.size(),zip.compressed_size()
+    );       
+    }
+    fn get_count(&self) -> usize {
+        self.counter
+    }
+    fn report(&self) {
+        println!("self.counter: {}", self.counter);
+    }
+}
+
+
 
 pub fn file_info(file: &ZipFile) {
     println!(

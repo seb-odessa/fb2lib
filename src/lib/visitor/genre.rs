@@ -27,6 +27,12 @@ impl sal::Save<FictionBook> for Genre {
     fn task(&self) -> sal::TASK {
         sal::TASK::GENRE
     }
+    fn get_new_count(&self) -> usize {
+        self.genres.len()
+    }
+    fn get_stored_count(&self) -> usize {
+        self.handled.len()
+    }    
 }
 impl algorithm::Visitor<FictionBook> for Genre {
     fn visit(&mut self, book: &FictionBook) {
@@ -39,16 +45,9 @@ impl algorithm::Visitor<FictionBook> for Genre {
             }
         }
     }
-    fn get_total_count(&self) -> usize {
+    fn get_count(&self) -> usize {
         self.counter
     }
-    fn get_new_count(&self) -> usize {
-        self.genres.len()
-    }
-    fn get_stored_count(&self) -> usize {
-        self.handled.len()
-    }
-
     fn report(&self) {
         let mut total = 0;
         let mut unknown = 0;

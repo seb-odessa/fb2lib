@@ -106,14 +106,8 @@ impl algorithm::Visitor<FictionBook> for Book {
             }
         }
     }
-    fn get_total_count(&self) -> usize {
+    fn get_count(&self) -> usize {
         self.counter
-    }
-    fn get_new_count(&self) -> usize {
-        self.books.len()
-    }
-    fn get_stored_count(&self) -> usize {
-        0
     }
     fn report(&self) {
         for book in &self.books {

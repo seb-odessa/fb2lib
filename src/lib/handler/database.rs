@@ -166,7 +166,7 @@ fn visit<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visi
                 return Err(e);
             }
         }
-        let (added, total) = (visitor.get_new_count(), visitor.get_total_count());
+        let (added, total) = (visitor.get_new_count(), visitor.get_count());
         match visitor.save(&conn) {
             Ok(()) => {
                 sal::set_archive_complete(conn, name, task)?;

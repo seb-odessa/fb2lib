@@ -30,6 +30,12 @@ impl sal::Save<FictionBook> for Lang {
     fn task(&self) -> sal::TASK {
         sal::TASK::LANGUAGE
     }
+    fn get_new_count(&self) -> usize {
+        self.langs.len()
+    }
+    fn get_stored_count(&self) -> usize {
+        self.handled.len()
+    }
 }
 impl algorithm::Visitor<FictionBook> for Lang {
     fn visit(&mut self, book: &FictionBook) {
@@ -39,14 +45,8 @@ impl algorithm::Visitor<FictionBook> for Lang {
             self.langs.insert(lang);
         }
     }
-    fn get_total_count(&self) -> usize {
+    fn get_count(&self) -> usize {
         self.counter
-    }
-    fn get_new_count(&self) -> usize {
-        self.langs.len()
-    }
-    fn get_stored_count(&self) -> usize {
-        self.handled.len()
     }
     fn report(&self) {
         for lang in &self.langs {
