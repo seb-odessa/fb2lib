@@ -98,8 +98,8 @@ impl Book {
     }
 }
 impl algorithm::Visitor<FictionBook> for Book {
-    fn visit(&mut self, book: &FictionBook) {
-        self.counter += 1;        
+    fn visit(&mut self, book: &mut FictionBook) {
+        self.counter += 1;
         if self.access.is_allowed(book) {
             for description in self.format(book) {
                 self.books.push(description);

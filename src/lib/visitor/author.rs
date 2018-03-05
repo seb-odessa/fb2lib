@@ -33,7 +33,7 @@ impl sal::Save<FictionBook> for Author {
         self.authors.clear();
         self.counter = 0;
         Ok(())
-    }    
+    }
     fn task(&self) -> sal::TASK {
         sal::TASK::AUTHOR
     }
@@ -45,7 +45,7 @@ impl sal::Save<FictionBook> for Author {
     }
 }
 impl algorithm::Visitor<FictionBook> for Author {
-    fn visit(&mut self, book: &FictionBook) {
+    fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         if self.access.is_allowed(book) {
             for author in book.get_book_authors() {

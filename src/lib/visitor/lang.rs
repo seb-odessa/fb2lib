@@ -38,7 +38,7 @@ impl sal::Save<FictionBook> for Lang {
     }
 }
 impl algorithm::Visitor<FictionBook> for Lang {
-    fn visit(&mut self, book: &FictionBook) {
+    fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         let lang = book.get_book_lang().to_lowercase().as_str().trim().to_string();
         if !self.handled.contains(&lang) {

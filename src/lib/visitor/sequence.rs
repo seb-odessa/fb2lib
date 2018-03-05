@@ -41,8 +41,8 @@ impl sal::Save<FictionBook> for Sequence {
     }
 }
 impl algorithm::Visitor<FictionBook> for Sequence {
-    fn visit(&mut self, book: &FictionBook) {
-        if self.access.is_allowed(book) {
+    fn visit(&mut self, book: &mut FictionBook) {
+        if self.access.is_allowed(&book) {
             self.counter += 1;
             let sequences = book.get_book_sequences();
             for sequence in &sequences {
@@ -62,6 +62,6 @@ impl algorithm::Visitor<FictionBook> for Sequence {
         }
         println!("=============================================");
         println!("Unique book sequences was found {}", self.names.len());
-        println!("Total sequences was found {}", self.counter);                
+        println!("Total sequences was found {}", self.counter);
     }
 }

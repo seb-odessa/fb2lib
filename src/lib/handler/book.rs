@@ -32,13 +32,13 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     let genres = sal::get_genre_codes_and_groups(&conn)?;
     let mut visitor = Book::new(access_guard, genres);
     for archive in archives {
-        algorithm::visit(archive, &mut visitor)?;
+        algorithm::visit_deprecated(archive, &mut visitor)?;
     }
     visitor.report();
     Ok(())
 }
 
-fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()> 
+fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
     where T: Visitor<FictionBook> + Save<FictionBook> + 'static
 {
     print!("Processing {}", &name);
@@ -47,7 +47,7 @@ fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: b
     if force || !is_complete(status) {
         sal::set_archive_started(conn, name, task)?;
         print!(".");
-        match algorithm::visit(archive, visitor) {
+        match algorithm::visit_deprecated(archive, visitor) {
             Ok(()) => {
                 sal::set_archive_visited(conn, name, task)?;
                 print!(".");
@@ -68,7 +68,7 @@ fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: b
                 sal::set_archive_failure(conn, name, task)?;
                 println!("{}", e);
                 return Err(e);
-            }            
+            }
         }
         let added = format!("{}/{}", added, total);
         println!("Done.\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
@@ -88,7 +88,7 @@ fn is_complete(status: sal::STATUS) -> bool {
     }
 }
 
-fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()> 
+fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
     where T: Visitor<FictionBook> + Save<FictionBook> + 'static
 {
     for archive in archives {
@@ -96,7 +96,7 @@ fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&st
         if save {
             visit_and_save(&conn, archive, name, force, &mut visitor)?;
         } else {
-            algorithm::visit(archive, &mut visitor)?;
+            algorithm::visit_deprecated(archive, &mut visitor)?;
         }
     }
     if !save {

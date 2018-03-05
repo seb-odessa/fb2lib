@@ -32,10 +32,10 @@ impl sal::Save<FictionBook> for Genre {
     }
     fn get_stored_count(&self) -> usize {
         self.handled.len()
-    }    
+    }
 }
 impl algorithm::Visitor<FictionBook> for Genre {
-    fn visit(&mut self, book: &FictionBook) {
+    fn visit(&mut self, book: &mut FictionBook) {
         for genre in book.get_book_genres().into_iter() {
             for genre in genre.split(",") {
                 self.counter += 1;

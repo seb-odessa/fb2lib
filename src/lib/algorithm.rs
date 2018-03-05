@@ -11,24 +11,36 @@ use std::sync::mpsc::channel;
 use crossbeam;
 
 pub trait Visitor<T> {
-    fn visit(&mut self, target: &T);
+    fn visit(&mut self, target: &mut T);
     fn get_count(&self) -> usize;
     fn report(&self) { }
 }
 
-pub fn visit(archive_name: &str, visitor: &mut Visitor<FictionBook>) -> Fb2Result<()> {
+pub fn visit_deprecated(archive_name: &str, visitor: &mut Visitor<FictionBook>) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
     let (sender, receiver) = channel();
     apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
     for fb2 in receiver.iter() {
-        if let Some(book) = fb2.ok() {
-            visitor.visit(&book);
+        if let Some(mut book) = fb2.ok() {
+            visitor.visit(&mut book);
         }
     }
     Ok(())
 }
 
-pub fn apply<F>(mut zip: ZipArchive, file_mask: &str, visitor: F) -> Fb2Result<()>
+pub fn visit<'a>(zip: &'a ZipArchive, pattern: &str, visitor: &mut Visitor<ZipFile<'a>>) -> Fb2Result<()> {
+    let re = make_regex(pattern)?;
+    for i in 0..zip.len() {
+        if let Some(mut file) = zip.by_index(i).ok() {
+            if re.is_match(file.name()) {
+                visitor.visit(&mut file);
+            }
+        }
+    };
+    Ok(())
+}
+
+pub fn apply<F>(zip: ZipArchive, file_mask: &str, visitor: F) -> Fb2Result<()>
 where
     F: Fn(String, String) -> () + Send + Copy,
 {
@@ -49,7 +61,7 @@ where
     Ok(())
 }
 
-pub fn apply_and_collect<F, R>(mut zip: ZipArchive, file_mask: &str, out: Sender<R>, visitor: F) -> Fb2Result<()>
+pub fn apply_and_collect<F, R>(zip: ZipArchive, file_mask: &str, out: Sender<R>, visitor: F) -> Fb2Result<()>
 where
     F: Fn(String) -> R + Send + Copy,
     R: Send
@@ -71,7 +83,7 @@ where
     Ok(())
 }
 
-pub fn apply_to_xml<F>(mut zip: ZipArchive, file_mask: &str, mut visitor: F) -> Fb2Result<()>
+pub fn apply_to_xml<F>(zip: ZipArchive, file_mask: &str, mut visitor: F) -> Fb2Result<()>
 where
     F: FnMut(String, String) -> (),
 {
@@ -87,7 +99,7 @@ where
     Ok(())
 }
 
-pub fn apply_to_file<F>(mut zip: ZipArchive, file_mask: &str, mut visitor: F) -> Fb2Result<()>
+pub fn apply_to_file<F>(zip: ZipArchive, file_mask: &str, mut visitor: F) -> Fb2Result<()>
 where
     F: FnMut(&ZipFile) -> Fb2Result<()>,
 {

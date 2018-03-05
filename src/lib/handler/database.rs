@@ -155,7 +155,7 @@ fn visit<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visi
     if force || !is_complete(status) {
         sal::set_archive_started(conn, name, task)?;
         print!(".");
-        match algorithm::visit(archive, visitor) {
+        match algorithm::visit_deprecated(archive, visitor) {
             Ok(()) => {
                 sal::set_archive_visited(conn, name, task)?;
                 print!(".");

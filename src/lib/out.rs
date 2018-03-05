@@ -1,26 +1,6 @@
 use zip::ZipFile;
 use result::Fb2Result;
 use tools::into_fb2;
-use algorithm;
-
-pub struct ZipVisitor{
-    counter: usize,
-}
-impl <'a> algorithm::Visitor<ZipFile<'a>> for ZipVisitor {
-    fn visit(&mut self, zip: &ZipFile) {
-        self.counter += 1;
-        println!("{:16}{:10}{:10}",zip.name(),zip.size(),zip.compressed_size()
-    );       
-    }
-    fn get_count(&self) -> usize {
-        self.counter
-    }
-    fn report(&self) {
-        println!("self.counter: {}", self.counter);
-    }
-}
-
-
 
 pub fn file_info(file: &ZipFile) {
     println!(
@@ -45,16 +25,16 @@ pub fn fb2(file_name: String, xml: String) {
 fn make_authors(authors: Vec<(String,String,String,String)>) -> String {
     let mut result = Vec::new();
     for author in authors.into_iter() {
-        result.push(format!("{} {} {} {}", author.0, author.1, author.2, author.3));        
+        result.push(format!("{} {} {} {}", author.0, author.1, author.2, author.3));
     }
     result.join(", ")
 }
 
 pub fn info(file_name: String, xml: String) {
     match into_fb2(xml) {
-        Ok(fb2) => println!("{:12} : {} : {} : {} : {}", 
-            file_name, 
-            fb2.get_book_title(), 
+        Ok(fb2) => println!("{:12} : {} : {} : {} : {}",
+            file_name,
+            fb2.get_book_title(),
             make_authors(fb2.get_book_authors()),
             fb2.get_book_lang(),
             fb2.get_book_genres().join(", ")

@@ -41,7 +41,7 @@ impl sal::Save<FictionBook> for Title {
     }
 }
 impl algorithm::Visitor<FictionBook> for Title {
-    fn visit(&mut self, book: &FictionBook) {
+    fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         if self.access.is_allowed(book) {
             let title = book.get_book_title();
@@ -59,6 +59,6 @@ impl algorithm::Visitor<FictionBook> for Title {
         }
         println!("=============================================");
         println!("Unique book titles was found {}", self.titles.len());
-        println!("Total titles was found {}", self.counter);        
+        println!("Total titles was found {}", self.counter);
     }
 }

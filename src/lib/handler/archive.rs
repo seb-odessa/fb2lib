@@ -4,19 +4,23 @@ use archive;
 use algorithm;
 use fb2parser::FictionBook;
 use result::Fb2Result;
-
+use algorithm::Visitor;
 use visitor::acess::AccessGuard;
 use visitor::author::Author;
 use visitor::lang::Lang;
 use visitor::genre::Genre;
 use visitor::title::Title;
 use visitor::sequence::Sequence;
+use visitor::header::Header;
 
 use std::collections::HashSet;
 
-pub fn show_xml(archive: &str, book: &str) -> Fb2Result<()> {
+pub fn show_xml(archive: &str, pattern: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
-    algorithm::apply(zip, book, out::xml)
+    let mut visitor = Header::new();
+    algorithm::visit(&zip, pattern, &mut visitor)?;
+    visitor.report();
+    Ok(())
 }
 
 pub fn show_fb2(archive: &str, book: &str) -> Fb2Result<()> {
@@ -35,7 +39,7 @@ pub fn show_zip(archive: &str, book: &str) -> Fb2Result<()> {
 }
 
 pub fn show_files(archive: &str) -> Fb2Result<()> {
-    let mut zip = archive::open(archive)?;
+    let zip = archive::open(archive)?;
     for i in 0..zip.len() {
         let file = zip.by_index(i)?;
         out::file_info(&file);
@@ -79,11 +83,11 @@ pub fn check_archive(archive: &str, quiet: bool) -> Fb2Result<()> {
     Ok(())
 }
 
-fn handle<T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()> 
+fn handle<T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
     where T: algorithm::Visitor<FictionBook> + 'static
 {
     for archive in archives {
-        algorithm::visit(archive, &mut visitor)?;
+        algorithm::visit_deprecated(archive, &mut visitor)?;
     }
     visitor.report();
     Ok(())
