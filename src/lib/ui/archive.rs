@@ -36,7 +36,7 @@ const SEQUENCES: &'static str = "sequences";
 const SEQUENCES_HELP: &'static str = "Manage book's sequences";
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
-    let arch = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true).multiple(true);
+    let arch = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true);
     let book = Arg::with_name(ui::BOOK_FILE).help(ui::BOOK_FILE_HELP).required(false);
     let quiet = Arg::with_name(QUIET).help(QUIET_HELP).long(QUIET).short("q").required(false);
     app.subcommand(
