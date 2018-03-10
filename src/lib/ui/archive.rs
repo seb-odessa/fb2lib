@@ -35,6 +35,7 @@ const SEQUENCES_HELP: &'static str = "Manage book's sequences";
 
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let arch = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true);
+    let archs = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true).multiple(true);
     let book = Arg::with_name(ui::BOOK_FILE).help(ui::BOOK_FILE_HELP).required(false);
     let quiet = Arg::with_name(QUIET).help(QUIET_HELP).long(QUIET).short("q").required(false);
     app.subcommand(
@@ -46,11 +47,11 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(XML).about(XML_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(FB2).about(FB2_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(INF).about(INF_HELP).arg(arch.clone()).arg(book.clone()))
-            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(GENRES).about(GENRES_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(archs.clone()))
+            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(archs.clone()))
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(archs.clone()))
+            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(archs.clone()))
+            .subcommand(SubCommand::with_name(GENRES).about(GENRES_HELP).arg(archs.clone()))
         )
     )
 }
@@ -75,22 +76,22 @@ fn handle_show<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
         (XML, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
-            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*.fb2");
             handler::archive::show_xml(&archive, book)
         }
         (FB2, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
-            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*.fb2");
             handler::archive::show_fb2(&archive, book)
         }
         (INF, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
-            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*.fb2");
             handler::archive::show_inf(&archive, book)
         }
         (ZIP, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
-            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*");
+            let book = arg.value_of(ui::BOOK_FILE).unwrap_or("*.fb2");
             handler::archive::show_zip(&archive, book)
         }
         (AUTHORS, Some(arg)) => {

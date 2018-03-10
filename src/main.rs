@@ -28,7 +28,7 @@ fn main() {
                 .attach(ui::database::add)
                 .attach(ui::torrent::add)
                 .attach(ui::filter::add)
-                .attach(ui::book::add)
+                // .attach(ui::book::add)
                 .unwrap();
     //------------------------------------------------------------------------------------------------------//
     let matches = app.get_matches();
@@ -37,7 +37,7 @@ fn main() {
         (ui::database::CMD, Some(arg)) => ui::database::handle(arg),
         (ui::torrent::CMD, Some(arg)) => ui::torrent::handle(arg),
         (ui::filter::CMD, Some(arg)) => ui::filter::handle(arg),
-        (ui::book::CMD, Some(arg)) => ui::book::handle(arg),
+        // (ui::book::CMD, Some(arg)) => ui::book::handle(arg),
         (_,_) => {
             matches.usage();
             Ok(())

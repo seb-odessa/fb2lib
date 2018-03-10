@@ -2,7 +2,7 @@ use result::Fb2Result;
 use clap::{App, ArgMatches};
 
 pub mod archive;
-pub mod book;
+//pub mod book;
 pub mod config;
 pub mod database;
 pub mod filter;

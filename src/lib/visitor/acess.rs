@@ -5,12 +5,22 @@ use std::collections::HashSet;
 
 #[derive(Clone)]
 pub struct AccessGuard {
+    allow_all: bool,
     disabled_genres: HashSet<String>,
     disabled_langs: HashSet<String>
 }
 impl AccessGuard {
     pub fn new() -> Self {
         AccessGuard {
+            allow_all: false,
+            disabled_genres: HashSet::new(),
+            disabled_langs: HashSet::new(),
+        }
+    }
+
+    pub fn all() -> Self {
+        AccessGuard {
+            allow_all: true,
             disabled_genres: HashSet::new(),
             disabled_langs: HashSet::new(),
         }
@@ -42,6 +52,6 @@ impl AccessGuard {
     }
 
     pub fn is_allowed(&self, book: &FictionBook) -> bool {
-        self.is_genre_allowed(book) && self.is_lang_allowed(book)
+        self.allow_all || (self.is_genre_allowed(book) && self.is_lang_allowed(book))
     }
 }

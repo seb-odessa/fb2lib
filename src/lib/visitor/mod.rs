@@ -6,3 +6,4 @@ pub mod genre;
 pub mod title;
 pub mod sequence;
 pub mod header;
+pub mod collector;

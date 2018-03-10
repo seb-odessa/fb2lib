@@ -14,7 +14,7 @@ pub type Connection = rusqlite::Connection;
 pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
     let conn = Connection::open(db_file_name).map_err(into)?;
     conn.execute_batch(sal::query_drop::VERSION_SUBSYSTEM).map_err(into)?;
-    
+
     // conn.execute(sal::query_drop::ARCHIVES, &[]).map_err(into)?;
     // conn.execute(sal::query_drop::PIECES, &[]).map_err(into)?;
     // conn.execute(sal::query_drop::LANGUAGES, &[]).map_err(into)?;
@@ -48,6 +48,7 @@ pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
 
 fn get_task_id(oper: sal::TASK) -> i64 {
     match oper {
+        sal::TASK::UNDEFINED => 0,
         sal::TASK::LANGUAGE => 1,
         sal::TASK::GENRE => 2,
         sal::TASK::AUTHOR => 3,

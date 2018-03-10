@@ -32,6 +32,7 @@ pub enum STATUS {
 
 #[derive(Debug, Clone, Copy)]
 pub enum TASK {
+    UNDEFINED,
     LANGUAGE,
     GENRE,
     AUTHOR,
