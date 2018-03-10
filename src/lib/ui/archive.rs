@@ -6,8 +6,6 @@ use clap::{App, Arg, SubCommand, ArgMatches};
 pub const CMD: &'static str = "archive";
 const CMD_HELP: &'static str = "Use to work with archives of FB2 books";
 
-const LS: &'static str = "ls";
-const LS_HELP: &'static str = "Print the list of files in the archive";
 const CHECK: &'static str = "check";
 const CHECK_HELP: &'static str = "Try parse all books in archive.";
 const SHOW: &'static str = "show";
@@ -41,14 +39,13 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let quiet = Arg::with_name(QUIET).help(QUIET_HELP).long(QUIET).short("q").required(false);
     app.subcommand(
         SubCommand::with_name(CMD).about(CMD_HELP)
-        .subcommand(SubCommand::with_name(LS).about(LS_HELP).arg(arch.clone()))
         .subcommand(SubCommand::with_name(CHECK).about(CHECK_HELP).arg(arch.clone()).arg(quiet))
         .subcommand(
             SubCommand::with_name(SHOW).about(SHOW_HELP)
+            .subcommand(SubCommand::with_name(ZIP).about(ZIP_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(XML).about(XML_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(FB2).about(FB2_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(INF).about(INF_HELP).arg(arch.clone()).arg(book.clone()))
-            .subcommand(SubCommand::with_name(ZIP).about(ZIP_HELP).arg(arch.clone()).arg(book.clone()))
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(arch.clone()))
             .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(arch.clone()))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(arch.clone()))
@@ -60,10 +57,6 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
 
 pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
-        (LS, Some(arg)) => {
-            let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
-            handler::archive::show_files(&archive)
-        }
         (CHECK, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");
             let quiet = arg.occurrences_of(QUIET) != 0;
@@ -106,7 +99,7 @@ fn handle_show<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
             } else {
                 ui::usage(arg)
             }
-        }        
+        }
         (LANGS, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
                 handler::archive::langs(&archives.collect::<Vec<&str>>())
@@ -134,7 +127,7 @@ fn handle_show<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
             } else {
                 ui::usage(arg)
             }
-        }        
+        }
         (_, _) => ui::usage(arg)
     }
 }

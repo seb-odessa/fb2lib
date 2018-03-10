@@ -5,10 +5,10 @@
     "tasks": [
         {
             "type": "shell",
-            "taskName": "cargo remote",
+            "taskName": "cargo build",
             "command": "cargo",
             "args": [
-                "remote -- build"
+                "build"
             ],
             "problemMatcher": [
                 "$rustc"
@@ -17,6 +17,17 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "shell",
+            "taskName": "cargo build",
+            "command": "cargo",
+            "args": [
+                "build"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ]
         }
     ]
 }

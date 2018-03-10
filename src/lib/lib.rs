@@ -23,7 +23,6 @@ pub mod ui;
 pub mod result;
 pub mod algorithm;
 
-mod out;
 mod sal;
 mod tools;
 mod iconv;

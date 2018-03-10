@@ -1,4 +1,3 @@
-use out;
 use tools;
 use archive;
 use algorithm;
@@ -11,39 +10,39 @@ use visitor::lang::Lang;
 use visitor::genre::Genre;
 use visitor::title::Title;
 use visitor::sequence::Sequence;
-use visitor::header::Header;
+use visitor::header::{Header, Show};
 
 use std::collections::HashSet;
 
-pub fn show_xml(archive: &str, pattern: &str) -> Fb2Result<()> {
+pub fn show_zip(archive: &str, pattern: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
-    let mut visitor = Header::new();
+    let mut visitor = Header::new(Show::Zip);
     algorithm::visit(&zip, pattern, &mut visitor)?;
     visitor.report();
     Ok(())
 }
 
-pub fn show_fb2(archive: &str, book: &str) -> Fb2Result<()> {
+pub fn show_xml(archive: &str, pattern: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
-    algorithm::apply(zip, book, out::fb2)
+    let mut visitor = Header::new(Show::Xml);
+    algorithm::visit(&zip, pattern, &mut visitor)?;
+    visitor.report();
+    Ok(())
 }
 
-pub fn show_inf(archive: &str, book: &str) -> Fb2Result<()> {
+pub fn show_fb2(archive: &str, pattern: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
-    algorithm::apply(zip, book, out::info)
+    let mut visitor = Header::new(Show::Fb2);
+    algorithm::visit(&zip, pattern, &mut visitor)?;
+    visitor.report();
+    Ok(())
 }
 
-pub fn show_zip(archive: &str, book: &str) -> Fb2Result<()> {
+pub fn show_inf(archive: &str, pattern: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
-    algorithm::apply_to_file(zip, book, out::zip_info)
-}
-
-pub fn show_files(archive: &str) -> Fb2Result<()> {
-    let zip = archive::open(archive)?;
-    for i in 0..zip.len() {
-        let file = zip.by_index(i)?;
-        out::file_info(&file);
-    }
+    let mut visitor = Header::new(Show::Inf);
+    algorithm::visit(&zip, pattern, &mut visitor)?;
+    visitor.report();
     Ok(())
 }
 
@@ -57,7 +56,7 @@ pub fn check_archive(archive: &str, quiet: bool) -> Fb2Result<()> {
     if !quiet {
         print!("Progress:   %");
     }
-    algorithm::apply_to_xml(zip, "*", |book, xml| {
+    algorithm::apply_to_xml(zip, "*.fb2", |book, xml| {
         match tools::into_fb2(xml) {
             Ok(_) => succ += 1,
             Err(_) => {
