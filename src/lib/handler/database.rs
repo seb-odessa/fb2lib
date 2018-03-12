@@ -2,7 +2,7 @@ use sal;
 use algorithm;
 
 use sal::Save;
-use result::Fb2Result;
+use result::{Fb2Result, Fb2Error};
 use algorithm::Visitor;
 use fb2parser::FictionBook;
 
@@ -15,9 +15,16 @@ use visitor::sequence::Sequence;
 use std::path;
 
 /************************************ RESET HANDLERS *******************************************/
-pub fn reset_all(db_file_name: &str) -> Fb2Result<()> {
-    println!("reset({})", db_file_name);
-    sal::reset_tables(db_file_name)
+pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
+    println!("reset({}, {})", db_file_name, subsystem);
+    match subsystem {
+        "torrent" => sal::reset(db_file_name, sal::SUBSYSTEM::TORRENT),
+        "progress" => sal::reset(db_file_name, sal::SUBSYSTEM::PROGRESS),
+        "filter" => sal::reset(db_file_name, sal::SUBSYSTEM::FILTER),
+        "lang" => sal::reset(db_file_name, sal::SUBSYSTEM::LANGUAGE),
+        "genre" => sal::reset(db_file_name, sal::SUBSYSTEM::GENRE),
+        _ => Err(Fb2Error::Custom(String::from("Unknown Subsystem")))
+    }
 }
 /************************************* LOAD HANDLERS *******************************************/
 pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {

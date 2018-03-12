@@ -11,39 +11,49 @@ use std::collections::HashSet;
 
 pub type Connection = rusqlite::Connection;
 
-pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
+pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
     let conn = Connection::open(db_file_name).map_err(into)?;
-    conn.execute_batch(sal::query_drop::VERSION_SUBSYSTEM).map_err(into)?;
+    match system {
+        sal::SUBSYSTEM::TORRENT => {
+            conn.execute_batch(sal::query_create::TORRENTS_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::PROGRESS => {
+            conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::FILTER => {
+            conn.execute_batch(sal::query_create::FILTER_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::LANGUAGE => {
+            conn.execute_batch(sal::query_create::LANGUAGE_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::GENRE => {
+            conn.execute_batch(sal::query_create::GENRE_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
+        },
 
-    // conn.execute(sal::query_drop::ARCHIVES, &[]).map_err(into)?;
-    // conn.execute(sal::query_drop::PIECES, &[]).map_err(into)?;
-    // conn.execute(sal::query_drop::LANGUAGES, &[]).map_err(into)?;
-    // conn.execute(sal::query_drop::LANGUAGES_DISABLED, &[]).map_err(into)?;
-    // conn.execute(sal::query_drop::LANGUAGES_ENABLED, &[]).map_err(into)?;
-    // conn.execute_batch(sal::query_drop::FILTER_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_drop::GENRE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_drop::PROGRESS_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_drop::SEQUENCES_SUBSYSTEM).map_err(into)?;
-
-    // conn.execute(sal::query_create::ARCHIVES, &[]).map_err(into)?;
-    // conn.execute(sal::query_create::PIECES, &[]).map_err(into)?;
-    // conn.execute(sal::query_create::LANGUAGES, &[]).map_err(into)?;
-    // conn.execute(sal::query_create::LANGUAGES_AUTO, &[]).map_err(into)?;
-    // conn.execute(sal::query_create::LANGUAGES_DISABLED, &[]).map_err(into)?;
-    // conn.execute(sal::query_create::LANGUAGES_ENABLED, &[]).map_err(into)?;
-    conn.execute_batch(sal::query_create::VERSION_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_create::FILTER_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_init::FILTER_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_create::GENRE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
-    // conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
-    // conn.execute_batch(sal::query_create::PROGRESS_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
-    conn.execute_batch(sal::query_create::SEQUENCES_SUBSYSTEM).map_err(into)?;
-
+        sal::SUBSYSTEM::VERSION => {
+            conn.execute_batch(sal::query_drop::VERSION_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_create::VERSION_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::TITLES => {
+            conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::SEQUENCES => {
+            conn.execute_batch(sal::query_drop::SEQUENCES_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_create::SEQUENCES_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::PEOPLE => {
+            conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+        },
+    }
     Ok(())
+}
+
+
+pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
+    reset(db_file_name, sal::SUBSYSTEM::VERSION)
 }
 
 fn get_task_id(oper: sal::TASK) -> i64 {

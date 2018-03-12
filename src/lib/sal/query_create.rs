@@ -1,6 +1,8 @@
 
 #[allow(dead_code)]
-pub const ARCHIVES: &'static str = "
+pub const TORRENTS_SUBSYSTEM: &'static str = "
+	BEGIN;
+	DROP TABLE IF EXISTS archives;
     CREATE TABLE IF NOT EXISTS archives (
 	    id         	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    name   	        TEXT NOT NULL,
@@ -9,75 +11,135 @@ pub const ARCHIVES: &'static str = "
 	    total_length	INTEGER NOT NULL,
 	    piece_length	INTEGER NOT NULL,
 	    pieces_count	INTEGER NOT NULL
-    );";
-
-#[allow(dead_code)]
-pub const PIECES: &'static str = "
+    );
+	DROP TABLE IF EXISTS pieces;
     CREATE TABLE IF NOT EXISTS pieces (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    archive_id  	INTEGER NOT NULL, /* FK to archives.id */
 	    piece_idx       INTEGER NOT NULL,
 	    hash      	    TEXT NOT NULL
-    );";
-
-
-#[allow(dead_code)]
-pub const LANGUAGES: &'static str = "
-    CREATE TABLE IF NOT EXISTS languages (
-	    id  	        INTEGER NOT NULL PRIMARY KEY UNIQUE,
-	    name      	    TEXT NOT NULL UNIQUE
-    );";
+    );
+	COMMIT;";
 
 #[allow(dead_code)]
-pub const LANGUAGES_AUTO: &'static str = "
-	CREATE TRIGGER IF NOT EXISTS languages_auto AFTER INSERT ON languages
+pub const PROGRESS_SUBSYSTEM: &'static str = "
+	BEGIN;
+
+	DROP TABLE IF EXISTS task;
+	CREATE TABLE task (
+    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    	name 	TEXT NOT NULL UNIQUE
+	);
+	INSERT OR IGNORE INTO task VALUES (1, 'языки');
+	INSERT OR IGNORE INTO task VALUES (2, 'жанры');
+	INSERT OR IGNORE INTO task VALUES (3, 'авторы');
+	INSERT OR IGNORE INTO task VALUES (4, 'названия');
+	INSERT OR IGNORE INTO task VALUES (5, 'циклы');
+
+    DROP TABLE IF EXISTS status;
+	CREATE TABLE status (
+    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    	name 	TEXT NOT NULL UNIQUE
+	);
+    INSERT OR IGNORE INTO status VALUES (1, 'обработка архива начата');
+    INSERT OR IGNORE INTO status VALUES (2, 'обработка архива завершена');
+	INSERT OR IGNORE INTO status VALUES (3, 'операция завершена');
+    INSERT OR IGNORE INTO status VALUES (4, 'операция завершилась неудачей');
+
+	DROP TABLE IF EXISTS progress;
+	CREATE TABLE progress (
+    	id 				INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+		archive_id      INTEGER NOT NULL,       /* FK to archives.id */
+		task_id 		INTEGER NOT NULL,       /* FK to task.id */
+		status_id 		INTEGER NOT NULL,       /* FK to status.id */
+		registred		TEXT,
+		UNIQUE (archive_id, task_id) ON CONFLICT REPLACE
+	);
+
+	DROP VIEW IF EXISTS progress_log;
+	CREATE VIEW progress_log AS
+	SELECT progress.id AS id, archives.name, task.name AS task, status.name AS status, registred
+	FROM progress
+	LEFT JOIN status ON progress.status_id = status.id
+	LEFT JOIN task ON progress.task_id = task.id
+	LEFT JOIN archives ON progress.archive_id = archives.id;
+
+	DROP INDEX IF EXISTS progress_archive_index;
+	CREATE INDEX progress_archive_index on progress (archive_id ASC);
+
+	DROP TRIGGER IF EXISTS progress_on_insert;
+	CREATE TRIGGER progress_on_insert AFTER INSERT ON progress
 	BEGIN
-	    UPDATE	languages
-    	SET 	id = (SELECT max(id) + 1 FROM languages)
-    	WHERE   ROWID = new.ROWID;
-	END;";
+		UPDATE progress SET registred = datetime('now') WHERE new.id = progress.id;
+	END;
 
-#[allow(dead_code)]
-pub const LANGUAGES_DISABLED: &'static str = "
-	CREATE VIEW IF NOT EXISTS languages_disabled AS
-		SELECT languages.id, languages.name
-		FROM languages LEFT JOIN filters_def
-		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
-		WHERE filters_def.filtered_id IS NOT NULL;";
-
-#[allow(dead_code)]
-pub const LANGUAGES_ENABLED: &'static str = "
-	CREATE VIEW IF NOT EXISTS languages_enabled AS
-		SELECT languages.id, languages.name
-		FROM languages LEFT JOIN filters_def
-		ON filters_def.filter_id = (select id from filters where name = \"lang\") AND languages.id = filters_def.filtered_id
-		WHERE filters_def.filtered_id IS NULL;
-		;";
+	DROP TRIGGER IF EXISTS progress_on_update;
+	CREATE TRIGGER progress_on_update AFTER UPDATE ON progress
+	BEGIN
+		UPDATE progress SET registred = datetime('now') WHERE new.id = progress.id AND new.status_id != old.status_id;
+	END;
+    COMMIT;";
 
 #[allow(dead_code)]
 pub const FILTER_SUBSYSTEM: &'static str = "
 	BEGIN;
+    DROP TABLE IF EXISTS filters;
 	CREATE TABLE IF NOT EXISTS filters (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    name      	    TEXT NOT NULL UNIQUE
 	);
+	DROP TABLE IF EXISTS filters_def;
 	CREATE TABLE IF NOT EXISTS filters_def (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    filter_id       INTEGER NOT NULL,  	/* FK to filters.id */
 		filtered_id     INTEGER NOT NULL   	/* FK to id  of the filtered table, e.g. languages.id*/
 	);
+	INSERT OR IGNORE INTO filters VALUES (1, 'lang');
+    INSERT OR IGNORE INTO filters VALUES (2, 'genre');
+
+	DROP INDEX IF EXISTS filter_def_index;
 	CREATE INDEX filter_def_index on filters_def (filter_id ASC, filtered_id ASC);
+	COMMIT;";
+
+
+#[allow(dead_code)]
+pub const LANGUAGE_SUBSYSTEM: &'static str = "
+	BEGIN;
+    DROP TABLE IF EXISTS languages;
+    CREATE TABLE IF NOT EXISTS languages (
+	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    name      	    TEXT NOT NULL UNIQUE
+    );
+
+	DROP VIEW IF EXISTS languages_disabled;
+	CREATE VIEW IF NOT EXISTS languages_disabled AS
+		SELECT languages.id, languages.name
+		FROM languages LEFT JOIN filters_def
+		ON filters_def.filter_id = (select id from filters where name = \"lang\")
+		AND languages.id = filters_def.filtered_id
+		WHERE filters_def.filtered_id IS NOT NULL;
+
+	DROP VIEW IF EXISTS languages_enabled;
+	CREATE VIEW IF NOT EXISTS languages_enabled AS
+		SELECT languages.id, languages.name
+		FROM languages LEFT JOIN filters_def
+		ON filters_def.filter_id = (select id from filters where name = \"lang\")
+		AND languages.id = filters_def.filtered_id
+		WHERE filters_def.filtered_id IS NULL;
+	DELETE FROM progress WHERE progress.task_id = 1;
 	COMMIT;";
 
 
 #[allow(dead_code)]
 pub const GENRE_SUBSYSTEM: &'static str = "
 	BEGIN;
+        DROP TABLE IF EXISTS genre_groups;
         CREATE TABLE genre_groups (
 			id		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     		name	TEXT NOT NULL
 		);
 
+		DROP TABLE IF EXISTS genre_names;
         CREATE TABLE genre_names (
 			id			INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			group_id	INTEGER NOT NULL,       /* FK to genre_groups.id */
@@ -85,12 +147,14 @@ pub const GENRE_SUBSYSTEM: &'static str = "
     		name		TEXT NOT NULL
 		);
 
+		DROP TABLE IF EXISTS genre_synonyms;
 		CREATE TABLE genre_synonyms (
 			id			INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 			code		TEXT NOT NULL UNIQUE,	/* code */
 			synonym_id 	INTEGER NOT NULL        /* FK to genre_names.id */
 		);
 
+		DROP VIEW IF EXISTS genres;
 		CREATE VIEW genres AS
 		SELECT A.id, C.code as code, B.name as type, A.name as name
 		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id JOIN genre_synonyms C ON A.id = C.synonym_id
@@ -98,6 +162,7 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		SELECT A.id, A.code as code, B.name as type, A.name as name
 		FROM genre_names A LEFT JOIN genre_groups B ON A.group_id = B.id;
 
+		DROP VIEW IF EXISTS genres_enabled;
 		CREATE VIEW IF NOT EXISTS genres_enabled AS
 		SELECT genre_names.id, genre_groups.name AS group_name, genre_names.name AS genre_name
 		FROM genre_names
@@ -105,13 +170,13 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre')
 		WHERE filtered_id IS NULL;
 
+		DROP VIEW IF EXISTS genres_disabled;
 		CREATE VIEW IF NOT EXISTS genres_disabled AS
 		SELECT genre_names.id, genre_groups.name AS group_name, genre_names.name AS genre_name
 		FROM genre_names
 		JOIN genre_groups ON genre_names.group_id = genre_groups.id
 		LEFT JOIN filters_def ON genre_names.id = filtered_id AND filter_id = (SELECT id FROM filters WHERE name = 'genre')
 		WHERE filtered_id IS NOT NULL;
-
 
     COMMIT;";
 
@@ -139,70 +204,21 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 	);
 
 	CREATE VIEW IF NOT EXISTS authors AS
-		SELECT 
-			id, 
-			trim(trim(last_name) || ' ' || trim(first_name) || ' ' || trim(middle_name) || ' ' || trim(nickname)) AS name, 
-			last_name, 
-			first_name, 
-			middle_name, 
+		SELECT
+			id,
+			trim(trim(last_name) || ' ' || trim(first_name) || ' ' || trim(middle_name) || ' ' || trim(nickname)) AS name,
+			last_name,
+			first_name,
+			middle_name,
 			nickname
 		FROM people;
 
 	CREATE VIEW authors_joined AS
-		SELECT A.id, A.name AS src_name, ifnull(B.name, A.name) AS dst_name 
+		SELECT A.id, A.name AS src_name, ifnull(B.name, A.name) AS dst_name
 		FROM authors A LEFT JOIN people_links ON src_id = A.id LEFT JOIN authors B ON dst_id = B.id;
 
     COMMIT;";
 
-#[allow(dead_code)]
-pub const PROGRESS_SUBSYSTEM: &'static str = "
-	BEGIN;
-	CREATE TABLE task (
-    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    	name 	TEXT NOT NULL UNIQUE
-	);
-	INSERT OR IGNORE INTO task VALUES (1, 'загрузка языков');
-	INSERT OR IGNORE INTO task VALUES (2, 'загрузка жанров');
-	INSERT OR IGNORE INTO task VALUES (3, 'загрузка авторов');
-	INSERT OR IGNORE INTO task VALUES (4, 'загрузка названий');
-	INSERT OR IGNORE INTO task VALUES (5, 'загрузка циклов');
-
-	CREATE TABLE status (
-    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    	name 	TEXT NOT NULL UNIQUE
-	);
-    INSERT OR IGNORE INTO status VALUES (1, 'обработка архива начата');
-    INSERT OR IGNORE INTO status VALUES (2, 'обработка архива завершена');
-	INSERT OR IGNORE INTO status VALUES (3, 'операция завершена');
-    INSERT OR IGNORE INTO status VALUES (4, 'операция завершилась неудачей');
-
-	CREATE TABLE progress (
-    	id 				INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-		archive_id      INTEGER NOT NULL,       /* FK to archives.id */
-		task_id 		INTEGER NOT NULL,       /* FK to task.id */
-		status_id 		INTEGER NOT NULL,       /* FK to status.id */
-		registred		TEXT,
-		UNIQUE (archive_id, task_id) ON CONFLICT REPLACE
-	);
-
-	CREATE VIEW progress_log AS
-	SELECT progress.id AS id, archives.name, task.name AS task, status.name AS status, registred
-	FROM progress
-	LEFT JOIN status ON progress.status_id = status.id
-	LEFT JOIN task ON progress.task_id = task.id
-	LEFT JOIN archives ON progress.archive_id = archives.id;
-
-	CREATE INDEX progress_archive_index on progress (archive_id ASC);
-
-	CREATE TRIGGER progress_on_insert AFTER INSERT ON progress
-	BEGIN
-		UPDATE progress SET registred = datetime('now') WHERE new.id = progress.id;
-	END;
-	CREATE TRIGGER progress_on_update AFTER UPDATE ON progress
-	BEGIN
-		UPDATE progress SET registred = datetime('now') WHERE new.id = progress.id AND new.status_id != old.status_id;
-	END;
-    COMMIT;";
 
 #[allow(dead_code)]
 pub const TITLES_SUBSYSTEM: &'static str = "
@@ -220,7 +236,7 @@ pub const TITLES_SUBSYSTEM: &'static str = "
     	version_id 	INTEGER NOT NULL /* FK to versions.id */
 	);
 	CREATE VIEW titles_joined AS
-		SELECT A.id, A.title AS src_title, ifnull(B.title, A.title) AS dst_title 
+		SELECT A.id, A.title AS src_title, ifnull(B.title, A.title) AS dst_title
 		FROM titles A LEFT JOIN titles_links ON src_id = A.id LEFT JOIN titles B ON dst_id = B.id;
 
     COMMIT;";

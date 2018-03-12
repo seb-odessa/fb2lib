@@ -227,7 +227,7 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'story', 'story');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'upbringing_book', 'upbringing_book');
 	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'visual_arts', 'visual_arts');
-	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'ya', 'ya');	
+	INSERT INTO genre_names (group_id, code, name) VALUES (16, 'ya', 'ya');
 
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'litrpg', id FROM genre_names WHERE code = 'sf_litrpg';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'literature_short', id FROM genre_names WHERE code = 'short_story';
@@ -261,13 +261,6 @@ pub const INSERT_GENRES: &'static str = "
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'city_fantasy', id FROM genre_names WHERE code = 'sf_fantasy_city';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'religion_rel', id FROM genre_names WHERE code = 'religion';
 	INSERT INTO genre_synonyms (code, synonym_id) SELECT 'попаданцы', id FROM genre_names WHERE code = 'popadanec';
-	
+
 	COMMIT;";
 
-#[allow(dead_code)]
-pub const FILTER_SUBSYSTEM: &'static str = "
-	BEGIN;
-    INSERT OR IGNORE INTO filters VALUES (1, 'lang');
-    INSERT OR IGNORE INTO filters VALUES (2, 'genre');    
-	COMMIT;";
-	

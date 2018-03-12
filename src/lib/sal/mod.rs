@@ -21,6 +21,19 @@ pub trait Save<T> {
     fn get_stored_count(&self) -> usize;
 }
 
+pub enum SUBSYSTEM {
+    TORRENT,
+    LANGUAGE,
+
+    VERSION,
+    TITLES,
+    SEQUENCES,
+    FILTER,
+    GENRE,
+    PEOPLE,
+    PROGRESS,
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum STATUS {
     STARTED,
@@ -40,6 +53,7 @@ pub enum TASK {
     SEQUENCE,
 }
 
+pub use sal::imp::reset;
 
 pub use sal::imp::reset_tables;
 pub use sal::imp::get_connection;
