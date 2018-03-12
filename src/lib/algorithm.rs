@@ -48,9 +48,7 @@ where
     crossbeam::scope(|scope| for i in 0..zip.len() {
         if let Some(mut file) = zip.by_index(i).ok() {
             if re.is_match(file.name()) {
-                if let Some(xml) = archive::load_header(&mut file)
-                    .and_then(tools::into_utf8)
-                    .ok()
+                if let Some(xml) = archive::load_xml(&mut file).ok()
                 {
                     let name = String::from(file.name());
                     scope.spawn(move || visitor(name, xml));
@@ -70,9 +68,7 @@ where
     crossbeam::scope(|scope| for i in 0..zip.len() {
         if let Some(mut file) = zip.by_index(i).ok() {
             if re.is_match(file.name()) {
-                if let Some(xml) = archive::load_header(&mut file)
-                    .and_then(tools::into_utf8)
-                    .ok()
+                if let Some(xml) = archive::load_xml(&mut file).ok()
                 {
                     let channel = out.clone();
                     scope.spawn(move || channel.send(visitor(xml)));
@@ -92,7 +88,7 @@ where
         let mut file = zip.by_index(i)?;
         if re.is_match(file.name()) {
             let name = String::from(file.name());
-            let xml = archive::load_header(&mut file).and_then(tools::into_utf8)?;
+            let xml = archive::load_xml(&mut file)?;
             visitor(name, xml);
         }
     }

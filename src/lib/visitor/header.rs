@@ -9,6 +9,7 @@ pub enum Show {
     Xml,
     Fb2,
     Inf,
+    Bad,
 }
 
 pub struct Header{
@@ -22,15 +23,9 @@ impl Header {
             output: output,
         }
     }
-    fn load_header<'a>(&self, zip: &mut ZipFile) -> Option<String> {
-        archive::load_header(zip).and_then(tools::into_utf8).ok()
-    }
-    fn load_fb2<'a>(&self, zip: &mut ZipFile) -> Option<FictionBook> {
-        self.load_header(zip).and_then(|xml|tools::into_fb2(xml).ok())
-    }
     fn zip<'a>(&self, zip: &mut ZipFile) -> Option<String> {
         Some(format!(
-            "{:10} ({:10}) : Size {:8} Original Size: {:8} crc32: {:x}, offset: {}",
+            "{:10} ({:10}) : Size {:8} Original Size: {:8} crc32: {:x}, offset: {}\n",
             &zip.name(),
             &zip.compression(),
             &zip.compressed_size(),
@@ -40,20 +35,23 @@ impl Header {
         ))
     }
     fn xml<'a>(&self, zip: &mut ZipFile) -> Option<String> {
-        self.load_header(zip).and_then(|xml| Some(
-            format!("{}", xml))
+        archive::load_xml(zip).ok().and_then(|xml| Some(
+            format!("{}\n", xml))
         )
     }
     fn fb2<'a>(&self, zip: &mut ZipFile) -> Option<String> {
-        self.load_fb2(zip).and_then(|a| Some(
-            format!("{:#?}", a))
+        archive::load_fb2(zip).ok().and_then(|a| Some(
+            format!("{:#?}\n", a))
         )
     }
     fn inf<'a>(&self, zip: &mut ZipFile) -> Option<String> {
-        self.load_fb2(zip).and_then(|a| Some(
-            format!("{:12} : {} : {}", zip.name(), a.get_book_title(), fmt(a.get_book_authors())))
+        archive::load_fb2(zip).ok().and_then(|a| Some(
+            format!("{:12} : {} : {}\n", zip.name(), a.get_book_title(), fmt(a.get_book_authors())))
         )
     }
+    fn bad<'a>(&self, zip: &mut ZipFile) -> Option<String> {
+        archive::load_fb2(zip).ok().and_then(|_| Some(String::new()))
+    }    
 }
 impl <'a> algorithm::Visitor<ZipFile<'a>> for Header {
     fn visit(&mut self, zip: &mut ZipFile) {
@@ -63,9 +61,10 @@ impl <'a> algorithm::Visitor<ZipFile<'a>> for Header {
             Show::Xml => self.xml(zip),
             Show::Fb2 => self.fb2(zip),
             Show::Inf => self.inf(zip),
+            Show::Bad => self.bad(zip),
         };
         match result {
-            Some(string) => println!("{}", string),
+            Some(string) => print!("{}", string),
             None => println!("Filed to process {} file.", zip.name()),
         }
     }

@@ -46,39 +46,11 @@ pub fn show_inf(archive: &str, pattern: &str) -> Fb2Result<()> {
     Ok(())
 }
 
-pub fn check_archive(archive: &str, quiet: bool) -> Fb2Result<()> {
-    use std::io;
-    use std::io::Write;
+pub fn show_bad(archive: &str, pattern: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
-    let count = zip.len();
-    let mut succ = 0;
-    let mut curr = 0;
-    if !quiet {
-        print!("Progress:   %");
-    }
-    algorithm::apply_to_xml(zip, "*.fb2", |book, xml| {
-        match tools::into_fb2(xml) {
-            Ok(_) => succ += 1,
-            Err(_) => {
-                if !quiet {
-                    println!();
-                }
-                println!(
-                    "The {} file contained unsupported FB2 file {}",
-                    archive,
-                    &book
-                )
-            }
-        }
-        if !quiet {
-            curr += 1;
-            print!("\rProgress: {:3}%", 100 * (1 + curr) / count);
-            io::stdout().flush().unwrap();
-        }
-    })?;
-    if !quiet {
-        println!("\nSucceeded {}/{} ({}%)", succ, count, 100 * succ / count);
-    }
+    let mut visitor = Header::new(Show::Bad);
+    algorithm::visit(&zip, pattern, &mut visitor)?;
+    visitor.report();
     Ok(())
 }
 

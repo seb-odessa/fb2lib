@@ -2,6 +2,7 @@ extern crate std;
 extern crate zip;
 
 use tools;
+use fb2parser::FictionBook;
 use std::io::Read;
 use result::Fb2Result;
 
@@ -18,6 +19,16 @@ pub fn open(name: &str) -> Fb2Result<ZipArchive> {
     Ok(archive)
 }
 
+// Load book description as raw XML file in FB2 format. Payload with text will droped
+pub fn load_xml<F: Read>(file: &mut F) -> Fb2Result<String> {
+    load_header(file).and_then(tools::into_utf8)
+}
+
+// Load book description in FictionBook format.
+pub fn load_fb2<F: Read>(file: &mut F) -> Fb2Result<FictionBook> {
+    load_xml(file).and_then(|xml|tools::into_fb2(xml))
+}
+
 fn load_buffer<F: Read>(file: &mut F, content: &mut Vec<u8>) -> bool {
     content.reserve(CHUNCK_LENGTH);
     let mut buffer = [0u8; CHUNCK_LENGTH];
@@ -30,7 +41,7 @@ fn load_buffer<F: Read>(file: &mut F, content: &mut Vec<u8>) -> bool {
     return false;
 }
 
-pub fn load_header<F: Read>(file: &mut F) -> Fb2Result<Vec<u8>> {
+fn load_header<F: Read>(file: &mut F) -> Fb2Result<Vec<u8>> {
     let mut header: Vec<u8> = Vec::new();
     while load_buffer(file, &mut header) {
         const DESC_CLOSE_TAG: &'static str = "</description>";
