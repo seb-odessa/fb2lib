@@ -65,6 +65,13 @@ fn handle<T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
 }
 
 pub fn authors(archives: &Vec<&str>) -> Fb2Result<()> {
+    // let visitor = Author::new(AccessGuard::all(), HashSet::new());
+    // for archive in archives {
+    //     let zip = archive::open(archive)?;
+    //     algorithm::visit(&zip, "*.fb2", &mut visitor)?;
+    // }
+    // visitor.report();
+    // Ok(())
     handle(archives, Author::new(AccessGuard::new(), HashSet::new()))
 }
 pub fn langs(archives: &Vec<&str>) -> Fb2Result<()> {

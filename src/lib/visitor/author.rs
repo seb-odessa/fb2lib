@@ -44,6 +44,20 @@ impl sal::Save<FictionBook> for Author {
         self.handled.len()
     }
 }
+// impl <'a> algorithm::Visitor<ZipFile<'a>> for Author {
+//     fn visit(&mut self, zip: &mut ZipFile) {
+//         self.counter += 1;
+//         if let Some(book) = archive::load_fb2(zip).ok() {
+//             if self.access.is_allowed(book) {
+//                 for author in book.get_book_authors() {
+//                     if !self.handled.contains(&author) {
+//                         self.authors.insert(author);
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
 impl algorithm::Visitor<FictionBook> for Author {
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
