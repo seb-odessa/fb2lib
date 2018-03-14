@@ -14,7 +14,7 @@ const CHECK_HELP: &'static str = "Compare existing file's SHA1 hashes with the l
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let db = Arg::with_name(ui::DB_FILE).help(ui::DB_FILE_HELP).required(false);
     let archive = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true);
-    let torrent = Arg::with_name(ui::TORRENT_FILE).help(ui::TORRENT_FILE_HELP).required(true);
+    let torrent = Arg::with_name(ui::TORRENT_FILE).help(ui::TORRENT_FILE_HELP).required(true).multiple(true);
 
     app.subcommand(
         SubCommand::with_name(CMD).about(CMD_HELP).arg(db)
@@ -27,8 +27,11 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
     let database = arg.value_of(ui::DB_FILE).unwrap_or(ui::DB_FILE);
     match arg.subcommand() {
         (LOAD, Some(arg)) => {
-            let torrent = arg.value_of(ui::TORRENT_FILE).unwrap_or("");
-            handler::torrent::load(database, torrent)
+            if let Some(torrents) = arg.values_of(ui::TORRENT_FILE) {
+                handler::torrent::load(database, &torrents.collect::<Vec<&str>>())
+            } else {
+                ui::usage(arg)
+            }
         },
         (CHECK, Some(arg)) => {
             let archive = arg.value_of(ui::ARCH_FILE).unwrap_or("");

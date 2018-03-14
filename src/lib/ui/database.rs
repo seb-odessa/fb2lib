@@ -17,17 +17,24 @@ const LINK_HELP: &'static str = "Make link between records in the database";
 const UNLINK: &'static str = "unlink";
 const UNLINK_HELP: &'static str = "Drop link between records in the database";
 
+const TORRENT: &'static str = "torrent";
+const TORRENT_HELP: &'static str = "Manage torrent";
+const PROGRESS: &'static str = "progress";
+const PROGRESS_HELP: &'static str = "Manage progress";
+const FILTER: &'static str = "filter";
+const FILTER_HELP: &'static str = "Manage filter";
+const GENRE: &'static str = "genre";
+const GENRE_HELP: &'static str = "Manage book genres";
+const LANGS: &'static str = "langs";
+const LANGS_HELP: &'static str = "Manage book languages";
+
 const AUTHORS: &'static str = "authors";
 const AUTHORS_HELP: &'static str = "Work with authors from the archive";
-const LANGS: &'static str = "langs";
-const LANGS_HELP: &'static str = "Work with book languages from the archive";
 const TITLES: &'static str = "titles";
 const TITLES_HELP: &'static str = "Work with book titles from the archive";
 const SEQUENCES: &'static str = "sequences";
 const SEQUENCES_HELP: &'static str = "Work with book sequences from the archive";
 
-const ALL: &'static str = "all";
-const ALL_HELP: &'static str = "Perform subcommand for all";
 const FORCE: &'static str = "force";
 const FORCE_HELP: &'static str = "Force save data to the database";
 const PATTERN: &'static str = "pattern";
@@ -41,7 +48,6 @@ const LINK_DST_HELP: &'static str = "The destination of the link";
 pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     let database = Arg::with_name(ui::DB_FILE).help(ui::DB_FILE_HELP).required(false);
     let arch = Arg::with_name(ui::ARCH_FILE).help(ui::ARCH_FILE_HELP).required(true).multiple(true);
-    let all = Arg::with_name(ALL).help(ALL_HELP).long(ALL).required(false);
     let force = Arg::with_name(FORCE).help(FORCE_HELP).long(FORCE).short("f").required(false);
     let pattern = Arg::with_name(PATTERN).help(PATTERN_HELP).required(false);
     let src = Arg::with_name(LINK_SRC).help(LINK_SRC_HELP).required(true);
@@ -49,7 +55,12 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
     app.subcommand(
         SubCommand::with_name(CMD).about(CMD_HELP).arg(database)
         .subcommand(
-            SubCommand::with_name(RESET).about(RESET_HELP).arg(all)
+            SubCommand::with_name(RESET).about(RESET_HELP)
+            .subcommand(SubCommand::with_name(TORRENT).about(TORRENT_HELP))
+            .subcommand(SubCommand::with_name(PROGRESS).about(PROGRESS_HELP))
+            .subcommand(SubCommand::with_name(FILTER).about(FILTER_HELP))
+            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP))
+            .subcommand(SubCommand::with_name(GENRE).about(GENRE_HELP))
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
@@ -75,7 +86,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(src.clone()).arg(dst.clone()))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(src.clone()).arg(dst.clone()))
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(src.clone()).arg(dst.clone()))
-        )        
+        )
     )
 }
 
@@ -93,7 +104,11 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
 
 fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
-        (ALL, Some(_)) => handler::database::reset_all(&database),
+        (TORRENT, Some(_)) => handler::database::reset(database, "torrent"),
+        (PROGRESS, Some(_)) => handler::database::reset(database, "progress"),
+        (FILTER, Some(_)) => handler::database::reset(database, "filter"),
+        (LANGS, Some(_)) => handler::database::reset(database, "lang"),
+        (GENRE, Some(_)) => handler::database::reset(database, "genre"),
         (_, _) => ui::usage(arg)
     }
 }
