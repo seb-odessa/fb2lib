@@ -51,11 +51,6 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
     Ok(())
 }
 
-
-pub fn reset_tables(db_file_name: &str) -> Fb2Result<()> {
-    reset(db_file_name, sal::SUBSYSTEM::VERSION)
-}
-
 fn get_task_id(oper: sal::TASK) -> i64 {
     match oper {
         sal::TASK::UNDEFINED => 0,

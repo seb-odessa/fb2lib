@@ -6,7 +6,7 @@ use std::iter::FromIterator;
 use std::collections::HashSet;
 use std::collections::HashMap;
 
-pub type GenreMap = HashMap<String, String>;
+//pub type GenreMap = HashMap<String, String>;
 
 pub struct Book {
     counter: usize,

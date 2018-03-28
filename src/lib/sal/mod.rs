@@ -24,7 +24,6 @@ pub trait Save<T> {
 pub enum SUBSYSTEM {
     TORRENT,
     LANGUAGE,
-
     VERSION,
     TITLES,
     SEQUENCES,
@@ -54,8 +53,6 @@ pub enum TASK {
 }
 
 pub use sal::imp::reset;
-
-pub use sal::imp::reset_tables;
 pub use sal::imp::get_connection;
 
 pub use sal::imp::get_archive_sizes;

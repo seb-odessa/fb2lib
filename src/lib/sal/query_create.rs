@@ -255,7 +255,7 @@ pub const SEQUENCES_SUBSYSTEM: &'static str = "
     	src_id 		INTEGER NOT NULL,	/* FK to sequences.id */
     	dst_id 		INTEGER NOT NULL,	/* FK to sequences.id */
     	version_id 	INTEGER NOT NULL /* FK to versions.id */
-	)
+	);
 	CREATE VIEW sequences_joined AS
 		SELECT A.id, A.sequence AS src_sequence, ifnull(B.sequence, A.sequence) AS dst_sequence
 		FROM sequences A LEFT JOIN sequences_links ON src_id = A.id LEFT JOIN sequences B ON dst_id = B.id;

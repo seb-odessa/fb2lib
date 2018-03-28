@@ -96,7 +96,7 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
 
 pub fn load_torrent(torrent_file_name: &str) -> Fb2Result<Metainfo>{
     let mut buffer = Vec::new();
-    /// @todo Add file filter by magic prefix
+    // @todo Add file filter by magic prefix
     File::open(torrent_file_name)?.read_to_end(&mut buffer)?;
     let meta = Metainfo::from(&buffer).map_err(|e| io::Error::new(io::ErrorKind::Other, e.description()))?;
     Ok(meta)

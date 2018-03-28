@@ -67,13 +67,17 @@ $ ./fb2lib torrent load torrents/*.torrent
 $ ./fb2lib database reset progress
 $ ./fb2lib database reset filter
 $ ./fb2lib database reset langs
-$ ./fb2lib database load langs storage/fb2-000024-030559.zip
+$ ./fb2lib database load langs books/fb2-000024-030559.zip
 $ ./fb2lib filter lang display
 $ ./fb2lib filter lang disable it
 $ ./fb2lib filter lang disable en
 $ ./fb2lib filter lang display
 $ ./fb2lib database reset genre
 $ ./fb2lib filter genre display
+$ ./fb2lib database reset authors
+$ ./fb2lib database reset titles
+$ ./fb2lib database reset sequences
+
 ```
 
 ### Performance tests

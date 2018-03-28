@@ -2,8 +2,8 @@ use sal;
 use algorithm;
 
 use sal::Save;
-use result::{Fb2Result, Fb2Error};
 use algorithm::Visitor;
+use result::{Fb2Result, Fb2Error};
 use fb2parser::FictionBook;
 
 use visitor::acess;
@@ -11,6 +11,7 @@ use visitor::author::Author;
 use visitor::lang::Lang;
 use visitor::title::Title;
 use visitor::sequence::Sequence;
+use visitor::collector::Collector;
 
 use std::path;
 
@@ -23,6 +24,9 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
         "filter" => sal::reset(db_file_name, sal::SUBSYSTEM::FILTER),
         "lang" => sal::reset(db_file_name, sal::SUBSYSTEM::LANGUAGE),
         "genre" => sal::reset(db_file_name, sal::SUBSYSTEM::GENRE),
+        "author" => sal::reset(db_file_name, sal::SUBSYSTEM::PEOPLE),
+        "sequence" => sal::reset(db_file_name, sal::SUBSYSTEM::SEQUENCES),
+        "title" => sal::reset(db_file_name, sal::SUBSYSTEM::TITLES),
         _ => Err(Fb2Error::Custom(String::from("Unknown Subsystem")))
     }
 }
@@ -56,6 +60,15 @@ pub fn load_sequences(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<
     let visitor = Sequence::new(access, ignore);
     handle(&conn, force, archives, visitor)
 }
+
+pub fn load_dictionary(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let access = create_access_guard(&conn)?;
+    let visitor = Collector::new(access, &conn)?;
+    handle(&conn, force, archives, visitor)
+}
+
+
 /************************************* SHOW HANDLERS *******************************************/
 pub fn show_authors(db: &str, pattern: &str) -> Fb2Result<()> {
     let re = algorithm::make_regex(pattern)?;
@@ -153,8 +166,7 @@ fn is_complete(status: sal::STATUS) -> bool {
     }
 }
 
-fn visit<T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
-    where T: Visitor<FictionBook> + Save<FictionBook> + 'static
+fn visit<T: Visitor<FictionBook> + Save<FictionBook>>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
 {
     print!("Processing {}", &name);
     let task = visitor.task();

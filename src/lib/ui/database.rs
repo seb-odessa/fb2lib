@@ -18,22 +18,26 @@ const UNLINK: &'static str = "unlink";
 const UNLINK_HELP: &'static str = "Drop link between records in the database";
 
 const TORRENT: &'static str = "torrent";
-const TORRENT_HELP: &'static str = "Manage torrent";
+const TORRENT_HELP: &'static str = "Handle torrents";
 const PROGRESS: &'static str = "progress";
-const PROGRESS_HELP: &'static str = "Manage progress";
+const PROGRESS_HELP: &'static str = "Handle progress subsystem";
 const FILTER: &'static str = "filter";
-const FILTER_HELP: &'static str = "Manage filter";
+const FILTER_HELP: &'static str = "Handle filter";
 const GENRE: &'static str = "genre";
-const GENRE_HELP: &'static str = "Manage book genres";
+const GENRE_HELP: &'static str = "Handle book genres";
 const LANGS: &'static str = "langs";
-const LANGS_HELP: &'static str = "Manage book languages";
+const LANGS_HELP: &'static str = "Handle book languages";
 
 const AUTHORS: &'static str = "authors";
-const AUTHORS_HELP: &'static str = "Work with authors from the archive";
+const AUTHORS_HELP: &'static str = "Handle authors";
 const TITLES: &'static str = "titles";
-const TITLES_HELP: &'static str = "Work with book titles from the archive";
+const TITLES_HELP: &'static str = "Handle book titles";
 const SEQUENCES: &'static str = "sequences";
-const SEQUENCES_HELP: &'static str = "Work with book sequences from the archive";
+const SEQUENCES_HELP: &'static str = "Handle book sequences";
+
+const AST: &'static str = "ast";
+const AST_HELP: &'static str = "Handle book authors sequences and titles at once";
+
 
 const FORCE: &'static str = "force";
 const FORCE_HELP: &'static str = "Force save data to the database";
@@ -61,13 +65,17 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(FILTER).about(FILTER_HELP))
             .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP))
             .subcommand(SubCommand::with_name(GENRE).about(GENRE_HELP))
+            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP))
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP))
+            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP))
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()).arg(arch.clone()))            
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(AST).about(AST_HELP).arg(force.clone()).arg(arch.clone()))
         )
         .subcommand(
             SubCommand::with_name(SHOW).about(SHOW_HELP)
@@ -109,6 +117,9 @@ fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (FILTER, Some(_)) => handler::database::reset(database, "filter"),
         (LANGS, Some(_)) => handler::database::reset(database, "lang"),
         (GENRE, Some(_)) => handler::database::reset(database, "genre"),
+        (AUTHORS, Some(_)) => handler::database::reset(database, "author"),
+        (TITLES, Some(_)) => handler::database::reset(database, "title"),
+        (SEQUENCES, Some(_)) => handler::database::reset(database, "sequence"),
         (_, _) => ui::usage(arg)
     }
 }
@@ -147,6 +158,14 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
                 ui::usage(arg)
             }
         }
+        (AST, Some(arg)) => {
+            if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
+                let force = arg.is_present(FORCE);
+                handler::database::load_dictionary(database, force, &archives.collect::<Vec<&str>>())
+            } else {
+                ui::usage(arg)
+            }
+        }        
         (_, _) => ui::usage(arg)
     }
 }
