@@ -54,11 +54,11 @@ pub fn show_bad(archive: &str, pattern: &str) -> Fb2Result<()> {
     Ok(())
 }
 
-fn handle<T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
-    where T: algorithm::Visitor<FictionBook> + 'static
+fn handle<'a, T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
+    where T: algorithm::Visitor<'a, Type=FictionBook> + 'static
 {
     for archive in archives {
-        algorithm::visit_deprecated(archive, &mut visitor)?;
+        algorithm::visit_books(archive, &mut visitor)?;
     }
     visitor.report();
     Ok(())
@@ -86,5 +86,3 @@ pub fn sequences(archives: &Vec<&str>) -> Fb2Result<()> {
 pub fn genres(archives: &Vec<&str>) -> Fb2Result<()> {
     handle(archives, Genre::new(HashSet::new()))
 }
-
-

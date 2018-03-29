@@ -49,7 +49,8 @@ impl sal::Save for Collector {
         sal::set_archive_status(conn, archive, sal::get_task_id(self.titles.task()), status_id)
     }
 }
-impl algorithm::Visitor<FictionBook> for Collector {
+impl <'a> algorithm::Visitor<'a> for Collector {
+    type Type = FictionBook;
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         if self.access.is_allowed(book) {

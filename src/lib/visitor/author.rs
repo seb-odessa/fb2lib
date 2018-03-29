@@ -58,7 +58,8 @@ impl sal::Save for Author {
 //         }
 //     }
 // }
-impl algorithm::Visitor<FictionBook> for Author {
+impl <'a> algorithm::Visitor<'a> for Author {
+    type Type = FictionBook;
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         if self.access.is_allowed(book) {

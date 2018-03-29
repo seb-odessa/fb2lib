@@ -32,7 +32,7 @@ pub fn ls(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     let genres = sal::get_genre_codes_and_groups(&conn)?;
     let mut visitor = Book::new(access_guard, genres);
     for archive in archives {
-        algorithm::visit_deprecated(archive, &mut visitor)?;
+        algorithm::visit_books(archive, &mut visitor)?;
     }
     visitor.report();
     Ok(())
@@ -47,7 +47,7 @@ fn visit_and_save<T>(conn: &sal::Connection, archive: &str, name: &str, force: b
     if force || !is_complete(status) {
         sal::set_archive_started(conn, name, task)?;
         print!(".");
-        match algorithm::visit_deprecated(archive, visitor) {
+        match algorithm::visit_books(archive, visitor) {
             Ok(()) => {
                 sal::set_archive_visited(conn, name, task)?;
                 print!(".");
@@ -96,7 +96,7 @@ fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&st
         if save {
             visit_and_save(&conn, archive, name, force, &mut visitor)?;
         } else {
-            algorithm::visit_deprecated(archive, &mut visitor)?;
+            algorithm::visit_books(archive, &mut visitor)?;
         }
     }
     if !save {
@@ -146,5 +146,3 @@ pub fn genres(db: &str, only_unknown: bool, archives: &Vec<&str>) -> Fb2Result<(
     let visitor = Genre::new(ignore);
     handle(&conn, false, false, archives, visitor)
 }
-
-

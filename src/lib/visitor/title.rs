@@ -40,7 +40,8 @@ impl sal::Save for Title {
         self.handled.len()
     }
 }
-impl algorithm::Visitor<FictionBook> for Title {
+impl <'a> algorithm::Visitor<'a> for Title {
+    type Type = FictionBook;
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         if self.access.is_allowed(book) {

@@ -166,7 +166,8 @@ fn is_complete(status: sal::STATUS) -> bool {
     }
 }
 
-fn visit<T: Visitor<FictionBook> + Save>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
+fn visit<'a, T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
+    where T: Visitor<'a, Type=FictionBook> + Save + 'static
 {
     print!("Processing {}", &name);
     let task = visitor.task();
@@ -174,7 +175,7 @@ fn visit<T: Visitor<FictionBook> + Save>(conn: &sal::Connection, archive: &str, 
     if force || !is_complete(status) {
         visitor.set_status(&conn, name, sal::STATUS::STARTED)?;
         print!(".");
-        match algorithm::visit_deprecated(archive, visitor) {
+        match algorithm::visit_books(archive, visitor) {
             Ok(()) => {
                 visitor.set_status(&conn, name, sal::STATUS::VISITED)?;
                 print!(".");
@@ -205,8 +206,8 @@ fn visit<T: Visitor<FictionBook> + Save>(conn: &sal::Connection, archive: &str, 
     Ok(())
 }
 
-fn handle<T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
-    where T: Visitor<FictionBook> + Save + 'static
+fn handle<'a, T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
+    where T: Visitor<'a, Type=FictionBook> + Save + 'static
 {
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();

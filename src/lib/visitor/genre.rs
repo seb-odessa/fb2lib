@@ -34,7 +34,8 @@ impl sal::Save for Genre {
         self.handled.len()
     }
 }
-impl algorithm::Visitor<FictionBook> for Genre {
+impl <'a> algorithm::Visitor<'a> for Genre {
+    type Type = FictionBook;
     fn visit(&mut self, book: &mut FictionBook) {
         for genre in book.get_book_genres().into_iter() {
             for genre in genre.split(",") {

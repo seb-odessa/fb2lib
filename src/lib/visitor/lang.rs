@@ -37,7 +37,8 @@ impl sal::Save for Lang {
         self.handled.len()
     }
 }
-impl algorithm::Visitor<FictionBook> for Lang {
+impl <'a> algorithm::Visitor<'a> for Lang {
+    type Type = FictionBook;
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         let lang = book.get_book_lang().to_lowercase().as_str().trim().to_string();

@@ -12,18 +12,18 @@ pub enum Show {
     Bad,
 }
 
-pub struct Header{
+pub struct Header {
     counter: usize,
     output: Show,
 }
-impl Header {
+impl <'a> Header {
     pub fn new(output: Show) -> Self {
         Header {
             counter: 0,
             output: output,
         }
     }
-    fn zip<'a>(&self, zip: &mut ZipFile) -> Option<String> {
+    fn zip(&self, zip: &mut ZipFile) -> Option<String> {
         Some(format!(
             "{:10} ({:10}) : Size {:8} Original Size: {:8} crc32: {:x}, offset: {}\n",
             &zip.name(),
@@ -34,27 +34,28 @@ impl Header {
             &zip.offset()
         ))
     }
-    fn xml<'a>(&self, zip: &mut ZipFile) -> Option<String> {
+    fn xml(&self, zip: &mut ZipFile) -> Option<String> {
         archive::load_xml(zip).ok().and_then(|xml| Some(
             format!("{}\n", xml))
         )
     }
-    fn fb2<'a>(&self, zip: &mut ZipFile) -> Option<String> {
+    fn fb2(&self, zip: &mut ZipFile) -> Option<String> {
         archive::load_fb2(zip).ok().and_then(|a| Some(
             format!("{:#?}\n", a))
         )
     }
-    fn inf<'a>(&self, zip: &mut ZipFile) -> Option<String> {
+    fn inf(&self, zip: &mut ZipFile) -> Option<String> {
         archive::load_fb2(zip).ok().and_then(|a| Some(
             format!("{:12} : {} : {}\n", zip.name(), a.get_book_title(), fmt(a.get_book_authors())))
         )
     }
-    fn bad<'a>(&self, zip: &mut ZipFile) -> Option<String> {
+    fn bad(&self, zip: &mut ZipFile) -> Option<String> {
         archive::load_fb2(zip).ok().and_then(|_| Some(String::new()))
-    }    
+    }
 }
-impl <'a> algorithm::Visitor<ZipFile<'a>> for Header {
-    fn visit(&mut self, zip: &mut ZipFile) {
+impl <'a> algorithm::Visitor<'a> for Header{
+    type Type = ZipFile<'a> ;
+    fn visit(&mut self, zip: &mut Self::Type) {
         self.counter += 1;
         let result = match self.output {
             Show::Zip => self.zip(zip),
