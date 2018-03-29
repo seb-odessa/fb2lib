@@ -24,7 +24,7 @@ impl Author {
         }
     }
 }
-impl sal::Save<FictionBook> for Author {
+impl sal::Save for Author {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_people(&conn, &self.authors)?;
         self.handled = self.handled.union(&self.authors)

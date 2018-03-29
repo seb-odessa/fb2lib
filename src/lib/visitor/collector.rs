@@ -26,7 +26,7 @@ impl Collector {
         })
     }
 }
-impl sal::Save<FictionBook> for Collector {
+impl sal::Save for Collector {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         self.authors.save(conn)?;
         self.sequences.save(conn)?;
@@ -37,10 +37,16 @@ impl sal::Save<FictionBook> for Collector {
         sal::TASK::UNDEFINED
     }
     fn get_new_count(&self) -> usize {
-        0
+        self.authors.get_new_count() + self.sequences.get_new_count() + self.titles.get_new_count()
     }
     fn get_stored_count(&self) -> usize {
-        0
+        self.authors.get_stored_count() + self.sequences.get_stored_count() + self.titles.get_stored_count()
+    }
+    fn set_status(&self, conn: &sal::Connection, archive: &str, status: sal::STATUS) -> Fb2Result<()> {
+        let status_id = sal::get_status_id(status);
+        sal::set_archive_status(conn, archive, sal::get_task_id(self.authors.task()), status_id)?;
+        sal::set_archive_status(conn, archive, sal::get_task_id(self.sequences.task()), status_id)?;
+        sal::set_archive_status(conn, archive, sal::get_task_id(self.titles.task()), status_id)
     }
 }
 impl algorithm::Visitor<FictionBook> for Collector {

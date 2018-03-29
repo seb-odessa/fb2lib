@@ -22,7 +22,7 @@ impl Sequence {
         }
     }
 }
-impl sal::Save<FictionBook> for Sequence {
+impl sal::Save for Sequence {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_sequences(&conn, &self.names)?;
         self.handled = self.handled.union(&self.names).map(|s| s.clone()).collect();

@@ -166,21 +166,21 @@ fn is_complete(status: sal::STATUS) -> bool {
     }
 }
 
-fn visit<T: Visitor<FictionBook> + Save<FictionBook>>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
+fn visit<T: Visitor<FictionBook> + Save>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
 {
     print!("Processing {}", &name);
     let task = visitor.task();
     let status = sal::get_archive_status(&conn, name, task)?;
     if force || !is_complete(status) {
-        sal::set_archive_started(conn, name, task)?;
+        visitor.set_status(&conn, name, sal::STATUS::STARTED)?;
         print!(".");
         match algorithm::visit_deprecated(archive, visitor) {
             Ok(()) => {
-                sal::set_archive_visited(conn, name, task)?;
+                visitor.set_status(&conn, name, sal::STATUS::VISITED)?;
                 print!(".");
             },
             Err(e) => {
-                sal::set_archive_failure(conn, name, task)?;
+                visitor.set_status(&conn, name, sal::STATUS::FAILURE)?;
                 println!("{}", e);
                 return Err(e);
             }
@@ -188,11 +188,11 @@ fn visit<T: Visitor<FictionBook> + Save<FictionBook>>(conn: &sal::Connection, ar
         let (added, total) = (visitor.get_new_count(), visitor.get_count());
         match visitor.save(&conn) {
             Ok(()) => {
-                sal::set_archive_complete(conn, name, task)?;
+                visitor.set_status(&conn, name, sal::STATUS::COMPLETE)?;
                 print!(".");
             },
             Err(e) => {
-                sal::set_archive_failure(conn, name, task)?;
+                visitor.set_status(&conn, name, sal::STATUS::FAILURE)?;
                 println!("{}", e);
                 return Err(e);
             }
@@ -206,7 +206,7 @@ fn visit<T: Visitor<FictionBook> + Save<FictionBook>>(conn: &sal::Connection, ar
 }
 
 fn handle<T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
-    where T: Visitor<FictionBook> + Save<FictionBook> + 'static
+    where T: Visitor<FictionBook> + Save + 'static
 {
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
@@ -214,4 +214,3 @@ fn handle<T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visi
     }
     Ok(())
 }
-

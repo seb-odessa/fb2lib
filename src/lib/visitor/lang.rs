@@ -19,7 +19,7 @@ impl Lang {
         }
     }
 }
-impl sal::Save<FictionBook> for Lang {
+impl sal::Save for Lang {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_languages(&conn, &self.langs)?;
         self.handled = self.handled.union(&self.langs).map(|s| s.clone()).collect();

@@ -22,7 +22,7 @@ impl Title {
         }
     }
 }
-impl sal::Save<FictionBook> for Title {
+impl sal::Save for Title {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_titles(&conn, &self.titles)?;
         self.handled = self.handled.union(&self.titles).map(|s| s.clone()).collect();

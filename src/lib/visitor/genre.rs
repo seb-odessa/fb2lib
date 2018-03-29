@@ -20,7 +20,7 @@ impl Genre {
         }
     }
 }
-impl sal::Save<FictionBook> for Genre {
+impl sal::Save for Genre {
     fn save(&mut self, _: &sal::Connection) -> Fb2Result<()> {
         Ok(())
     }

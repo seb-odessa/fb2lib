@@ -62,22 +62,22 @@ fb2lib filter genre display
 ## Init flow
 Prepare Database infrastructure
 ```
-$ ./fb2lib database reset torrent
-$ ./fb2lib torrent load torrents/*.torrent
-$ ./fb2lib database reset progress
-$ ./fb2lib database reset filter
-$ ./fb2lib database reset langs
-$ ./fb2lib database load langs books/fb2-000024-030559.zip
-$ ./fb2lib filter lang display
-$ ./fb2lib filter lang disable it
-$ ./fb2lib filter lang disable en
-$ ./fb2lib filter lang display
-$ ./fb2lib database reset genre
-$ ./fb2lib filter genre display
-$ ./fb2lib database reset authors
-$ ./fb2lib database reset titles
-$ ./fb2lib database reset sequences
+./fb2lib database reset torrent
+./fb2lib database reset progress
+./fb2lib database reset filter
+./fb2lib database reset langs
+./fb2lib database reset genre
+./fb2lib database reset authors
+./fb2lib database reset titles
+./fb2lib database reset sequences
 
+./fb2lib torrent load ~/books/*.torrent
+./fb2lib database load langs ~/books/*.zip
+./fb2lib filter lang disable '*'
+./fb2lib filter lang enable ''
+./fb2lib filter lang enable 'r*'
+./fb2lib filter lang display
+./fb2lib filter genre display
 ```
 
 ### Performance tests
@@ -96,4 +96,3 @@ test tools::bench::into_utf8             ... bench:       1,136 ns/iter (+/- 100
 - https://en.wikipedia.org/wiki/FictionBook
 - http://fictionbook.org/index.php/FictionBook
 - http://fictionbook.org/index.php?title=%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5_%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B0_FB2_%D0%BE%D1%82_Sclex&oldid=2972
-

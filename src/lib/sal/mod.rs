@@ -14,9 +14,13 @@ use std::collections::HashMap;
 
 pub type HashesByIdx = HashMap<i64, String>;
 pub type Connection = rusqlite::Connection;
-pub trait Save<T> {
+
+pub trait Save {
     fn save(&mut self, conn: &Connection) -> result::Fb2Result<()>;
     fn task(&self) -> TASK;
+    fn set_status(&self, conn: &Connection, archive: &str, status: STATUS) -> result::Fb2Result<()> {
+        set_archive_status(conn, archive, get_task_id(self.task()), get_status_id(status))
+    }
     fn get_new_count(&self) -> usize;
     fn get_stored_count(&self) -> usize;
 }
@@ -80,10 +84,9 @@ pub use sal::imp::get_genre_codes_disabled;
 pub use sal::imp::get_genre_codes_and_groups;
 
 pub use sal::imp::get_archive_status;
-pub use sal::imp::set_archive_started;
-pub use sal::imp::set_archive_visited;
-pub use sal::imp::set_archive_complete;
-pub use sal::imp::set_archive_failure;
+pub use sal::imp::set_archive_status;
+pub use sal::imp::get_task_id;
+pub use sal::imp::get_status_id;
 
 pub use sal::imp::insert_people;
 pub use sal::imp::select_people;
@@ -102,4 +105,3 @@ pub use sal::imp::select_sequences;
 pub use sal::imp::select_sequences_joined;
 pub use sal::imp::link_sequences;
 pub use sal::imp::unlink_sequences;
-

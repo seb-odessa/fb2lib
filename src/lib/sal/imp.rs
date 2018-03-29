@@ -51,7 +51,7 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
     Ok(())
 }
 
-fn get_task_id(oper: sal::TASK) -> i64 {
+pub fn get_task_id(oper: sal::TASK) -> i64 {
     match oper {
         sal::TASK::UNDEFINED => 0,
         sal::TASK::LANGUAGE => 1,
@@ -72,7 +72,7 @@ fn get_status_type(code: i64) -> sal::STATUS {
     }
 }
 
-fn get_status_id(code: sal::STATUS) -> i64 {
+pub fn get_status_id(code: sal::STATUS) -> i64 {
     match code {
         sal::STATUS::STARTED => 1,
         sal::STATUS::VISITED => 2,
@@ -102,26 +102,10 @@ fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
     Err(Fb2Error::Custom(format!("Archive {} not found in database", archive)))
 }
 
-fn set_archive_status(conn: &Connection, archive: &str, task: i64, status: i64) -> Fb2Result<()> {
-let archive_id = get_archive_id_by_name(conn, archive)?;
+pub fn set_archive_status(conn: &Connection, archive: &str, task: i64, status: i64) -> Fb2Result<()> {
+    let archive_id = get_archive_id_by_name(conn, archive)?;
     conn.execute(sal::query_insert::PROGRESS, &[&archive_id, &task, &status]).map_err(into)?;
     Ok(())
-}
-
-pub fn set_archive_started(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
-    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::STARTED))
-}
-
-pub fn set_archive_visited(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
-    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::VISITED))
-}
-
-pub fn set_archive_complete(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
-    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::COMPLETE))
-}
-
-pub fn set_archive_failure(conn: &Connection, archive: &str, oper: sal::TASK) -> Fb2Result<()> {
-    set_archive_status(conn, archive, get_task_id(oper), get_status_id(sal::STATUS::FAILURE))
 }
 
 #[derive(Debug)]
