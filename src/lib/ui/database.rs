@@ -34,6 +34,9 @@ const TITLES: &'static str = "titles";
 const TITLES_HELP: &'static str = "Handle book titles";
 const SEQUENCES: &'static str = "sequences";
 const SEQUENCES_HELP: &'static str = "Handle book sequences";
+const BOOKS: &'static str = "books";
+const BOOKS_HELP: &'static str = "Handle books description";
+
 
 const AST: &'static str = "ast";
 const AST_HELP: &'static str = "Handle book authors sequences and titles at once";
@@ -68,12 +71,13 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP))
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP))
+            .subcommand(SubCommand::with_name(BOOKS).about(BOOKS_HELP))
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()).arg(arch.clone()))            
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(AST).about(AST_HELP).arg(force.clone()).arg(arch.clone()))
         )
@@ -120,6 +124,7 @@ fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (AUTHORS, Some(_)) => handler::database::reset(database, "author"),
         (TITLES, Some(_)) => handler::database::reset(database, "title"),
         (SEQUENCES, Some(_)) => handler::database::reset(database, "sequence"),
+        (BOOKS, Some(_)) => handler::database::reset(database, "book"),
         (_, _) => ui::usage(arg)
     }
 }
@@ -165,7 +170,7 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
             } else {
                 ui::usage(arg)
             }
-        }        
+        }
         (_, _) => ui::usage(arg)
     }
 }

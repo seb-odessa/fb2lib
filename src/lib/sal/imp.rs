@@ -6,7 +6,6 @@ use rusqlite;
 use rustc_serialize::hex::ToHex;
 
 use std::iter::FromIterator;
-use std::collections::HashMap;
 use std::collections::HashSet;
 
 pub type Connection = rusqlite::Connection;
@@ -46,6 +45,10 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
         sal::SUBSYSTEM::PEOPLE => {
             conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+        },
+        sal::SUBSYSTEM::BOOK => {
+            conn.execute_batch(sal::query_drop::BOOKS_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_create::BOOKS_SUBSYSTEM).map_err(into)?;
         },
     }
     Ok(())
@@ -229,16 +232,6 @@ pub fn enable_language(conn: &Connection, lang: &str) -> Fb2Result<(i32)> {
     conn.execute(sal::query_insert::ENABLE_LANGUAGE, &[&lang]).map_err(into)
 }
 
-pub fn get_genre_codes(conn: &Connection) -> Fb2Result<HashSet<String>> {
-    let mut result = HashSet::new();
-    let mut stmt = conn.prepare(sal::query_select::GENRE_CODES).map_err(into)?;
-    for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
-        let code: String = row.map_err(into)? ;
-        result.insert(code);
-    }
-    Ok(result)
-}
-
 pub fn get_genres_disabled(conn: &Connection) -> Fb2Result<Vec<(String, String)>> {
     let mut result = Vec::new();
     let mut stmt = conn.prepare(sal::query_select::GENRES_DISABLED).map_err(into)?;
@@ -299,16 +292,6 @@ pub fn get_genre_codes_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     for row in stmt.query_map(&[], |row| row.get(0)).map_err(into)? {
         let group: String = row.map_err(into)? ;
         result.push(group);
-    }
-    Ok(result)
-}
-
-pub fn get_genre_codes_and_groups(conn: &Connection) -> Fb2Result<HashMap<String, String>> {
-    let mut result = HashMap::new();
-    let mut stmt = conn.prepare(sal::query_select::GENRES_CODES_AND_GROUPS).map_err(into)?;
-    for row in stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)? {
-        let (code, group) = row.map_err(into)? as (String, String);
-        result.insert(code, group);
     }
     Ok(result)
 }

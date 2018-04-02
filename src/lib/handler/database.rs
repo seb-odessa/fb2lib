@@ -27,6 +27,7 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
         "author" => sal::reset(db_file_name, sal::SUBSYSTEM::PEOPLE),
         "sequence" => sal::reset(db_file_name, sal::SUBSYSTEM::SEQUENCES),
         "title" => sal::reset(db_file_name, sal::SUBSYSTEM::TITLES),
+        "book" => sal::reset(db_file_name, sal::SUBSYSTEM::BOOK),
         _ => Err(Fb2Error::Custom(String::from("Unknown Subsystem")))
     }
 }

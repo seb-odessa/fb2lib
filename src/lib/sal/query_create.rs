@@ -30,11 +30,12 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     	name 	TEXT NOT NULL UNIQUE
 	);
-	INSERT OR IGNORE INTO task VALUES (1, 'языки');
-	INSERT OR IGNORE INTO task VALUES (2, 'жанры');
-	INSERT OR IGNORE INTO task VALUES (3, 'авторы');
-	INSERT OR IGNORE INTO task VALUES (4, 'названия');
-	INSERT OR IGNORE INTO task VALUES (5, 'циклы');
+	INSERT OR IGNORE INTO task VALUES (1, 'Заполнение справочника языков');
+	INSERT OR IGNORE INTO task VALUES (2, 'Заполнение справочника жанров');
+	INSERT OR IGNORE INTO task VALUES (3, 'Заполнение справочника авторов');
+	INSERT OR IGNORE INTO task VALUES (4, 'Заполнение справочника названий');
+	INSERT OR IGNORE INTO task VALUES (5, 'Заполнение справочника циклов');
+	INSERT OR IGNORE INTO task VALUES (6, 'Обработка данных библиотеки');
 
     DROP TABLE IF EXISTS status;
 	CREATE TABLE status (
@@ -351,7 +352,6 @@ Current hierarcy of supported/parsed data
 Book
 	Title
 	Lang
-	SrcLang
 	Genres : array
 	Authors : array
 	Sequence : array
@@ -363,84 +363,49 @@ pub const BOOKS_SUBSYSTEM: &'static str = "
 	CREATE TABLE books (
         id              	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
         archive_id      	INTEGER NOT NULL,       /* FK to archives.id */
-		index      			INTEGER NOT NULL,       /* File index in archive */
-        name       			TEXT NOT NULL UNIQUE,   /* e.g.: book.fb2 */
+		book_index 			INTEGER NOT NULL,       /* File index in archive */
         compression_method	TEXT NOT NULL,
         compressed_size     INTEGER,
         uncompressed_size   INTEGER,
 		src32         		INTEGER
         offset         		INTEGER
     );
-
-/*
-    CREATE TABLE title_info (
-	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    genre_id            INTEGER,    /* FK to genre.id */
-        author_set_id       INTEGER,    /* FK to people_set.id */
-        title_id            INTEGER,    /* FK to title.id */
-        lang_id             INTEGER,    /* FK to languages.id */
-        src_lang_id         INTEGER,    /* FK to languages.id */
-        translator_set_id   INTEGER,    /* FK to people_set.id */
-        sequence_id         INTEGER,    /* FK to sequences.id */
-        sequence_number     INTEGER     /* the number of book in sequence */
-    );
-*/
+	CREATE TABLE title_map (
+		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		book_id      	INTEGER NOT NULL,       /* FK to books.id */
+		title_id      	INTEGER NOT NULL        /* FK to titles.id */
+	);
+	CREATE TABLE lang_map (
+		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		book_id      	INTEGER NOT NULL,       /* FK to books.id */
+		lang_id      	INTEGER NOT NULL        /* FK to languages.id */
+	);
+	CREATE TABLE genre_map (
+		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		book_id      	INTEGER NOT NULL,       /* FK to books.id */
+		genre_id      	INTEGER NOT NULL        /* FK to genres.id */
+	);
+	CREATE TABLE author_map (
+		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		book_id      	INTEGER NOT NULL,       /* FK to books.id */
+		author_id      	INTEGER NOT NULL        /* FK to authors.id */
+	);
+	CREATE TABLE sequence_map (
+		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		book_id      	INTEGER NOT NULL,       /* FK to books.id */
+		sequence_id     INTEGER NOT NULL,       /* FK to sequence.id */
+		sequence_number	INTEGER					/* the number of the book in the sequence */
+	);
+	CREATE TABLE translator_map (
+		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		book_id      	INTEGER NOT NULL,       /* FK to books.id */
+		author_id      	INTEGER NOT NULL        /* FK to authors.id */
+	);
     COMMIT;";
 
 
 
 /*********************** Untested ***********************/
-
-#[allow(dead_code)]
-pub const TITLES: &'static str = "
-    CREATE TABLE titles (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
-    );";
-
-
-#[allow(dead_code)]
-pub const CREATE_SEQUENCES: &'static str = "
-    CREATE TABLE sequences (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
-    );";
-
-#[allow(dead_code)]
-pub const CREATE_PUBLISHERS: &'static str = "
-    CREATE TABLE publishers (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
-    );";
-
-#[allow(dead_code)]
-pub const CREATE_CITIES: &'static str = "
-    CREATE TABLE cities (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
-    );";
-
-#[allow(dead_code)]
-pub const CREATE_ISBNS: &'static str = "
-    CREATE TABLE isbns (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
-    );";
-
-#[allow(dead_code)]
-pub const CREATE_PROGRAMS: &'static str = "
-    CREATE TABLE programs (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    text      	    TEXT NOT NULL UNIQUE
-    );";
-
-// Defines any people sets, e.g. Authors, Translators, etc.
-#[allow(dead_code)]
-pub const CREATE_PEOPLE_SET: &'static str = "
-    CREATE TABLE people_set (
-	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    people_id       INTEGER
-    );";
 
 #[allow(dead_code)]
 pub const CREATE_TITLE_INFO: &'static str = "
