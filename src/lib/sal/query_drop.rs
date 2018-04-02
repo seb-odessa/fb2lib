@@ -32,7 +32,11 @@ pub const VERSION_SUBSYSTEM: &'static str = "
     /*DELETE FROM progress WHERE progress.task_id = 5;*/
     COMMIT;";
 
+#[allow(dead_code)]
+pub const BOOKS_SUBSYSTEM: &'static str = "
+	BEGIN;
+	DROP TABLE IF EXISTS books;
+    COMMIT;";
+
+
 /*********************** Untested ***********************/
-
-
-

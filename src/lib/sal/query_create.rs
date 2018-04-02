@@ -262,7 +262,6 @@ pub const SEQUENCES_SUBSYSTEM: &'static str = "
 
     COMMIT;";
 
-
 #[allow(dead_code)]
 pub const VERSION_SUBSYSTEM: &'static str = "
 	BEGIN;
@@ -279,19 +278,118 @@ pub const VERSION_SUBSYSTEM: &'static str = "
     COMMIT;";
 
 
-/*********************** Untested ***********************/
-#[allow(dead_code)]
-pub const BOOKS: &'static str = "
-    CREATE TABLE books (
-        id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        archive_id      INTEGER NOT NULL,       /* FK to archives.id */
-        file_name       TEXT NOT NULL UNIQUE,   /* e.g.: book.fb2 */
-        method          INTEGER,
-        packed_size     INTEGER,
-        unpacked_size   INTEGER,
-        file_offset     INTEGER
-    );";
 
+
+/*********************************************************************************************************************
+Current hierarcy of supported/parsed data
+<description>
+	<title-info> - 1 (один, обязателен);
+		<genre> - 1..n (любое число, один обязaтелен);
+			text: String
+		<author> - 1..n (любое число, один обязaтелен);
+		    <first-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - имя;
+				text: String
+			<middle-name> - 0..1 (один, опционально) - отчество;
+				text: String
+			<last-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - фамилия;
+				text: String
+			<nickname> - 0..1 (один, обязателен при отсутствии <first-name> и <last-name>, иначе опционально);
+				text: String
+		<book-title> - 1 (один, обязателен);
+			text: String
+		<lang> - 1 (один, обязателен);
+			text: String
+		<src-lang> - 0..1 (один, опционально);
+			text: String
+		<translator> - 0..n (любое число, опционально);
+		    <first-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - имя;
+				text: String
+			<middle-name> - 0..1 (один, опционально) - отчество;
+				text: String
+			<last-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - фамилия;
+				text: String
+			<nickname> - 0..1 (один, обязателен при отсутствии <first-name> и <last-name>, иначе опционально);
+				text: String
+		<sequence> - 0..n (любое число, опционально).
+				number: Number
+				name:	String
+    <document-info> - 1 (один, обязателен);
+	    <author> - 1..n (любое число, один обязaтелен);
+		    <first-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - имя;
+				text: String
+			<middle-name> - 0..1 (один, опционально) - отчество;
+				text: String
+			<last-name> - 0..1 (один, обязателен при отсутствии <nickname>, иначе опционально) - фамилия;
+				text: String
+			<nickname> - 0..1 (один, обязателен при отсутствии <first-name> и <last-name>, иначе опционально);
+				text: String
+		<program-used> - 0..1 (один, опционально);
+			text: String
+		<date> - 1 (один, обязателен);
+			value: String
+			text: String
+		<publisher> - 0..n (любое число, опционально) с версии 2.2.
+			text: String
+	<publish-info> - 0..1 (один, опционально);
+		<book-name> - 0..1 (один, опционально) - название;
+			text: String
+		<publisher> - 0..1 (один, опционально) - издательство;
+			text: String
+			... ?
+		<city> - 0..1 (один, опционально)- место издания;
+			text: String
+		<year> - 0..1 (один, опционально) - год издания;
+			text: String
+		<isbn> - 0..1 (один, опционально) - ISBN издания;
+			text: String
+		<sequence> - 0..n (любое число, опционально) - серия (серии) изданий, в которую входит книга.
+			number: Number
+			name:	String
+*********************************************************************************************************************/
+
+/*********************************************************************************************************************
+Book
+	Title
+	Lang
+	SrcLang
+	Genres : array
+	Authors : array
+	Sequence : array
+	Translator : array
+*********************************************************************************************************************/
+#[allow(dead_code)]
+pub const BOOKS_SUBSYSTEM: &'static str = "
+	BEGIN;
+	CREATE TABLE books (
+        id              	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+        archive_id      	INTEGER NOT NULL,       /* FK to archives.id */
+		index      			INTEGER NOT NULL,       /* File index in archive */
+        name       			TEXT NOT NULL UNIQUE,   /* e.g.: book.fb2 */
+        compression_method	TEXT NOT NULL,
+        compressed_size     INTEGER,
+        uncompressed_size   INTEGER,
+		src32         		INTEGER
+        offset         		INTEGER
+    );
+
+/*
+    CREATE TABLE title_info (
+	    id  	            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    genre_id            INTEGER,    /* FK to genre.id */
+        author_set_id       INTEGER,    /* FK to people_set.id */
+        title_id            INTEGER,    /* FK to title.id */
+        lang_id             INTEGER,    /* FK to languages.id */
+        src_lang_id         INTEGER,    /* FK to languages.id */
+        translator_set_id   INTEGER,    /* FK to people_set.id */
+        sequence_id         INTEGER,    /* FK to sequences.id */
+        sequence_number     INTEGER     /* the number of book in sequence */
+    );
+*/
+    COMMIT;";
+
+
+
+/*********************** Untested ***********************/
 
 #[allow(dead_code)]
 pub const TITLES: &'static str = "
@@ -390,4 +488,3 @@ pub const CREATE_DESCRIPTION: &'static str = "
 		document_info_id     INTEGER,    /* FK to document_info.id */
         publish_info_id      INTEGER     /* FK to publish_info.id */
 	);";
-
