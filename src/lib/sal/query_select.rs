@@ -30,8 +30,6 @@ pub const ARCHIVE_ID_BY_NAME: &'static str = "SELECT id FROM archives WHERE name
 
 pub const PEOPLE: &'static str = "SELECT first_name, middle_name, last_name, nickname FROM people";
 
-pub const PEOPLE_AND_IDS: &'static str = "SELECT id, first_name, middle_name, last_name, nickname FROM people";
-
 pub const TITLES: &'static str = "SELECT title FROM titles";
 
 pub const SEQUENCES: &'static str = "SELECT sequence FROM sequences";
@@ -41,3 +39,13 @@ pub const AUTHORS_JOINED: &'static str = "SELECT id, src_name, dst_name FROM aut
 pub const TITLES_JOINED: &'static str = "SELECT id, src_title, dst_title FROM titles_joined";
 
 pub const SEQUENCES_JOINED: &'static str = "SELECT id, src_sequence, dst_sequence FROM sequences_joined";
+
+pub const LOAD_ID_BY_NAME: &'static str = "SELECT id, first_name, middle_name, last_name, nickname FROM people";
+
+pub const LOAD_ID_BY_GENRE: &'static str = "SELECT id, code FROM genres";
+
+pub const LOAD_ID_BY_LANG: &'static str = "SELECT id, name FROM languages";
+
+pub const LOAD_ID_BY_TITLE: &'static str = "SELECT id,title FROM titles";
+
+pub const LOAD_ID_BY_SEQUENCE: &'static str = "SELECT id, sequence FROM sequences";

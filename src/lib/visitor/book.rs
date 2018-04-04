@@ -32,40 +32,32 @@ pub struct Book {
     allowed: usize,
     counter: usize,
     archive: i64,
-    connection: sal::Connection,
     access: AccessGuard,
     people: HashMap<People, i64>,
     genres: HashMap<String, i64>,
     langs: HashMap<String, i64>,
-    sequences: HashMap<String, i64>,
     titles: HashMap<String, i64>,
+    sequences: HashMap<String, i64>,
+    connection: sal::Connection,
 }
 impl <'a> Book {
     pub fn new(conn: sal::Connection, access: AccessGuard) -> Fb2Result<Self> {
-        let mut book = Book {
+        let book = Book {
             allowed: 0,
             counter: 0,
             archive: 0,
-            connection: conn,
             access: access,
-            people: HashMap::new(),
-            genres: HashMap::new(),
-            langs: HashMap::new(),
-            sequences: HashMap::new(),
-            titles: HashMap::new(),
+            people: sal::load_people(&conn)?.into_iter().map(|(name, id)| (People::from(name), id)).collect(),
+            genres: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_GENRE)?,
+            langs: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_LANG)?,
+            titles: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_TITLE)?,
+            sequences: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_SEQUENCE)?,
+            connection: conn,
         };
-        book.load_dictionaries()?;
         Ok(book)
     }
     pub fn select_archive(&mut self, archive: &str) -> Fb2Result<()> {
         self.archive = sal::get_archive_id_by_name(&self.connection, archive)?;
-        Ok(())
-    }
-    fn load_dictionaries(&mut self) -> Fb2Result<()> {
-        let people = sal::load_people(&self.connection)?;
-        for (name, id) in &people {
-           self.people.insert(People::from(name.clone()), *id);
-        }
         Ok(())
     }
 }
@@ -93,6 +85,10 @@ impl <'a> algorithm::Visitor<'a> for Book{
     fn report(&self) {
         println!("Handled {} files in archive, and {} allowed.", self.counter, self.allowed);
         println!("Known people count {}.", self.people.len());
+        println!("Known genres count {}.", self.genres.len());
+        println!("Known langs count {}.", self.langs.len());
+        println!("Known titles count {}.", self.titles.len());
+        println!("Known sequences count {}.", self.sequences.len());
     }
 }
 

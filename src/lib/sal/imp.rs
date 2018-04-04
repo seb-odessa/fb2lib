@@ -318,14 +318,25 @@ pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, St
 }
 
 pub fn load_people(conn: &Connection) -> Fb2Result<HashMap<(String, String, String, String), i64>> {
-    let mut people = HashMap::new();
-    let mut stmt = conn.prepare(sal::query_select::PEOPLE_AND_IDS).map_err(into)?;
+    let mut map = HashMap::new();
+    let mut stmt = conn.prepare(sal::query_select::LOAD_ID_BY_NAME).map_err(into)?;
     let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3), row.get(4))).map_err(into)?;
     for row in rows {
         let author = row.map_err(into)? as (i64, String,String,String,String);
-        people.insert((author.1, author.2, author.3, author.4), author.0);
+        map.insert((author.1, author.2, author.3, author.4), author.0);
     }
-    Ok(people)
+    Ok(map)
+}
+
+pub fn load_id_by_name(conn: &Connection, sql: &str) -> Fb2Result<HashMap<String, i64>> {
+    let mut map = HashMap::new();
+    let mut stmt = conn.prepare(sql).map_err(into)?;
+    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)?;
+    for row in rows {
+        let tuple = row.map_err(into)? as (i64, String);
+        map.insert(tuple.1, tuple.0);
+    }
+    Ok(map)
 }
 
 fn insert_from_set(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
