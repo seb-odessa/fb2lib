@@ -1,4 +1,5 @@
 use sal;
+use archive;
 use algorithm;
 
 use sal::Save;
@@ -6,11 +7,13 @@ use algorithm::Visitor;
 use result::{Fb2Result, Fb2Error};
 use fb2parser::FictionBook;
 
+
 use visitor::acess;
 use visitor::author::Author;
 use visitor::lang::Lang;
 use visitor::title::Title;
 use visitor::sequence::Sequence;
+use visitor::book::Book;
 use visitor::collector::Collector;
 
 use std::path;
@@ -69,6 +72,22 @@ pub fn load_dictionary(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result
     handle(&conn, force, archives, visitor)
 }
 
+pub fn load_books(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let access = create_access_guard(&conn)?;
+    let mut visitor = Book::new(conn, access)?;
+    for archive in archives {
+        let archive_name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
+        let res = visitor.select_archive(archive_name)
+                    .and_then(|()| archive::open(archive))
+                    .and_then(|zip| algorithm::visit_all(&zip, &mut visitor));
+        if res.is_err() {
+            println!("{}", res.unwrap_err());
+        }
+    }
+    visitor.report();
+    Ok(())
+}
 
 /************************************* SHOW HANDLERS *******************************************/
 pub fn show_authors(db: &str, pattern: &str) -> Fb2Result<()> {

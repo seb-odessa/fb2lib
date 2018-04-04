@@ -61,6 +61,7 @@ pub use sal::imp::reset;
 pub use sal::imp::get_connection;
 
 pub use sal::imp::get_archive_sizes;
+pub use sal::imp::get_archive_id_by_name;
 pub use sal::imp::register;
 pub use sal::imp::validate;
 pub use sal::imp::get_hash;
@@ -89,6 +90,7 @@ pub use sal::imp::get_status_id;
 
 pub use sal::imp::insert_people;
 pub use sal::imp::select_people;
+pub use sal::imp::load_people;
 pub use sal::imp::select_authors_joined;
 pub use sal::imp::link_authors;
 pub use sal::imp::unlink_authors;

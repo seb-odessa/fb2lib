@@ -363,40 +363,40 @@ pub const BOOKS_SUBSYSTEM: &'static str = "
 	CREATE TABLE books (
         id              	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
         archive_id      	INTEGER NOT NULL,       /* FK to archives.id */
-		book_index 			INTEGER NOT NULL,       /* File index in archive */
+		file_name 			TEXT NOT NULL,
         compression_method	TEXT NOT NULL,
         compressed_size     INTEGER,
-        uncompressed_size   INTEGER,
-		src32         		INTEGER
-        offset         		INTEGER
+        original_size       INTEGER,
+		src32         		INTEGER,
+        offset              INTEGER
     );
-	CREATE TABLE title_map (
+	CREATE TABLE book_titles (
 		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		book_id      	INTEGER NOT NULL,       /* FK to books.id */
 		title_id      	INTEGER NOT NULL        /* FK to titles.id */
 	);
-	CREATE TABLE lang_map (
+	CREATE TABLE book_langs (
 		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		book_id      	INTEGER NOT NULL,       /* FK to books.id */
 		lang_id      	INTEGER NOT NULL        /* FK to languages.id */
 	);
-	CREATE TABLE genre_map (
+	CREATE TABLE book_genres (
 		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		book_id      	INTEGER NOT NULL,       /* FK to books.id */
 		genre_id      	INTEGER NOT NULL        /* FK to genres.id */
 	);
-	CREATE TABLE author_map (
+	CREATE TABLE book_authors (
 		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		book_id      	INTEGER NOT NULL,       /* FK to books.id */
 		author_id      	INTEGER NOT NULL        /* FK to authors.id */
 	);
-	CREATE TABLE sequence_map (
+	CREATE TABLE book_sequences (
 		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		book_id      	INTEGER NOT NULL,       /* FK to books.id */
 		sequence_id     INTEGER NOT NULL,       /* FK to sequence.id */
 		sequence_number	INTEGER					/* the number of the book in the sequence */
 	);
-	CREATE TABLE translator_map (
+	CREATE TABLE book_translators (
 		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		book_id      	INTEGER NOT NULL,       /* FK to books.id */
 		author_id      	INTEGER NOT NULL        /* FK to authors.id */

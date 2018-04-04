@@ -7,6 +7,7 @@ use rustc_serialize::hex::ToHex;
 
 use std::iter::FromIterator;
 use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub type Connection = rusqlite::Connection;
 
@@ -95,7 +96,7 @@ pub fn get_archive_status(conn: &Connection, archive: &str, oper: sal::TASK) -> 
     Ok(sal::STATUS::UNKNOWN)
 }
 
-fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
+pub fn get_archive_id_by_name(conn: &Connection, archive: &str) -> Fb2Result<i64> {
     let mut stmt = conn.prepare(sal::query_select::ARCHIVE_ID_BY_NAME).map_err(into)?;
     let rows = stmt.query_map(&[&archive], |row| { row.get(0) })?;
     for row in rows {
@@ -314,6 +315,17 @@ pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, St
         authors.insert(author);
     }
     Ok(authors)
+}
+
+pub fn load_people(conn: &Connection) -> Fb2Result<HashMap<(String, String, String, String), i64>> {
+    let mut people = HashMap::new();
+    let mut stmt = conn.prepare(sal::query_select::PEOPLE_AND_IDS).map_err(into)?;
+    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3), row.get(4))).map_err(into)?;
+    for row in rows {
+        let author = row.map_err(into)? as (i64, String,String,String,String);
+        people.insert((author.1, author.2, author.3, author.4), author.0);
+    }
+    Ok(people)
 }
 
 fn insert_from_set(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {

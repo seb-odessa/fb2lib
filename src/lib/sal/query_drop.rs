@@ -36,12 +36,12 @@ pub const VERSION_SUBSYSTEM: &'static str = "
 pub const BOOKS_SUBSYSTEM: &'static str = "
 	BEGIN;
 	DROP TABLE IF EXISTS books;
-    DROP TABLE IF EXISTS title_map;
-    DROP TABLE IF EXISTS lang_map;
-    DROP TABLE IF EXISTS genre_map;
-    DROP TABLE IF EXISTS author_map;
-    DROP TABLE IF EXISTS sequence_map;
-    DROP TABLE IF EXISTS translator_map;
+    DROP TABLE IF EXISTS book_titles;
+    DROP TABLE IF EXISTS book_langs;
+    DROP TABLE IF EXISTS book_genres;
+    DROP TABLE IF EXISTS book_authors;
+    DROP TABLE IF EXISTS book_sequences;
+    DROP TABLE IF EXISTS book_translators;
     COMMIT;";
 
 

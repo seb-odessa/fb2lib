@@ -1,8 +1,6 @@
 use zip::ZipFile;
 use archive;
-//use tools;
 use algorithm;
-//use fb2parser::FictionBook;
 
 pub enum Show {
     Zip,

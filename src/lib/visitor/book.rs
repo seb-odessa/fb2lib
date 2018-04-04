@@ -1,117 +1,115 @@
+use sal;
+use archive;
 use algorithm;
+use result::Fb2Result;
 use visitor::acess::AccessGuard;
 use fb2parser::FictionBook;
+use zip::ZipFile;
 
-use std::iter::FromIterator;
-use std::collections::HashSet;
 use std::collections::HashMap;
+use std::convert::From;
 
-//pub type GenreMap = HashMap<String, String>;
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub struct People {
+    first_name: String,
+    middle_name: String,
+    last_name: String,
+    nickname: String,
+}
+impl From<(String, String,String, String)> for People {
+    fn from(src: (String, String,String, String)) -> Self {
+        People {
+            first_name: src.0,
+            middle_name: src.1,
+            last_name: src.2,
+            nickname: src.3
+        }
+    }
+}
 
 pub struct Book {
+    allowed: usize,
     counter: usize,
+    archive: i64,
+    connection: sal::Connection,
     access: AccessGuard,
-    books: Vec<String>,
-    genres: HashMap<String, String>,
+    people: HashMap<People, i64>,
+    genres: HashMap<String, i64>,
+    langs: HashMap<String, i64>,
+    sequences: HashMap<String, i64>,
+    titles: HashMap<String, i64>,
 }
-impl Book {
-    pub fn new(access: AccessGuard, genres: GenreMap) -> Self {
-        Book {
+impl <'a> Book {
+    pub fn new(conn: sal::Connection, access: AccessGuard) -> Fb2Result<Self> {
+        let mut book = Book {
+            allowed: 0,
             counter: 0,
+            archive: 0,
+            connection: conn,
             access: access,
-            books: Vec::new(),
-            genres: genres,
-        }
+            people: HashMap::new(),
+            genres: HashMap::new(),
+            langs: HashMap::new(),
+            sequences: HashMap::new(),
+            titles: HashMap::new(),
+        };
+        book.load_dictionaries()?;
+        Ok(book)
     }
-    fn create_author(desc: &(String, String, String, String))->String {
-        let (fname, mname, lname, nick) = desc.clone();
-        if fname.is_empty() && mname.is_empty() && lname.is_empty() {
-            return nick;
-        } else {
-            let mut result = lname; // фамилия
-            if !fname.is_empty() {
-                result.push_str(" ");
-            }
-            result.push_str(fname.as_str()); // имя
-            if !mname.is_empty() {
-                result.push_str(" ");
-            }
-            result.push_str(mname.as_str()); // отчество
-            return result;
-        }
+    pub fn select_archive(&mut self, archive: &str) -> Fb2Result<()> {
+        self.archive = sal::get_archive_id_by_name(&self.connection, archive)?;
+        Ok(())
     }
-
-    fn create_genres(&self, book: &FictionBook)->Vec<String> {
-        let mut groups = HashSet::new();
-        for genre in book.get_book_genres() {
-            if let Some(group) = self.genres.get(genre.as_str()) {
-                groups.insert(group.clone());
-            }
+    fn load_dictionaries(&mut self) -> Fb2Result<()> {
+        let people = sal::load_people(&self.connection)?;
+        for (name, id) in &people {
+           self.people.insert(People::from(name.clone()), *id);
         }
-        Vec::from_iter(groups)
-    }
-
-    fn format(&self, book: &FictionBook)->Vec<String> {
-        let mut result = Vec::new();
-        let title = book.get_book_title();
-        let date = book.get_book_date();
-
-        for author_desc in book.get_book_authors() {
-            let author = Book::create_author(&author_desc);
-            let mut description = format!("{:40} : '{}'", author, title);
-            if !date.is_empty() {
-                description.push_str(" (");
-                description.push_str(date.as_str());
-                description.push_str(")");
-            }
-            let sequences = book.get_book_sequences();
-            if !sequences.is_empty() {
-                description.push_str(" [");
-                for sequence in &sequences {
-                    if &sequences[0] != sequence {
-                        description.push_str(", ");
-                    }
-                    if sequence.1 > 0 {
-                        description.push_str(format!("{} - {}", sequence.0, sequence.1).as_str());
-                    } else {
-                        description.push_str(format!("{}", sequence.0).as_str());
-                    }
-
-                }
-                description.push_str("]");
-            }
-
-            let genres = self.create_genres(book);
-            if !genres.is_empty() {
-                description.push_str(" {");
-                for genre in &genres{
-                    if &genres[0] != genre {
-                        description.push_str(", ");
-                    }
-                    description.push_str(format!("{}", genre).as_str());
-                }
-                description.push_str("}");
-            }
-            result.push(description);
-        }
-        result
+        Ok(())
     }
 }
-impl algorithm::Visitor<FictionBook> for Book {
-    fn visit(&mut self, book: &mut FictionBook) {
+impl <'a> algorithm::Visitor<'a> for Book{
+    type Type = ZipFile<'a> ;
+    fn visit(&mut self, zip: &mut Self::Type) {
         self.counter += 1;
-        if self.access.is_allowed(book) {
-            for description in self.format(book) {
-                self.books.push(description);
-            }
+        match archive::load_fb2(zip) {
+            Ok(book) => if self.archive != 0 && self.access.is_allowed(&book) {
+                self.allowed += 1;
+                let file_name = zip.name();
+                let compression_method = zip.compression();
+                let compressed_size = zip.compressed_size();
+                let original_size = zip.size();
+                let src32 = zip.crc32();
+                let offset = zip.offset();
+            },
+            Err(err) => println!("{}", err),
         }
+
     }
     fn get_count(&self) -> usize {
         self.counter
     }
     fn report(&self) {
-        for book in &self.books {
-            println!("{}", book);
-        }
+        println!("Handled {} files in archive, and {} allowed.", self.counter, self.allowed);
+        println!("Known people count {}.", self.people.len());
     }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::People;
+
+    #[test]
+    fn people_from_tuple() {
+        let src = (String::from("First"), String::from("Middle"), String::from("Last"), String::from("Nickname"));
+        let people = People::from(src.clone());
+        assert_eq!(people.first_name, src.0);
+        assert_eq!(people.middle_name, src.1);
+        assert_eq!(people.last_name, src.2);
+        assert_eq!(people.nickname, src.3);
+
+    }
+
 }

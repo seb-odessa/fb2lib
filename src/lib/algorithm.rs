@@ -41,6 +41,15 @@ pub fn visit<'a>(zip: &'a ZipArchive, pattern: &str, visitor: &mut Visitor<Type=
     Ok(())
 }
 
+pub fn visit_all<'a>(zip: &'a ZipArchive, visitor: &mut Visitor<Type=ZipFile<'a>>) -> Fb2Result<()> {
+    for i in 0..zip.len() {
+        if let Some(mut file) = zip.by_index(i).ok() {
+            visitor.visit(&mut file);
+        }
+    };
+    Ok(())
+}
+
 pub fn apply<F>(zip: ZipArchive, file_mask: &str, visitor: F) -> Fb2Result<()>
 where
     F: Fn(String, String) -> () + Send + Copy,
