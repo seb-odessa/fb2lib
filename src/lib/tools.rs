@@ -3,6 +3,9 @@ use fb2parser::FictionBook;
 use result::{Fb2Result, Fb2Error};
 
 use std::error::Error;
+use std::hash::Hash;
+use std::hash::Hasher;
+use std::collections::hash_map::DefaultHasher;
 
 
 pub fn find(haystack: &[u8], needle: &[u8]) -> Option<usize> {
@@ -123,6 +126,12 @@ pub fn into_utf8(header: Vec<u8>) -> Fb2Result<String> {
     return utf8(&header);
 }
 
+pub fn get_hash<T: Hash>(value: &T) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    value.hash(&mut hasher);
+    return hasher.finish();
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -132,6 +141,20 @@ mod tests {
             .as_bytes()
             .to_vec();
         assert_eq!(Some(String::from("utf-8")), super::get_encoding(&xml));
+    }
+
+    #[test]
+    fn get_hash() {
+        {
+            let value = String::from("String value");
+            assert_eq!(14472655620516614020u64, super::get_hash(&value));
+            assert_eq!(14472655620516614020u64, super::get_hash(&value.clone()));
+        }
+        {
+            let value = (String::from("String value"), 42u64);
+            assert_eq!(9839853712099573565u64, super::get_hash(&value));
+            assert_eq!(9839853712099573565u64, super::get_hash(&value.clone()));
+        }
     }
 }
 

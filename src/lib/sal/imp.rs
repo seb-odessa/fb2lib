@@ -1,4 +1,5 @@
 use sal;
+use tools;
 use result::{into, Fb2Result, Fb2Error};
 use torrent::Metainfo;
 
@@ -8,6 +9,7 @@ use rustc_serialize::hex::ToHex;
 use std::iter::FromIterator;
 use std::collections::HashSet;
 use std::collections::HashMap;
+
 
 pub type Connection = rusqlite::Connection;
 
@@ -159,7 +161,7 @@ pub fn validate(conn: &Connection, id: i64, desc: &sal::HashesByIdx) -> Fb2Resul
     Ok(None)
 }
 
-pub fn get_hash(conn: &Connection, id: i64, index: i64) -> Fb2Result<Option<String>> {
+pub fn get_piece_hash(conn: &Connection, id: i64, index: i64) -> Fb2Result<Option<String>> {
     let mut stmt = conn.prepare(sal::query_select::HASH_BY_ARCH_ID_AND_INDEX).map_err(into)?;
     let rows = stmt.query_map(&[&id, &index], |row| (row.get(0))).map_err(into)?;
     for row in rows {
@@ -335,6 +337,17 @@ pub fn load_id_by_name(conn: &Connection, sql: &str) -> Fb2Result<HashMap<String
     for row in rows {
         let tuple = row.map_err(into)? as (i64, String);
         map.insert(tuple.1, tuple.0);
+    }
+    Ok(map)
+}
+
+pub fn load_hash_to_id(conn: &Connection, sql: &str) -> Fb2Result<HashMap<u64, i64>> {
+    let mut map = HashMap::new();
+    let mut stmt = conn.prepare(sql).map_err(into)?;
+    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)?;
+    for row in rows {
+        let (id, value) = row.map_err(into)? as (i64, String);
+        map.insert(tools::get_hash(&value), id);
     }
     Ok(map)
 }

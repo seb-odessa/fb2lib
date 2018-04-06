@@ -6,6 +6,7 @@ use visitor::acess::AccessGuard;
 use fb2parser::FictionBook;
 use zip::ZipFile;
 
+use std::collections::HashSet;
 use std::collections::HashMap;
 use std::convert::From;
 
@@ -83,13 +84,15 @@ impl <'a> algorithm::Visitor<'a> for Book{
         self.counter
     }
     fn report(&self) {
+        let t = sal::load_hash_to_id(&self.connection, sal::LOAD_ID_BY_TITLE).unwrap().len();
         println!("Handled {} files in archive, and {} allowed.", self.counter, self.allowed);
         println!("Known people count {}.", self.people.len());
         println!("Known genres count {}.", self.genres.len());
         println!("Known langs count {}.", self.langs.len());
-        println!("Known titles count {}.", self.titles.len());
+        println!("Known titles count {} ({}).", self.titles.len(), t);
         println!("Known sequences count {}.", self.sequences.len());
     }
+
 }
 
 

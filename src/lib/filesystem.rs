@@ -65,7 +65,7 @@ pub fn check_integrity(db_file_name: &str, archive_name: &str) -> Fb2Result<()> 
         }
 
         if let Some(index) = sal::validate(&conn, arch.id, &desc)? {
-            let err = if let Some(expected) = sal::get_hash(&conn, arch.id, index)? {
+            let err = if let Some(expected) = sal::get_piece_hash(&conn, arch.id, index)? {
                 Fb2Error::Custom(format!(
                     "The hash of piece {} in archive {} is not valid: expected {}, actual {}",
                     index,
