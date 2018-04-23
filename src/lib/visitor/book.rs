@@ -69,12 +69,10 @@ impl <'a> algorithm::Visitor<'a> for Book{
     type Type = ZipFile<'a> ;
     fn visit(&mut self, zip: &mut Self::Type) {
         self.counter += 1;
-        println!("Book::visit() <- {}", zip.name());
         match archive::load_fb2(zip) {
             Ok(book) => if self.archive != 0 && self.access.is_allowed(&book) {
                 self.allowed += 1;
                 let book: FileDesc = FileDesc::from(zip);
-
                 match sal::register_book(&mut self.connection, self.archive, &book){
                     Ok(()) => {},
                     Err(e) => println!("{}", e)

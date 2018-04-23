@@ -450,7 +450,7 @@ pub fn register_book(conn: &mut Connection, arch_id: i64, desc: &FileDesc) -> Fb
         (":offset", &desc.offset),
     ])?;
 
-    println!("register_book({}) -> {}", &desc.file_name, book_id);
+    println!("register_book({}) -> {}", &desc.file_name, tr.last_insert_rowid());
 
     tr.commit().map_err(into)
 }

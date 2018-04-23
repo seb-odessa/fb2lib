@@ -368,7 +368,8 @@ pub const BOOKS_SUBSYSTEM: &'static str = "
         compressed_size     INTEGER,
         original_size       INTEGER,
 		src32         		INTEGER,
-        offset              INTEGER
+        offset              INTEGER,
+        UNIQUE (file_name, src32) ON CONFLICT IGNORE
     );
 	CREATE TABLE book_titles (
 		id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
