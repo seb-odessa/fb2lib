@@ -4,15 +4,16 @@ use algorithm;
 use result::Fb2Result;
 use visitor::acess::AccessGuard;
 use fb2parser::FictionBook;
+use types::FileDesc;
+
 use zip::ZipFile;
 
-use std::collections::HashSet;
 use std::collections::HashMap;
 use std::convert::From;
 
 
 #[derive(Debug, PartialEq, Eq, Hash)]
-pub struct People {
+struct People {
     first_name: String,
     middle_name: String,
     last_name: String,
@@ -29,6 +30,8 @@ impl From<(String, String,String, String)> for People {
     }
 }
 
+
+
 pub struct Book {
     allowed: usize,
     counter: usize,
@@ -36,21 +39,21 @@ pub struct Book {
     access: AccessGuard,
     people: HashMap<People, i64>,
     genres: HashMap<String, i64>,
-    langs: HashMap<String, i64>,
+    languages: HashMap<String, i64>,
     titles: HashMap<String, i64>,
     sequences: HashMap<String, i64>,
     connection: sal::Connection,
 }
 impl <'a> Book {
     pub fn new(conn: sal::Connection, access: AccessGuard) -> Fb2Result<Self> {
-        let book = Book {
+        let book: Book = Book {
             allowed: 0,
             counter: 0,
             archive: 0,
             access: access,
             people: sal::load_people(&conn)?.into_iter().map(|(name, id)| (People::from(name), id)).collect(),
             genres: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_GENRE)?,
-            langs: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_LANG)?,
+            languages: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_LANG)?,
             titles: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_TITLE)?,
             sequences: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_SEQUENCE)?,
             connection: conn,
@@ -66,15 +69,17 @@ impl <'a> algorithm::Visitor<'a> for Book{
     type Type = ZipFile<'a> ;
     fn visit(&mut self, zip: &mut Self::Type) {
         self.counter += 1;
+        println!("Book::visit() <- {}", zip.name());
         match archive::load_fb2(zip) {
             Ok(book) => if self.archive != 0 && self.access.is_allowed(&book) {
                 self.allowed += 1;
-                let file_name = zip.name();
-                let compression_method = zip.compression();
-                let compressed_size = zip.compressed_size();
-                let original_size = zip.size();
-                let src32 = zip.crc32();
-                let offset = zip.offset();
+                let book: FileDesc = FileDesc::from(zip);
+
+                match sal::register_book(&mut self.connection, self.archive, &book){
+                    Ok(()) => {},
+                    Err(e) => println!("{}", e)
+                }
+
             },
             Err(err) => println!("{}", err),
         }
@@ -88,7 +93,7 @@ impl <'a> algorithm::Visitor<'a> for Book{
         println!("Handled {} files in archive, and {} allowed.", self.counter, self.allowed);
         println!("Known people count {}.", self.people.len());
         println!("Known genres count {}.", self.genres.len());
-        println!("Known langs count {}.", self.langs.len());
+        println!("Known languages count {}.", self.languages.len());
         println!("Known titles count {} ({}).", self.titles.len(), t);
         println!("Known sequences count {}.", self.sequences.len());
     }

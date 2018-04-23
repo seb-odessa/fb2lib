@@ -93,6 +93,7 @@ fn handle<T>(conn: &sal::Connection, save: bool, force: bool, archives: &Vec<&st
 {
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
+        println!("handler::book::handle() <- {}", name);
         if save {
             visit_and_save(&conn, archive, name, force, &mut visitor)?;
         } else {

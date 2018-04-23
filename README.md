@@ -70,6 +70,7 @@ Prepare Database infrastructure
 ./fb2lib database reset authors
 ./fb2lib database reset titles
 ./fb2lib database reset sequences
+./fb2lib database reset books
 
 ./fb2lib torrent load ~/books/*.torrent
 ./fb2lib database load langs ~/books/*.zip

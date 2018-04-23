@@ -1,4 +1,4 @@
-#[allow(dead_code)]
+
 pub const INSERT_GENRES: &'static str = "
 	BEGIN;
 	INSERT INTO genre_groups (id, name) VALUES (1, 'приключения');
