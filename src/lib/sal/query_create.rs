@@ -364,7 +364,7 @@ pub const BOOKS_SUBSYSTEM: &'static str = "
         id              	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
         archive_id      	INTEGER NOT NULL,       /* FK to archives.id */
 		file_name 			TEXT NOT NULL,
-        compression_method	TEXT NOT NULL,
+        compression_method	INTEGER,
         compressed_size     INTEGER,
         original_size       INTEGER,
 		src32         		INTEGER,

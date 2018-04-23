@@ -2,6 +2,8 @@ use sal;
 use tools;
 use result::{into, Fb2Result, Fb2Error};
 use torrent::Metainfo;
+use types::FileDesc;
+use types::ArchiveSizes;
 
 use rusqlite;
 use rustc_serialize::hex::ToHex;
@@ -112,24 +114,6 @@ pub fn set_archive_status(conn: &Connection, archive: &str, task: i64, status: i
     let archive_id = get_archive_id_by_name(conn, archive)?;
     conn.execute(sal::query_insert::PROGRESS, &[&archive_id, &task, &status]).map_err(into)?;
     Ok(())
-}
-
-#[derive(Debug)]
-pub struct ArchiveSizes {
-    pub id: i64,
-    pub total_length: usize,
-    pub piece_length: usize,
-    pub pieces_count: usize,
-}
-impl ArchiveSizes {
-    pub fn new(id: i64, total_length: i64, piece_length: i64, pieces_count: i64) -> Self {
-        ArchiveSizes {
-            id: id,
-            total_length: total_length as usize,
-            piece_length: piece_length as usize,
-            pieces_count: pieces_count as usize,
-        }
-    }
 }
 
 pub fn get_connection(db_file_name: &str) -> Fb2Result<Connection> {
@@ -452,4 +436,21 @@ pub fn unlink_titles(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
 
 pub fn unlink_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
     conn.execute(sal::query_delete::SEQUENCES_LINK, &[&src, &dst]).map_err(into)
+}
+
+pub fn register_book(conn: &mut Connection, arch_id: i64, desc: &FileDesc) -> Fb2Result<()> {
+    let tr = conn.transaction()?;
+    let book_id = tr.execute_named(sal::query_insert::BOOK, &[
+        (":archive_id", &arch_id),
+        (":file_name", &desc.file_name),
+        (":compression_method", &desc.compression_method),
+        (":compressed_size", &desc.compressed_size),
+        (":original_size", &desc.original_size),
+        (":src32", &desc.src32),
+        (":offset", &desc.offset),
+    ])?;
+
+    println!("register_book({}) -> {}", &desc.file_name, book_id);
+
+    tr.commit().map_err(into)
 }

@@ -24,6 +24,7 @@ pub mod result;
 pub mod algorithm;
 
 mod sal;
+mod types;
 mod tools;
 mod iconv;
 mod handler;

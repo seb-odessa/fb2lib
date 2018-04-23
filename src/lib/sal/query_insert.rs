@@ -66,3 +66,16 @@ pub const AUTHOR_LINK: &'static str = "INSERT INTO people_links VALUES (NULL, ?,
 pub const TITLE_LINK: &'static str = "INSERT INTO titles_links VALUES (NULL, ?, ?, 0);";
 
 pub const SEQUENCES_LINK: &'static str = "INSERT INTO sequences_links VALUES (NULL, ?, ?, 0);";
+
+pub const BOOK: &'static str = "
+    INSERT INTO books VALUES (
+        NULL,
+        :archive_id,
+        :file_name,
+        :compression_method,
+        :compressed_size,
+        :original_size,
+        :src32,
+        :offset
+    );
+";
