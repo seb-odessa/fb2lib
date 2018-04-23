@@ -145,16 +145,13 @@ mod tests {
 
     #[test]
     fn get_hash() {
-        {
-            let value = String::from("String value");
-            assert_eq!(14472655620516614020u64, super::get_hash(&value));
-            assert_eq!(14472655620516614020u64, super::get_hash(&value.clone()));
-        }
-        {
-            let value = (String::from("String value"), 42u64);
-            assert_eq!(9839853712099573565u64, super::get_hash(&value));
-            assert_eq!(9839853712099573565u64, super::get_hash(&value.clone()));
-        }
+        let value = String::from("String value");
+        assert_eq!(14472655620516614020u64, super::get_hash(&value));
+        assert_eq!(14472655620516614020u64, super::get_hash(&value.clone()));
+
+        let tuple = (value, 42u64);
+        assert_eq!(9839853712099573565u64, super::get_hash(&tuple));
+        assert_eq!(9839853712099573565u64, super::get_hash(&tuple.clone()));
     }
 }
 
