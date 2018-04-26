@@ -115,5 +115,6 @@ pub use sal::imp::load_id_by_name;
 pub use sal::imp::load_hash_to_id;
 
 pub use sal::imp::register_book;
+pub use sal::imp::load_books;
 
 

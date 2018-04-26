@@ -5,38 +5,21 @@ use result::Fb2Result;
 use visitor::acess::AccessGuard;
 use fb2parser::FictionBook;
 use types::FileDesc;
+use types::People;
 
 use zip::ZipFile;
-
+use std::collections::HashSet;
 use std::collections::HashMap;
-use std::convert::From;
-
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-struct People {
-    first_name: String,
-    middle_name: String,
-    last_name: String,
-    nickname: String,
-}
-impl From<(String, String,String, String)> for People {
-    fn from(src: (String, String,String, String)) -> Self {
-        People {
-            first_name: src.0,
-            middle_name: src.1,
-            last_name: src.2,
-            nickname: src.3
-        }
-    }
-}
-
 
 
 pub struct Book {
     allowed: usize,
     counter: usize,
-    archive: i64,
-    access: AccessGuard,
+    archive_id: i64,
+    guard: AccessGuard,
+    books_added: HashSet<FileDesc>,
+    books_handled: HashSet<FileDesc>,
+
     people: HashMap<People, i64>,
     genres: HashMap<String, i64>,
     languages: HashMap<String, i64>,
@@ -49,8 +32,10 @@ impl <'a> Book {
         let book: Book = Book {
             allowed: 0,
             counter: 0,
-            archive: 0,
-            access: access,
+            archive_id: 0,
+            guard: access,
+            books_added: HashSet::new(),
+            books_handled: sal::load_books(&conn)?,
             people: sal::load_people(&conn)?.into_iter().map(|(name, id)| (People::from(name), id)).collect(),
             genres: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_GENRE)?,
             languages: sal::load_id_by_name(&conn, sal::LOAD_ID_BY_LANG)?,
@@ -61,7 +46,7 @@ impl <'a> Book {
         Ok(book)
     }
     pub fn select_archive(&mut self, archive: &str) -> Fb2Result<()> {
-        self.archive = sal::get_archive_id_by_name(&self.connection, archive)?;
+        self.archive_id = sal::get_archive_id_by_name(&self.connection, archive)?;
         Ok(())
     }
 }
@@ -70,14 +55,12 @@ impl <'a> algorithm::Visitor<'a> for Book{
     fn visit(&mut self, zip: &mut Self::Type) {
         self.counter += 1;
         match archive::load_fb2(zip) {
-            Ok(book) => if self.archive != 0 && self.access.is_allowed(&book) {
+            Ok(book) => if self.archive_id != 0 && self.guard.is_allowed(&book) {
                 self.allowed += 1;
-                let book: FileDesc = FileDesc::from(zip);
-                match sal::register_book(&mut self.connection, self.archive, &book){
-                    Ok(()) => {},
-                    Err(e) => println!("{}", e)
+                let desc: FileDesc = FileDesc::from((self.archive_id, zip));
+                if !self.books_handled.contains(&desc) {
+                    self.books_added.insert(desc);
                 }
-
             },
             Err(err) => println!("{}", err),
         }
@@ -89,29 +72,13 @@ impl <'a> algorithm::Visitor<'a> for Book{
     fn report(&self) {
         let t = sal::load_hash_to_id(&self.connection, sal::LOAD_ID_BY_TITLE).unwrap().len();
         println!("Handled {} files in archive, and {} allowed.", self.counter, self.allowed);
+        println!("Books registered in DB {}.", self.books_handled.len());
+        println!("Books ready to save to the DB {}.", self.books_added.len());
         println!("Known people count {}.", self.people.len());
         println!("Known genres count {}.", self.genres.len());
         println!("Known languages count {}.", self.languages.len());
         println!("Known titles count {} ({}).", self.titles.len(), t);
         println!("Known sequences count {}.", self.sequences.len());
-    }
-
-}
-
-
-#[cfg(test)]
-mod tests {
-    use super::People;
-
-    #[test]
-    fn people_from_tuple() {
-        let src = (String::from("First"), String::from("Middle"), String::from("Last"), String::from("Nickname"));
-        let people = People::from(src.clone());
-        assert_eq!(people.first_name, src.0);
-        assert_eq!(people.middle_name, src.1);
-        assert_eq!(people.last_name, src.2);
-        assert_eq!(people.nickname, src.3);
-
     }
 
 }

@@ -1,7 +1,9 @@
 
-mod imp;
+mod archive;
+mod people;
 
-pub use types::imp::FileDesc;
-pub use types::imp::ArchiveSizes;
+pub use types::archive::FileDesc;
+pub use types::archive::Sizes;
+pub use types::people::People;
 
 

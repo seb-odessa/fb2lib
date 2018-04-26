@@ -49,3 +49,14 @@ pub const LOAD_ID_BY_LANG: &'static str = "SELECT id, name FROM languages";
 pub const LOAD_ID_BY_TITLE: &'static str = "SELECT id,title FROM titles";
 
 pub const LOAD_ID_BY_SEQUENCE: &'static str = "SELECT id, sequence FROM sequences";
+
+pub const BOOKS: &'static str = "
+    SELECT
+        archive_id,
+        file_name,
+        compression_method,
+        compressed_size,
+        original_size,
+        src32,
+        offset
+     FROM books;";
