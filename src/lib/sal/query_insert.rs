@@ -55,11 +55,11 @@ pub const PEOPLE: &'static str = "
 pub const PROGRESS: &'static str = "
 	INSERT INTO progress (archive_id, task_id, status_id) VALUES (?, ?, ?)";
 
-pub const TITLES: &'static str = "
-	INSERT INTO titles (title) VALUES (?)";
+pub const TITLES: &'static str = "INSERT INTO titles (title) VALUES (?)";
 
-pub const SEQUENCES: &'static str = "
-	INSERT INTO sequences (sequence) VALUES (?)";
+pub const SEQUENCES: &'static str = "INSERT INTO sequences (sequence) VALUES (?)";
+
+pub const NAMES: &'static str = "INSERT INTO names (name) VALUES (?)";
 
 pub const AUTHOR_LINK: &'static str = "INSERT INTO people_links VALUES (NULL, ?, ?, 0);";
 

@@ -7,3 +7,4 @@ pub mod sequence;
 pub mod header;
 pub mod collector;
 pub mod book;
+pub mod name;

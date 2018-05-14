@@ -50,6 +50,8 @@ pub const LOAD_ID_BY_TITLE: &'static str = "SELECT id,title FROM titles";
 
 pub const LOAD_ID_BY_SEQUENCE: &'static str = "SELECT id, sequence FROM sequences";
 
+pub const NAMES: &'static str = "SELECT name FROM names";
+
 pub const BOOKS: &'static str = "
     SELECT
         archive_id,

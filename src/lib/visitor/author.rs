@@ -35,7 +35,7 @@ impl sal::Save for Author {
         Ok(())
     }
     fn task(&self) -> sal::TASK {
-        sal::TASK::AUTHOR
+        sal::TASK::NAME
     }
     fn get_new_count(&self) -> usize {
         self.authors.len()

@@ -67,7 +67,7 @@ pub fn get_task_id(oper: sal::TASK) -> i64 {
         sal::TASK::UNDEFINED => 0,
         sal::TASK::LANGUAGE => 1,
         sal::TASK::GENRE => 2,
-        sal::TASK::AUTHOR => 3,
+        sal::TASK::NAME => 3,
         sal::TASK::TITLE => 4,
         sal::TASK::SEQUENCE => 5,
     }
@@ -340,8 +340,12 @@ pub fn load_hash_to_id(conn: &Connection, sql: &str) -> Fb2Result<HashMap<u64, i
 }
 
 fn insert_from_set(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
+    let mut stmt = conn.prepare(sql).map_err(into)?;
     for item in items {
-        conn.execute(sql, &[item]).map_err(into)?;
+        match stmt.execute(&[item]).map_err(into) {
+            Ok(_) => {},
+            Err(e) => {println!("\n'{}' -> {}", item, e); return Err(e); }
+        }
     }
     Ok(())
 }
@@ -358,6 +362,10 @@ pub fn insert_sequences(conn: &Connection, sequences: &HashSet<String>) -> Fb2Re
     insert_from_set(conn, sal::query_insert::SEQUENCES, sequences)
 }
 
+pub fn save_names(conn: &Connection, names: &HashSet<String>) -> Fb2Result<()> {
+    insert_from_set(conn, sal::query_insert::NAMES, names)
+}
+
 fn select_column(conn: &Connection, sql: &str, col_num: i32) -> Fb2Result<Vec<String>> {
     let mut result = Vec::new();
     let mut stmt = conn.prepare(sql).map_err(into)?;
@@ -369,7 +377,7 @@ fn select_column(conn: &Connection, sql: &str, col_num: i32) -> Fb2Result<Vec<St
     Ok(result)
 }
 
-pub fn select_titles(conn: &Connection) -> Fb2Result<HashSet<String>> {
+pub fn load_titles(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let vector = select_column(conn, sal::query_select::TITLES, 0)?;
     Ok(HashSet::from_iter(vector))
 }
@@ -379,7 +387,7 @@ pub fn select_languages(conn: &Connection) -> Fb2Result<HashSet<String>> {
     Ok(HashSet::from_iter(vector))
 }
 
-pub fn select_sequences(conn: &Connection) -> Fb2Result<HashSet<String>> {
+pub fn load_sequences(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let vector = select_column(conn, sal::query_select::SEQUENCES, 0)?;
     Ok(HashSet::from_iter(vector))
 }
@@ -489,3 +497,16 @@ pub fn load(conn: &Connection, sql: &str) -> Fb2Result<HashSet<FileDesc>> {
     }
     Ok(result)
 }
+
+pub fn load_names(conn: &Connection) -> Fb2Result<HashSet<String>> {
+    let mut names = HashSet::new();
+    let mut stmt = conn.prepare(sal::query_select::NAMES).map_err(into)?;
+    let mut rows = stmt.query(&[]).map_err(into)?;
+    while let Some(row) = rows.next() {
+        let row = row?;
+        names.insert(row.get(0));
+
+    }
+    Ok(names)
+}
+

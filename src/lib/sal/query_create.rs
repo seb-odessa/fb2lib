@@ -21,6 +21,7 @@ pub const TORRENTS_SUBSYSTEM: &'static str = "
     );
 	COMMIT;";
 
+
 #[allow(dead_code)]
 pub const PROGRESS_SUBSYSTEM: &'static str = "
 	BEGIN;
@@ -28,11 +29,11 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	DROP TABLE IF EXISTS task;
 	CREATE TABLE task (
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    	name 	TEXT NOT NULL UNIQUE
+    	name 	TEXT NOT NULL UNIQUE ON CONFLICT IGNORE
 	);
 	INSERT OR IGNORE INTO task VALUES (1, 'Заполнение справочника языков');
 	INSERT OR IGNORE INTO task VALUES (2, 'Заполнение справочника жанров');
-	INSERT OR IGNORE INTO task VALUES (3, 'Заполнение справочника авторов');
+	INSERT OR IGNORE INTO task VALUES (3, 'Заполнение справочника имен');
 	INSERT OR IGNORE INTO task VALUES (4, 'Заполнение справочника названий');
 	INSERT OR IGNORE INTO task VALUES (5, 'Заполнение справочника циклов');
 	INSERT OR IGNORE INTO task VALUES (6, 'Обработка данных библиотеки');
@@ -184,6 +185,14 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 #[allow(dead_code)]
 pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
+
+	DROP TABLE IF EXISTS names;
+	CREATE TABLE names (
+    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    	name 	TEXT NOT NULL UNIQUE
+	);
+    CREATE INDEX name_idx on names (name ASC);
+
     CREATE TABLE people (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    first_name 	    TEXT NOT NULL,

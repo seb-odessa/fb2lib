@@ -52,7 +52,7 @@ pub enum TASK {
     UNDEFINED,
     LANGUAGE,
     GENRE,
-    AUTHOR,
+    NAME,
     TITLE,
     SEQUENCE,
 }
@@ -95,13 +95,13 @@ pub use sal::imp::link_authors;
 pub use sal::imp::unlink_authors;
 
 pub use sal::imp::insert_titles;
-pub use sal::imp::select_titles;
+pub use sal::imp::load_titles;
 pub use sal::imp::select_titles_joined;
 pub use sal::imp::link_titles;
 pub use sal::imp::unlink_titles;
 
 pub use sal::imp::insert_sequences;
-pub use sal::imp::select_sequences;
+pub use sal::imp::load_sequences;
 pub use sal::imp::select_sequences_joined;
 pub use sal::imp::link_sequences;
 pub use sal::imp::unlink_sequences;
@@ -117,4 +117,5 @@ pub use sal::imp::load_hash_to_id;
 pub use sal::imp::register_book;
 pub use sal::imp::load_books;
 
-
+pub use sal::imp::load_names;
+pub use sal::imp::save_names;

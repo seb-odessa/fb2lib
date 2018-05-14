@@ -6,6 +6,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
         DROP VIEW IF EXISTS authors_fixed;
         DROP TABLE IF EXISTS people;
         DROP TABLE IF EXISTS people_links;
+        DROP TABLE IF EXISTS names;
         DELETE FROM progress WHERE progress.task_id = 3;
     COMMIT;";
 

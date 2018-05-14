@@ -10,6 +10,7 @@ use fb2parser::FictionBook;
 
 use visitor::acess;
 use visitor::author::Author;
+use visitor::name::Name;
 use visitor::lang::Lang;
 use visitor::title::Title;
 use visitor::sequence::Sequence;
@@ -42,6 +43,14 @@ pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()
     let visitor = Author::new(access, handled);
     handle(&conn, force, archives, visitor)
 }
+pub fn load_names(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let access = create_access_guard(&conn)?;
+    let handled = sal::load_names(&conn)?;
+    let visitor = Name::new(access, handled);
+    handle(&conn, force, archives, visitor)
+}
+
 pub fn load_langs(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let langs = sal::select_languages(&conn)?;
@@ -52,7 +61,7 @@ pub fn load_langs(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> 
 pub fn load_titles(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
-    let ignore = sal::select_titles(&conn)?;
+    let ignore = sal::load_titles(&conn)?;
     let visitor = Title::new(access, ignore);
     handle(&conn, force, archives, visitor)
 }
@@ -60,7 +69,7 @@ pub fn load_titles(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()>
 pub fn load_sequences(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
-    let ignore = sal::select_sequences(&conn)?;
+    let ignore = sal::load_sequences(&conn)?;
     let visitor = Sequence::new(access, ignore);
     handle(&conn, force, archives, visitor)
 }
