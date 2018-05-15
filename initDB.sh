@@ -14,4 +14,5 @@ rm lib.rus.ec.db
 ./fb2lib filter lang enable ''
 ./fb2lib filter lang enable 'r*'
 ./fb2lib filter lang display
+
 #./fb2lib filter genre display
