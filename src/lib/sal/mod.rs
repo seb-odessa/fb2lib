@@ -118,4 +118,5 @@ pub use sal::imp::register_book;
 pub use sal::imp::load_books;
 
 pub use sal::imp::load_names;
+pub use sal::imp::load_id_by_names;
 pub use sal::imp::save_names;

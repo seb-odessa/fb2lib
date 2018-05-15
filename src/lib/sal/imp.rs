@@ -502,11 +502,20 @@ pub fn load_names(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let mut names = HashSet::new();
     let mut stmt = conn.prepare(sal::query_select::NAMES).map_err(into)?;
     let mut rows = stmt.query(&[]).map_err(into)?;
-    while let Some(row) = rows.next() {
-        let row = row?;
+    while let Some(result) = rows.next() {
+        let row = result?;
         names.insert(row.get(0));
-
     }
     Ok(names)
 }
 
+pub fn load_id_by_names(conn: &Connection) -> Fb2Result<HashMap<String, i64>> {
+    let mut names = HashMap::new();
+    let mut stmt = conn.prepare(sal::query_select::ID_BY_NAMES).map_err(into)?;
+    let mut rows = stmt.query(&[]).map_err(into)?;
+    while let Some(result) = rows.next() {
+        let row = result?;
+        names.insert(row.get(0), row.get(1));
+    }
+    Ok(names)
+}

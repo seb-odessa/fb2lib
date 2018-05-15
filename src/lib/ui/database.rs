@@ -3,6 +3,8 @@ use handler;
 use result::Fb2Result;
 use clap::{App, Arg, SubCommand, ArgMatches};
 
+// @todo Add method for storing FictionBook descriptions into the DB. This will allow
+
 pub const CMD: &'static str = "database";
 const CMD_HELP: &'static str = "Use to work with database structure";
 
