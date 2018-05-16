@@ -34,7 +34,7 @@ pub const VERSION_SUBSYSTEM: &'static str = "
     COMMIT;";
 
 #[allow(dead_code)]
-pub const BOOKS_SUBSYSTEM: &'static str = "
+pub const DESC_SUBSYSTEM: &'static str = "
 	BEGIN;
 	DROP TABLE IF EXISTS books;
     DROP TABLE IF EXISTS book_titles;

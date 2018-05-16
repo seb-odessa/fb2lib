@@ -39,8 +39,8 @@ const TITLES: &'static str = "titles";
 const TITLES_HELP: &'static str = "Handle book titles";
 const SEQUENCES: &'static str = "sequences";
 const SEQUENCES_HELP: &'static str = "Handle book sequences";
-const BOOKS: &'static str = "books";
-const BOOKS_HELP: &'static str = "Handle complete books description";
+const DESC: &'static str = "desc";
+const DESC_HELP: &'static str = "Handle complete books description";
 
 
 const REFS: &'static str = "refs";
@@ -76,7 +76,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP))
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP))
-            .subcommand(SubCommand::with_name(BOOKS).about(BOOKS_HELP))
+            .subcommand(SubCommand::with_name(DESC).about(DESC_HELP))
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
@@ -86,7 +86,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(NAMES).about(NAMES_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(REFS).about(REFS_HELP).arg(force.clone()).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(BOOKS).about(BOOKS_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(DESC).about(DESC_HELP).arg(arch.clone()))
         )
         .subcommand(
             SubCommand::with_name(SHOW).about(SHOW_HELP)
@@ -131,7 +131,7 @@ fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (AUTHORS, Some(_)) => handler::database::reset(database, "author"),
         (TITLES, Some(_)) => handler::database::reset(database, "title"),
         (SEQUENCES, Some(_)) => handler::database::reset(database, "sequence"),
-        (BOOKS, Some(_)) => handler::database::reset(database, "book"),
+        (DESC, Some(_)) => handler::database::reset(database, DESC),
         (_, _) => ui::usage(arg)
     }
 }
@@ -186,9 +186,9 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
                 ui::usage(arg)
             }
         }
-        (BOOKS, Some(arg)) => {
+        (DESC, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                handler::database::load_books(database, &archives.collect::<Vec<&str>>())
+                handler::database::load_descriptions(database, &archives.collect::<Vec<&str>>())
             } else {
                 ui::usage(arg)
             }

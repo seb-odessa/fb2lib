@@ -14,7 +14,7 @@ use visitor::name::Name;
 use visitor::lang::Lang;
 use visitor::title::Title;
 use visitor::sequence::Sequence;
-use visitor::book::Book;
+use visitor::description::Description;
 use visitor::collector::Collector;
 
 use std::path;
@@ -31,7 +31,7 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
         "author" => sal::reset(db_file_name, sal::SUBSYSTEM::PEOPLE),
         "sequence" => sal::reset(db_file_name, sal::SUBSYSTEM::SEQUENCES),
         "title" => sal::reset(db_file_name, sal::SUBSYSTEM::TITLES),
-        "book" => sal::reset(db_file_name, sal::SUBSYSTEM::BOOK),
+        "desc" => sal::reset(db_file_name, sal::SUBSYSTEM::DESC),
         _ => Err(Fb2Error::Custom(String::from("Unknown Subsystem")))
     }
 }
@@ -81,20 +81,53 @@ pub fn load_dictionary(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result
     handle(&conn, force, archives, visitor)
 }
 
-pub fn load_books(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
+pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
-    let mut visitor = Book::new(conn, access)?;
+    let mut visitor = Description::new(conn, access)?;
+
     for archive in archives {
-        let archive_name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
-        let res = visitor.select_archive(archive_name)
-                    .and_then(|()| archive::open(archive))
-                    .and_then(|zip| algorithm::visit_all(&zip, &mut visitor));
-        if res.is_err() {
-            println!("{}", res.unwrap_err());
+        let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
+        print!("Processing {}", &name);
+        let task = visitor.task();
+        let status = visitor.get_stat()?;
+        if !is_complete(status) {
+            visitor.set_stat(sal::STATUS::STARTED)?;
+            print!(".");
+            let result = visitor.select_archive(name)
+                .and_then(|()| archive::open(archive))
+                .and_then(|zip| algorithm::visit_all(&zip, &mut visitor));
+
+            match result {
+                Ok(()) => {
+                    visitor.set_stat(sal::STATUS::VISITED)?;
+                    print!(".");
+                },
+                Err(e) => {
+                    visitor.set_stat(sal::STATUS::FAILURE)?;
+                    println!("{}", e);
+                    return Err(e);
+                }
+            }
+
+            let (added, total) = (visitor.get_new_count(), visitor.get_count());
+            match visitor.save_collected() {
+                Ok(()) => {
+                    visitor.set_stat(sal::STATUS::COMPLETE)?;
+                    print!(".");
+                },
+                Err(e) => {
+                    visitor.set_stat(sal::STATUS::FAILURE)?;
+                    println!("{}", e);
+                    return Err(e);
+                }
+            }
+            let added = format!("{}/{}", added, total);
+            println!("Done.\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
+        } else {
+            println!("...Skipped.");
         }
     }
-    visitor.report();
     Ok(())
 }
 

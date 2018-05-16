@@ -36,7 +36,8 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	INSERT OR IGNORE INTO task VALUES (3, 'Заполнение справочника имен');
 	INSERT OR IGNORE INTO task VALUES (4, 'Заполнение справочника названий');
 	INSERT OR IGNORE INTO task VALUES (5, 'Заполнение справочника циклов');
-	INSERT OR IGNORE INTO task VALUES (6, 'Обработка данных библиотеки');
+    INSERT OR IGNORE INTO task VALUES (6, 'Заполнение таблицы описаний');
+	INSERT OR IGNORE INTO task VALUES (7, 'Обработка данных библиотеки');
 
     DROP TABLE IF EXISTS status;
 	CREATE TABLE status (
@@ -367,7 +368,7 @@ Book
 	Translator : array
 *********************************************************************************************************************/
 #[allow(dead_code)]
-pub const BOOKS_SUBSYSTEM: &'static str = "
+pub const DESC_SUBSYSTEM: &'static str = "
 	BEGIN;
 	CREATE TABLE books (
         id              	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,

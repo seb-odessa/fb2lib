@@ -2,7 +2,7 @@ use zip::ZipFile;
 use std::convert::From;
 
 /**************************************************************************************************/
-#[derive(Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Default)]
 pub struct FileDesc
 {
     pub archive_id: i64,

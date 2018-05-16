@@ -31,7 +31,7 @@ pub enum SUBSYSTEM {
     VERSION,
     TITLES,
     SEQUENCES,
-    BOOK,
+    DESC,
     FILTER,
     GENRE,
     PEOPLE,
@@ -55,6 +55,7 @@ pub enum TASK {
     NAME,
     TITLE,
     SEQUENCE,
+    DESC,
 }
 
 pub use sal::imp::reset;
@@ -114,9 +115,9 @@ pub use sal::query_select::LOAD_ID_BY_SEQUENCE;
 pub use sal::imp::load_id_by_name;
 pub use sal::imp::load_hash_to_id;
 
-pub use sal::imp::register_book;
 pub use sal::imp::load_books;
+pub use sal::imp::save_books;
 
 pub use sal::imp::load_names;
-pub use sal::imp::load_id_by_names;
 pub use sal::imp::save_names;
+pub use sal::imp::load_id_by_names;

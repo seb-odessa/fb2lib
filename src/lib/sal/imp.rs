@@ -54,9 +54,9 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
             conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
         },
-        sal::SUBSYSTEM::BOOK => {
-            conn.execute_batch(sal::query_drop::BOOKS_SUBSYSTEM).map_err(into)?;
-            conn.execute_batch(sal::query_create::BOOKS_SUBSYSTEM).map_err(into)?;
+        sal::SUBSYSTEM::DESC => {
+            conn.execute_batch(sal::query_drop::DESC_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_create::DESC_SUBSYSTEM).map_err(into)?;
         },
     }
     Ok(())
@@ -70,6 +70,7 @@ pub fn get_task_id(oper: sal::TASK) -> i64 {
         sal::TASK::NAME => 3,
         sal::TASK::TITLE => 4,
         sal::TASK::SEQUENCE => 5,
+        sal::TASK::DESC => 6,
     }
 }
 
@@ -449,21 +450,20 @@ pub fn unlink_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32>
     conn.execute(sal::query_delete::SEQUENCES_LINK, &[&src, &dst]).map_err(into)
 }
 
-pub fn register_book(conn: &mut Connection, desc: &FileDesc) -> Fb2Result<()> {
-    let tr = conn.transaction()?;
-    tr.execute_named(sal::query_insert::BOOK, &[
-        (":archive_id", &desc.archive_id),
-        (":file_name", &desc.file_name),
-        (":compression_method", &desc.compression_method),
-        (":compressed_size", &desc.compressed_size),
-        (":original_size", &desc.original_size),
-        (":src32", &desc.src32),
-        (":offset", &desc.offset),
-    ])?;
-    tr.commit().map_err(into)
-}
-pub fn load_books(conn: &Connection) -> Fb2Result<HashSet<FileDesc>> {
-    load(conn, sal::query_select::BOOKS)
+pub fn save_books(conn: &mut Connection, descriptions: &HashSet<FileDesc>) -> Fb2Result<()> {
+    let mut stmt = conn.prepare(sal::query_insert::BOOK).map_err(into)?;
+    for desc in descriptions {
+        stmt.execute_named(&[
+            (":archive_id", &desc.archive_id),
+            (":file_name", &desc.file_name),
+            (":compression_method", &desc.compression_method),
+            (":compressed_size", &desc.compressed_size),
+            (":original_size", &desc.original_size),
+            (":src32", &desc.src32),
+            (":offset", &desc.offset),
+        ])?;
+    }
+    Ok(())
 }
 
 fn make_index_by_name(stmt: &rusqlite::Statement)->Fb2Result<HashMap<String, i32>> {
@@ -476,9 +476,9 @@ fn make_index_by_name(stmt: &rusqlite::Statement)->Fb2Result<HashMap<String, i32
     Ok(result)
 }
 
-pub fn load(conn: &Connection, sql: &str) -> Fb2Result<HashSet<FileDesc>> {
+pub fn load_books(conn: &Connection) -> Fb2Result<HashSet<FileDesc>> {
     let mut result = HashSet::new();
-    let mut stmt = conn.prepare(sql).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::BOOKS).map_err(into)?;
     let columns = make_index_by_name(&stmt);
     let mut rows = stmt.query(&[]).map_err(into)?;
     while let Some(row) = rows.next() {
