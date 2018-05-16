@@ -6,3 +6,4 @@ data/fb2-393072-405875.zip
 *.rs.bk
 *.rs.fmt
 *.db-journal
+.idea

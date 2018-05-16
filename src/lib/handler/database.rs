@@ -89,12 +89,12 @@ pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
         print!("Processing {}", &name);
+        visitor.select_archive(name)?;
         let task = visitor.task();
         let status = visitor.get_stat()?;
         if !is_complete(status) {
-            visitor.set_stat(sal::STATUS::STARTED)?;
             print!(".");
-            let result = visitor.select_archive(name)
+            let result = visitor.set_stat(sal::STATUS::STARTED)
                 .and_then(|()| archive::open(archive))
                 .and_then(|zip| algorithm::visit_all(&zip, &mut visitor));
 
