@@ -8,6 +8,7 @@ use fb2parser::FictionBook;
 use types::FileDesc;
 
 use zip::ZipFile;
+use bincode::{serialize, deserialize};
 use std::error::Error;
 use std::collections::HashSet;
 use std::collections::HashMap;
@@ -91,6 +92,7 @@ impl <'a> algorithm::Visitor<'a> for Description{
                 Ok(book) => {
                     let desc: FileDesc = FileDesc::from((self.archive_id, zip));
                     visitor::discover(&mut self.books_known, &mut self.books_new, desc);
+                    let encoded: Vec<u8> = serialize(&book).unwrap();
                 },
                 Err(err) => {
                     println!(". Failed to process {} file in {} archive with error: {} ",

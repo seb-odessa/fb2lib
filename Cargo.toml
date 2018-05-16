@@ -17,6 +17,7 @@ path = "src/lib/lib.rs"
     clap = "*"
     regex = "*"
     crossbeam = "*"
+    bincode = "*"
     rustc-serialize = "*"
 
 

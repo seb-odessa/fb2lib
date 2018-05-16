@@ -16,6 +16,7 @@ extern crate clap;
 extern crate regex;
 extern crate crypto;
 extern crate rusqlite;
+extern crate bincode;
 extern crate crossbeam;
 extern crate rustc_serialize;
 
