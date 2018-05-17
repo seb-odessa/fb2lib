@@ -1,9 +1,11 @@
 use zip::ZipFile;
 use std::convert::From;
+use fb2parser::FictionBook;
+use bincode::deserialize;
 
 /**************************************************************************************************/
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Default)]
-pub struct FileDesc
+pub struct BookDescription
 {
     pub archive_id: i64,
     pub file_name: String,
@@ -12,10 +14,11 @@ pub struct FileDesc
     pub original_size: i64,
     pub src32: u32,
     pub offset: i64,
+    pub description: Option<FictionBook>,
 }
 
-impl <'a,'b> From<(i64, &'a mut ZipFile<'b>)> for FileDesc {
-    fn from(arg: (i64, &mut ZipFile)) -> Self {
+impl <'a,'b> From<(i64, &'a mut ZipFile<'b>, FictionBook)> for BookDescription {
+    fn from(arg: (i64, &mut ZipFile, FictionBook)) -> Self {
         Self {
             archive_id: arg.0,
             file_name: arg.1.name().to_string(),
@@ -24,12 +27,13 @@ impl <'a,'b> From<(i64, &'a mut ZipFile<'b>)> for FileDesc {
             original_size: arg.1.size() as i64,
             src32: arg.1.crc32(),
             offset: arg.1.offset() as i64,
+            description: Some(arg.2),
         }
     }
 }
 
-impl From<(i64, String, u16, i64, i64, u32, i64)> for FileDesc {
-    fn from(arg: (i64, String, u16, i64, i64, u32, i64)) -> Self {
+impl From<(i64, String, u16, i64, i64, u32, i64, Option<Vec<u8>>)> for BookDescription {
+    fn from(arg: (i64, String, u16, i64, i64, u32, i64, Option<Vec<u8>>)) -> Self {
         Self {
             archive_id: arg.0,
             file_name: arg.1,
@@ -38,6 +42,7 @@ impl From<(i64, String, u16, i64, i64, u32, i64)> for FileDesc {
             original_size: arg.4,
             src32: arg.5,
             offset: arg.6,
+            description: arg.7.and_then(|blob| deserialize(&blob).ok()),
         }
     }
 }

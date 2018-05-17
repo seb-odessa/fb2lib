@@ -379,6 +379,7 @@ pub const DESC_SUBSYSTEM: &'static str = "
         original_size       INTEGER,
 		src32         		INTEGER,
         offset              INTEGER,
+        description         BLOB,
         UNIQUE (file_name, src32) ON CONFLICT IGNORE
     );
 	CREATE TABLE book_titles (

@@ -5,13 +5,11 @@ use algorithm;
 use result::Fb2Result;
 use visitor::acess::AccessGuard;
 use fb2parser::FictionBook;
-use types::FileDesc;
+use types::BookDescription;
 
 use zip::ZipFile;
-use bincode::{serialize, deserialize};
 use std::error::Error;
 use std::collections::HashSet;
-use std::collections::HashMap;
 
 
 pub struct Description {
@@ -19,8 +17,8 @@ pub struct Description {
     book_count: usize,
     archive_id: i64,
     archive_name: String,
-    books_new: HashSet<FileDesc>,
-    books_known: HashSet<FileDesc>,
+    books_new: HashSet<BookDescription>,
+    books_known: HashSet<BookDescription>,
     connection: sal::Connection,
 }
 impl <'a> Description
@@ -90,12 +88,11 @@ impl <'a> algorithm::Visitor<'a> for Description{
             self.book_count += 1;
             match archive::load_fb2(zip) {
                 Ok(book) => {
-                    let desc: FileDesc = FileDesc::from((self.archive_id, zip));
+                    let desc = BookDescription::from((self.archive_id, zip, book));
                     visitor::discover(&mut self.books_known, &mut self.books_new, desc);
-                    let encoded: Vec<u8> = serialize(&book).unwrap();
                 },
                 Err(err) => {
-                    println!(". Failed to process {} file in {} archive with error: {} ",
+                    print!("\n\t Failed to process {} file in {} archive with error: {}.",
                              zip.name(),
                              self.archive_name,
                              err.description());

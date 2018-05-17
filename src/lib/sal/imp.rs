@@ -2,10 +2,14 @@ use sal;
 use tools;
 use result::{into, Fb2Result, Fb2Error};
 use torrent::Metainfo;
-use types::FileDesc;
+use types::BookDescription;
 use types::Sizes;
 
 use rusqlite;
+use rusqlite::DatabaseName;
+pub use rusqlite::Connection;
+
+use bincode::{serialize, deserialize};
 use rustc_serialize::hex::ToHex;
 
 use std::hash::Hash;
@@ -14,9 +18,7 @@ use std::default::Default;
 use std::iter::FromIterator;
 use std::collections::HashSet;
 use std::collections::HashMap;
-
-
-pub type Connection = rusqlite::Connection;
+use std::io::{Read, Write, Seek, SeekFrom};
 
 pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
     let conn = Connection::open(db_file_name).map_err(into)?;
@@ -450,10 +452,13 @@ pub fn unlink_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32>
     conn.execute(sal::query_delete::SEQUENCES_LINK, &[&src, &dst]).map_err(into)
 }
 
-pub fn save_books(conn: &mut Connection, descriptions: &HashSet<FileDesc>) -> Fb2Result<()> {
+pub fn save_books(conn: &Connection, descriptions: &HashSet<BookDescription>) -> Fb2Result<()> {
     let mut stmt = conn.prepare(sal::query_insert::BOOK).map_err(into)?;
     for desc in descriptions {
-        stmt.execute_named(&[
+
+        let description = serialize(&desc.description).ok();
+
+        let count = stmt.execute_named(&[
             (":archive_id", &desc.archive_id),
             (":file_name", &desc.file_name),
             (":compression_method", &desc.compression_method),
@@ -461,9 +466,33 @@ pub fn save_books(conn: &mut Connection, descriptions: &HashSet<FileDesc>) -> Fb
             (":original_size", &desc.original_size),
             (":src32", &desc.src32),
             (":offset", &desc.offset),
+            (":description", &description),
         ])?;
     }
     Ok(())
+}
+
+pub fn load_books(conn: &Connection) -> Fb2Result<HashSet<BookDescription>> {
+    let mut result = HashSet::new();
+    let mut stmt = conn.prepare(sal::query_select::BOOKS).map_err(into)?;
+    let columns = make_index_by_name(&stmt);
+    let mut rows = stmt.query(&[]).map_err(into)?;
+    while let Some(row) = rows.next() {
+        let row = row?;
+        let mut item = BookDescription::from((
+            row.get(0),
+            row.get(1),
+            row.get(2),
+            row.get(3),
+            row.get(4),
+            row.get(5),
+            row.get(6),
+            row.get(7)
+        ));
+        result.insert(item);
+
+    }
+    Ok(result)
 }
 
 fn make_index_by_name(stmt: &rusqlite::Statement)->Fb2Result<HashMap<String, i32>> {
@@ -472,28 +501,6 @@ fn make_index_by_name(stmt: &rusqlite::Statement)->Fb2Result<HashMap<String, i32
     for column_name in &columns {
         let column_index = stmt.column_index(column_name).map_err(into)?;
         result.insert(String::from(*column_name), column_index);
-    }
-    Ok(result)
-}
-
-pub fn load_books(conn: &Connection) -> Fb2Result<HashSet<FileDesc>> {
-    let mut result = HashSet::new();
-    let mut stmt = conn.prepare(sal::query_select::BOOKS).map_err(into)?;
-    let columns = make_index_by_name(&stmt);
-    let mut rows = stmt.query(&[]).map_err(into)?;
-    while let Some(row) = rows.next() {
-        let row = row?;
-        let mut item = FileDesc::from((
-            row.get(0),
-            row.get(1),
-            row.get(2),
-            row.get(3),
-            row.get(4),
-            row.get(5),
-            row.get(6)
-        ));
-        result.insert(item);
-
     }
     Ok(result)
 }

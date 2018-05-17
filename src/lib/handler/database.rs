@@ -123,7 +123,7 @@ pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
                 }
             }
             let added = format!("{}/{}", added, total);
-            println!("Done.\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
+            println!("Done.\n\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
         } else {
             println!("...Skipped.");
         }

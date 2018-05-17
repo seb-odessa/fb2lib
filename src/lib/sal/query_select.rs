@@ -62,5 +62,6 @@ pub const BOOKS: &'static str = "
         compressed_size,
         original_size,
         src32,
-        offset
+        offset,
+        description
      FROM books;";

@@ -76,6 +76,7 @@ pub const BOOK: &'static str = "
         :compressed_size,
         :original_size,
         :src32,
-        :offset
+        :offset,
+        :description
     );
 ";
