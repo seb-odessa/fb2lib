@@ -1,17 +1,20 @@
 # fb2lib
 Tool for managing FB2 books.
 
-## fb2lib archive
-This part may be used for investigating content of the **archive.zip**
+
+## Работа с архивами книг
+
+Анализ содержимого архивов с книгами в fb2 формате, например [fb2-632000-634999.zip](http://trec.to/viewtopic.php?t=34961);
+Комманда: archive 
 
 | Command | Description |
 | ------- | ----------- |
-| `$ ./fb2lib archive ls <archive.zip>`          | Print list of files in the **archive.zip** |
-| `$ ./fb2lib archive check <archive.zip>`       | Checks that books in the **archive.zip** are FB2 convertable. |
-| `$ ./fb2lib archive show xml <archive.zip> [book]`    | Prints book description in XML format |
-| `$ ./fb2lib archive show fb2 <archive.zip> [book]`    | Prints book description into FictionBook structure |
-| `$ ./fb2lib archive show inf <archive.zip> [book]`    | Prints book brief description |
-| `$ ./fb2lib archive show zip <archive.zip> [book]`    | Prints compression info and the offset of the book in the archive |
+| `$ fb2lib archive ls <archive.zip>`          | Вывести список файлов в архиве |
+| `$ fb2lib archive check <archive.zip>`       | Проверить возможность распарсить книги в архиве |
+| `$ fb2lib archive show xml <archive.zip> [book]`    | Извлечь описание книг(и) в XML формате [FB2](http://fictionbook.org/) |
+| `$ fb2lib archive show fb2 <archive.zip> [book]`    | Извлечь описание в виде дампа внутренней структуры []FictionBook](https://github.com/seb-odessa/fb2parser) |
+| `$ fb2lib archive show inf <archive.zip> [book]`    | Извлечь однострочное описание книги |
+| `$ fb2lib archive show zip <archive.zip> [book]`    | Извлечь описание физического расположения файла в архиве |
 
 The *book* argument may be replaced by regexps or wildcards, e.g:
 

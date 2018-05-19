@@ -8,7 +8,8 @@ use types::Sizes;
 use rusqlite;
 use rusqlite::DatabaseName;
 pub use rusqlite::Connection;
-
+use crypto::sha1::Sha1;
+use crypto::digest::Digest;
 use bincode::{serialize, deserialize};
 use rustc_serialize::hex::ToHex;
 
@@ -452,45 +453,32 @@ pub fn unlink_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32>
     conn.execute(sal::query_delete::SEQUENCES_LINK, &[&src, &dst]).map_err(into)
 }
 
-pub fn save_books(conn: &Connection, descriptions: &HashSet<BookDescription>) -> Fb2Result<()> {
+pub fn save_books(conn: &Connection, descriptions: &Vec<BookDescription>) -> Fb2Result<()> {
     let mut stmt = conn.prepare(sal::query_insert::BOOK).map_err(into)?;
     for desc in descriptions {
-
-        let description = serialize(&desc.description).ok();
-
-        let count = stmt.execute_named(&[
-            (":archive_id", &desc.archive_id),
-            (":file_name", &desc.file_name),
-            (":compression_method", &desc.compression_method),
-            (":compressed_size", &desc.compressed_size),
-            (":original_size", &desc.original_size),
-            (":src32", &desc.src32),
-            (":offset", &desc.offset),
-            (":description", &description),
+        stmt.execute_named(&[
+            (":archive_id", &desc.arch),
+            (":file_name", &desc.file.name),
+            (":compression_method", &desc.file.compression_method),
+            (":compressed_size", &desc.file.compressed_size),
+            (":original_size", &desc.file.original_size),
+            (":src32", &desc.file.src32),
+            (":offset", &desc.file.offset),
+            (":size", &desc.blob.size),
+            (":description", &Some(desc.blob.data.clone())),
+            (":sha1", &desc.blob.sha1),
         ])?;
     }
     Ok(())
 }
 
-pub fn load_books(conn: &Connection) -> Fb2Result<HashSet<BookDescription>> {
+pub fn load_known_books(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let mut result = HashSet::new();
-    let mut stmt = conn.prepare(sal::query_select::BOOKS).map_err(into)?;
+    let mut stmt = conn.prepare(sal::query_select::BOOKS_SHA1).map_err(into)?;
     let columns = make_index_by_name(&stmt);
     let mut rows = stmt.query(&[]).map_err(into)?;
     while let Some(row) = rows.next() {
-        let row = row?;
-        let mut item = BookDescription::from((
-            row.get(0),
-            row.get(1),
-            row.get(2),
-            row.get(3),
-            row.get(4),
-            row.get(5),
-            row.get(6),
-            row.get(7)
-        ));
-        result.insert(item);
-
+        result.insert(row?.get(0));
     }
     Ok(result)
 }

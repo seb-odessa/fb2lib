@@ -5,20 +5,22 @@ use algorithm;
 use result::Fb2Result;
 use visitor::acess::AccessGuard;
 use fb2parser::FictionBook;
-use types::BookDescription;
+use types::{FileDescription, BlobDescription, BookDescription};
 
 use zip::ZipFile;
+use crypto::sha1::Sha1;
+use crypto::digest::Digest;
 use std::error::Error;
 use std::collections::HashSet;
-
 
 pub struct Description {
     arch_count: usize,
     book_count: usize,
     archive_id: i64,
     archive_name: String,
-    books_new: HashSet<BookDescription>,
-    books_known: HashSet<BookDescription>,
+    books_new: Vec<BookDescription>,
+    books_known: HashSet<String>,
+    hasher: Sha1,
     connection: sal::Connection,
 }
 impl <'a> Description
@@ -30,8 +32,9 @@ impl <'a> Description
                 book_count: 0,
                 archive_id: 0,
                 archive_name: String::new(),
-                books_new: HashSet::new(),
-                books_known: sal::load_books(&conn)?,
+                books_new: Vec::new(),
+                books_known: sal::load_known_books(&conn)?,
+                hasher: Sha1::new(),
                 connection: conn,
             }
         )
@@ -54,15 +57,15 @@ impl <'a> Description
 
     pub fn save_collected(&mut self) -> Fb2Result<()> {
         sal::save_books(&mut self.connection, &self.books_new)?;
-        visitor::merge(&mut self.books_known, &mut self.books_new, &mut self.book_count);
+        let saved: HashSet<String> = self.books_new.iter().map(|desc| desc.blob.sha1.clone()).collect();
+        self.books_known = self.books_known.union(&saved).map(|s| s.clone()).collect();
+        self.books_new.clear();
         Ok(())
     }
 }
 
 impl sal::Save for Description {
-    fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::save_books(&mut self.connection, &self.books_new)?;
-        visitor::merge(&mut self.books_known, &mut self.books_new, &mut self.book_count);
+    fn save(&mut self, _: &sal::Connection) -> Fb2Result<()> {
         Ok(())
     }
 
@@ -82,20 +85,28 @@ impl sal::Save for Description {
 impl <'a> algorithm::Visitor<'a> for Description{
 
     type Type = ZipFile<'a> ;
-
     fn visit(&mut self, zip: &mut Self::Type) {
         if self.archive_id != 0 {
             self.book_count += 1;
             match archive::load_fb2(zip) {
                 Ok(book) => {
-                    let desc = BookDescription::from((self.archive_id, zip, book));
-                    visitor::discover(&mut self.books_known, &mut self.books_new, desc);
+                    if let Some(bytes) = book.save() {
+                        self.hasher.input(&bytes);
+                        let sha1 = self.hasher.result_str();
+                        let blob = BlobDescription::from(bytes, sha1);
+                        self.hasher.reset();
+                        if !self.books_known.contains(&blob.sha1) {
+                            let file = FileDescription::from(zip);
+                            let desc = BookDescription::from((self.archive_id, file, blob));
+                            self.books_new.push(desc);
+                        }
+                    }
                 },
-                Err(err) => {
+                Err(e) => {
                     print!("\n\t Failed to process {} file in {} archive with error: {}.",
                              zip.name(),
                              self.archive_name,
-                             err.description());
+                             e.description());
                 },
             }
         }

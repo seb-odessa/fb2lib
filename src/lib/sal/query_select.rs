@@ -54,14 +54,4 @@ pub const NAMES: &'static str = "SELECT name FROM names";
 
 pub const ID_BY_NAMES: &'static str = "SELECT name, id FROM names";
 
-pub const BOOKS: &'static str = "
-    SELECT
-        archive_id,
-        file_name,
-        compression_method,
-        compressed_size,
-        original_size,
-        src32,
-        offset,
-        description
-     FROM books;";
+pub const BOOKS_SHA1: &'static str = "SELECT sha1 FROM books;";
