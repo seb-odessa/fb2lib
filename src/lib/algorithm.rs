@@ -10,14 +10,22 @@ use std::sync::mpsc::Sender;
 use std::sync::mpsc::channel;
 use crossbeam;
 
-pub trait Visitor<'a> {
+pub trait MutVisitor<'a> { // @todo eliminate mutability
     type Type;
     fn visit(&mut self, target: &mut Self::Type);
     fn get_count(&self) -> usize;
     fn report(&self) { }
 }
 
-pub fn visit_books<'a>(archive_name: &str, visitor: &mut Visitor<'a, Type=FictionBook>) -> Fb2Result<()> {
+pub trait Visitor<'a> {
+    type Type;
+    fn visit(&mut self, target: &Self::Type);
+    fn get_visited(&self) -> usize;
+    fn report(&self) { }
+}
+
+
+pub fn visit_books<'a>(archive_name: &str, visitor: &mut MutVisitor<'a, Type=FictionBook>) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
     let (sender, receiver) = channel();
     apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
@@ -29,7 +37,7 @@ pub fn visit_books<'a>(archive_name: &str, visitor: &mut Visitor<'a, Type=Fictio
     Ok(())
 }
 
-pub fn visit<'a>(zip: &'a ZipArchive, pattern: &str, visitor: &mut Visitor<Type=ZipFile<'a>>) -> Fb2Result<()> {
+pub fn visit<'a>(zip: &'a ZipArchive, pattern: &str, visitor: &mut MutVisitor<Type=ZipFile<'a>>) -> Fb2Result<()> {
     let re = make_regex(pattern)?;
     for i in 0..zip.len() {
         if let Some(mut file) = zip.by_index(i).ok() {
@@ -41,7 +49,7 @@ pub fn visit<'a>(zip: &'a ZipArchive, pattern: &str, visitor: &mut Visitor<Type=
     Ok(())
 }
 
-pub fn visit_all<'a>(zip: &'a ZipArchive, visitor: &mut Visitor<Type=ZipFile<'a>>) -> Fb2Result<()> {
+pub fn visit_all<'a>(zip: &'a ZipArchive, visitor: &mut MutVisitor<Type=ZipFile<'a>>) -> Fb2Result<()> {
     for i in 0..zip.len() {
         if let Some(mut file) = zip.by_index(i).ok() {
             visitor.visit(&mut file);

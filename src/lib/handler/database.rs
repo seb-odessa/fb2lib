@@ -3,7 +3,7 @@ use archive;
 use algorithm;
 
 use sal::Save;
-use algorithm::Visitor;
+use algorithm::MutVisitor;
 use result::{Fb2Result, Fb2Error};
 use fb2parser::FictionBook;
 
@@ -19,6 +19,46 @@ use visitor::collector::Collector;
 
 use std::path;
 
+
+fn parse<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb2Result<()>
+    where T: algorithm::Visitor<'a, Type=FictionBook> + Save + 'static
+{
+    let archives = sal::load_archives(conn)?;
+    for archive in &archives {
+        let name = &archive.name;
+        print!("Processing {}", &name);
+        let task = visitor.task();
+        let status = sal::get_archive_status(&conn, &name, task)?;
+        if force || !is_complete(status) {
+            visitor.set_status(&conn, &name, sal::STATUS::STARTED)?;
+            print!(".");
+            let books = sal::load_books(conn, archive.id)?;
+            for mut book in &books {
+                visitor.visit(&mut book)
+            }
+            visitor.set_status(&conn, &name, sal::STATUS::VISITED)?;
+
+            let (added, visited) = (visitor.get_new_count(), visitor.get_visited());
+            match visitor.save(&conn) {
+                Ok(()) => {
+                    visitor.set_status(&conn, &name, sal::STATUS::COMPLETE)?;
+                    print!(".");
+                },
+                Err(e) => {
+                    visitor.set_status(&conn, &name, sal::STATUS::FAILURE)?;
+                    println!("{}", e);
+                    return Err(e);
+                }
+            }
+            let added = format!("{}/{}", added, visited);
+            println!("Done.\n\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
+        } else {
+            println!("...Skiped.");
+        }
+    }
+    Ok(())
+}
+
 /************************************ RESET HANDLERS *******************************************/
 pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
     println!("reset({}, {})", db_file_name, subsystem);
@@ -31,11 +71,19 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
         "author" => sal::reset(db_file_name, sal::SUBSYSTEM::PEOPLE),
         "sequence" => sal::reset(db_file_name, sal::SUBSYSTEM::SEQUENCES),
         "title" => sal::reset(db_file_name, sal::SUBSYSTEM::TITLES),
-        "desc" => sal::reset(db_file_name, sal::SUBSYSTEM::DESC),
+        "descriptions" => sal::reset(db_file_name, sal::SUBSYSTEM::DESCRIPTIONS),
         _ => Err(Fb2Error::Custom(String::from("Unknown Subsystem")))
     }
 }
 /************************************* LOAD HANDLERS *******************************************/
+pub fn load_langs(db: &str, force: bool) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let langs = sal::select_languages(&conn)?;
+    let visitor = Lang::new(langs);
+    parse(&conn, force, visitor)
+}
+
+
 pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
@@ -48,13 +96,6 @@ pub fn load_names(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> 
     let access = create_access_guard(&conn)?;
     let handled = sal::load_names(&conn)?;
     let visitor = Name::new(access, handled);
-    handle(&conn, force, archives, visitor)
-}
-
-pub fn load_langs(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
-    let conn = sal::get_connection(db)?;
-    let langs = sal::select_languages(&conn)?;
-    let visitor = Lang::new(langs);
     handle(&conn, force, archives, visitor)
 }
 
@@ -229,7 +270,7 @@ fn is_complete(status: sal::STATUS) -> bool {
 }
 
 fn visit<'a, T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
-    where T: Visitor<'a, Type=FictionBook> + Save + 'static
+    where T: MutVisitor<'a, Type=FictionBook> + Save + 'static
 {
     print!("Processing {}", &name);
     let task = visitor.task();
@@ -269,7 +310,7 @@ fn visit<'a, T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, 
 }
 
 fn handle<'a, T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
-    where T: Visitor<'a, Type=FictionBook> + Save + 'static
+    where T: MutVisitor<'a, Type=FictionBook> + Save + 'static
 {
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();

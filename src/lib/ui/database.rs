@@ -39,8 +39,8 @@ const TITLES: &'static str = "titles";
 const TITLES_HELP: &'static str = "Handle book titles";
 const SEQUENCES: &'static str = "sequences";
 const SEQUENCES_HELP: &'static str = "Handle book sequences";
-const DESC: &'static str = "desc";
-const DESC_HELP: &'static str = "Handle complete books description";
+const DESC: &'static str = "descriptions";
+const DESC_HELP: &'static str = "Handle books descriptions";
 
 
 const REFS: &'static str = "refs";
@@ -80,7 +80,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
-            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()).arg(arch.clone()))
@@ -147,12 +147,8 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
             }
         }
         (LANGS, Some(arg)) => {
-            if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                let force = arg.is_present(FORCE);
-                handler::database::load_langs(database, force, &archives.collect::<Vec<&str>>())
-            } else {
-                ui::usage(arg)
-            }
+            let force = arg.is_present(FORCE);
+            handler::database::load_langs(database, force)
         }
         (TITLES, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {

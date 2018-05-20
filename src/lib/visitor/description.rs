@@ -82,7 +82,7 @@ impl sal::Save for Description {
     }
 }
 
-impl <'a> algorithm::Visitor<'a> for Description{
+impl <'a> algorithm::MutVisitor<'a> for Description{
 
     type Type = ZipFile<'a> ;
     fn visit(&mut self, zip: &mut Self::Type) {

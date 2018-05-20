@@ -44,7 +44,7 @@ impl sal::Save for Author {
         self.handled.len()
     }
 }
-impl <'a> algorithm::Visitor<'a> for Author {
+impl <'a> algorithm::MutVisitor<'a> for Author {
     type Type = FictionBook;
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;

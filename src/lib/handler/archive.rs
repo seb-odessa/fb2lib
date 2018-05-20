@@ -3,7 +3,7 @@ use archive;
 use algorithm;
 use fb2parser::FictionBook;
 use result::Fb2Result;
-use algorithm::Visitor;
+use algorithm::MutVisitor;
 use visitor::acess::AccessGuard;
 use visitor::author::Author;
 use visitor::lang::Lang;
@@ -55,7 +55,7 @@ pub fn show_bad(archive: &str, pattern: &str) -> Fb2Result<()> {
 }
 
 fn handle<'a, T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
-    where T: algorithm::Visitor<'a, Type=FictionBook> + 'static
+    where T: algorithm::MutVisitor<'a, Type=FictionBook> + 'static
 {
     for archive in archives {
         algorithm::visit_books(archive, &mut visitor)?;
@@ -75,7 +75,8 @@ pub fn authors(archives: &Vec<&str>) -> Fb2Result<()> {
     handle(archives, Author::new(AccessGuard::new(), HashSet::new()))
 }
 pub fn langs(archives: &Vec<&str>) -> Fb2Result<()> {
-    handle(archives, Lang::new(HashSet::new()))
+    //handle(archives, Lang::new(HashSet::new()))
+    Ok(())
 }
 pub fn titles(archives: &Vec<&str>) -> Fb2Result<()> {
     handle(archives, Title::new(AccessGuard::new(), HashSet::new()))

@@ -3,7 +3,9 @@ use tools;
 use result::{into, Fb2Result, Fb2Error};
 use torrent::Metainfo;
 use types::BookDescription;
+use types::Archive;
 use types::Sizes;
+use fb2parser::FictionBook;
 
 use rusqlite;
 use rusqlite::DatabaseName;
@@ -19,6 +21,7 @@ use std::default::Default;
 use std::iter::FromIterator;
 use std::collections::HashSet;
 use std::collections::HashMap;
+use std::collections::VecDeque;
 use std::io::{Read, Write, Seek, SeekFrom};
 
 pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
@@ -57,10 +60,10 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
             conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
         },
-        sal::SUBSYSTEM::DESC => {
+        sal::SUBSYSTEM::DESCRIPTIONS => {
             conn.execute_batch(sal::query_drop::DESC_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::DESC_SUBSYSTEM).map_err(into)?;
-        },
+        }
     }
     Ok(())
 }
@@ -452,7 +455,7 @@ pub fn unlink_titles(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
 pub fn unlink_sequences(conn: &Connection, src: i64, dst: i64) -> Fb2Result<i32> {
     conn.execute(sal::query_delete::SEQUENCES_LINK, &[&src, &dst]).map_err(into)
 }
-
+//================== Books ==================
 pub fn save_books(conn: &Connection, descriptions: &Vec<BookDescription>) -> Fb2Result<()> {
     let mut stmt = conn.prepare(sal::query_insert::BOOK).map_err(into)?;
     for desc in descriptions {
@@ -475,13 +478,43 @@ pub fn save_books(conn: &Connection, descriptions: &Vec<BookDescription>) -> Fb2
 pub fn load_known_books(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let mut result = HashSet::new();
     let mut stmt = conn.prepare(sal::query_select::BOOKS_SHA1).map_err(into)?;
-    let columns = make_index_by_name(&stmt);
     let mut rows = stmt.query(&[]).map_err(into)?;
     while let Some(row) = rows.next() {
-        result.insert(row?.get(0));
+        if let Some(row) = row.ok() {
+            result.insert(row.get(0));
+        }
     }
     Ok(result)
 }
+
+pub fn load_books(conn: &Connection, archive_id: i64) -> Fb2Result<VecDeque<FictionBook>> {
+    let mut result = VecDeque::new();
+    let mut stmt = conn.prepare(sal::query_select::BOOKS_IN_ARCHIVE).map_err(into)?;
+    let mut rows = stmt.query(&[&archive_id]).map_err(into)?;
+    while let Some(row) = rows.next() {
+        if let Some(row) = row.ok() {
+            let bytes: Vec<u8> = row.get(0);
+            if let Some(book) = FictionBook::load(&bytes) {
+                result.push_back(book);
+            }
+        }
+    }
+    Ok(result)
+}
+//================== Archives ==================
+pub fn load_archives(conn: &Connection) -> Fb2Result<VecDeque<Archive>> {
+    let mut result = VecDeque::new();
+    let mut stmt = conn.prepare(sal::query_select::ARCHIVES).map_err(into)?;
+    let mut rows = stmt.query(&[]).map_err(into)?;
+    while let Some(row) = rows.next() {
+        if let Some(row) = row.ok() {
+            result.push_back(Archive::new(row.get(0), row.get(1)))
+        }
+    }
+    Ok(result)
+}
+
+
 
 fn make_index_by_name(stmt: &rusqlite::Statement)->Fb2Result<HashMap<String, i32>> {
     let mut result = HashMap::new();

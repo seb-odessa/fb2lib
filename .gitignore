@@ -1,4 +1,5 @@
 fb2lib
+fb2lib.iws
 target
 lib.rus.ec.db
 Cargo.lock

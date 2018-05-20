@@ -52,7 +52,7 @@ impl sal::Save for Collector {
         Ok(())
     }
 }
-impl <'a> algorithm::Visitor<'a> for Collector {
+impl <'a> algorithm::MutVisitor<'a> for Collector {
     type Type = FictionBook;
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;

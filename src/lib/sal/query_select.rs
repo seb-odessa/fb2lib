@@ -26,6 +26,8 @@ pub const GENRE_CODES_DISABLED: &'static str = "
 pub const PROGRESS_STATUS: &'static str = "
 	SELECT status_id FROM progress LEFT JOIN archives ON progress.archive_id = archives.id WHERE archives.name = ? AND progress.task_id = ?;";
 
+pub const ARCHIVES: &'static str = "SELECT id, name FROM  archives";
+
 pub const ARCHIVE_ID_BY_NAME: &'static str = "SELECT id FROM archives WHERE name = ?1";
 
 pub const PEOPLE: &'static str = "SELECT first_name, middle_name, last_name, nickname FROM people";
@@ -54,4 +56,6 @@ pub const NAMES: &'static str = "SELECT name FROM names";
 
 pub const ID_BY_NAMES: &'static str = "SELECT name, id FROM names";
 
-pub const BOOKS_SHA1: &'static str = "SELECT sha1 FROM books;";
+pub const BOOKS_SHA1: &'static str = "SELECT sha1 FROM books";
+
+pub const BOOKS_IN_ARCHIVE: &'static str = "SELECT description FROM books where archive_id = :id";

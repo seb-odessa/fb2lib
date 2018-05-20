@@ -51,7 +51,7 @@ impl <'a> Header {
         archive::load_fb2(zip).ok().and_then(|_| Some(String::new()))
     }
 }
-impl <'a> algorithm::Visitor<'a> for Header{
+impl <'a> algorithm::MutVisitor<'a> for Header{
     type Type = ZipFile<'a> ;
     fn visit(&mut self, zip: &mut Self::Type) {
         self.counter += 1;

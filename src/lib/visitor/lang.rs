@@ -39,19 +39,23 @@ impl sal::Save for Lang {
 }
 impl <'a> algorithm::Visitor<'a> for Lang {
     type Type = FictionBook;
-    fn visit(&mut self, book: &mut FictionBook) {
+    fn visit(&mut self, book: &FictionBook) {
         self.counter += 1;
         let lang = book.get_book_lang().to_lowercase().as_str().trim().to_string();
         if !self.handled.contains(&lang) {
             self.langs.insert(lang);
         }
     }
-    fn get_count(&self) -> usize {
+
+    fn get_visited(&self) -> usize {
         self.counter
     }
+
     fn report(&self) {
+        println!("Visited {} languages", self.counter);
         for lang in &self.langs {
-            println!("'{}'", lang);
+            print!("'{}' ", lang);
         }
+        println!();
     }
 }
