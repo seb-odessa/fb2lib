@@ -108,13 +108,18 @@ pub const FILTER_SUBSYSTEM: &'static str = "
 #[allow(dead_code)]
 pub const LANGUAGE_SUBSYSTEM: &'static str = "
 	BEGIN;
+
+	DELETE FROM progress WHERE progress.task_id = 1;
+
     DROP TABLE IF EXISTS languages;
+
     CREATE TABLE IF NOT EXISTS languages (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    name      	    TEXT NOT NULL UNIQUE
     );
 
 	DROP VIEW IF EXISTS languages_disabled;
+
 	CREATE VIEW IF NOT EXISTS languages_disabled AS
 		SELECT languages.id, languages.name
 		FROM languages LEFT JOIN filters_def
@@ -123,13 +128,14 @@ pub const LANGUAGE_SUBSYSTEM: &'static str = "
 		WHERE filters_def.filtered_id IS NOT NULL;
 
 	DROP VIEW IF EXISTS languages_enabled;
+
 	CREATE VIEW IF NOT EXISTS languages_enabled AS
 		SELECT languages.id, languages.name
 		FROM languages LEFT JOIN filters_def
 		ON filters_def.filter_id = (select id from filters where name = \"lang\")
 		AND languages.id = filters_def.filtered_id
 		WHERE filters_def.filtered_id IS NULL;
-	DELETE FROM progress WHERE progress.task_id = 1;
+
 	COMMIT;";
 
 

@@ -8,19 +8,15 @@ use result::{Fb2Result, Fb2Error};
 use std::error::Error;
 use std::sync::mpsc::Sender;
 use std::sync::mpsc::channel;
+use std::sync::{Arc, Mutex};
+use std::collections::VecDeque;
+
 use crossbeam;
 
 pub trait MutVisitor<'a> { // @todo eliminate mutability
     type Type;
     fn visit(&mut self, target: &mut Self::Type);
     fn get_count(&self) -> usize;
-    fn report(&self) { }
-}
-
-pub trait Visitor<'a> {
-    type Type;
-    fn visit(&mut self, target: &Self::Type);
-    fn get_visited(&self) -> usize;
     fn report(&self) { }
 }
 

@@ -1,4 +1,5 @@
 use sal;
+use types;
 use algorithm;
 use result::Fb2Result;
 use visitor::acess::AccessGuard;
@@ -47,9 +48,10 @@ impl sal::Save for Name {
         self.handled.len()
     }
 }
-impl <'a> algorithm::MutVisitor<'a> for Name {
+impl <'a> types::Visitor<'a> for Name {
+
     type Type = FictionBook;
-    fn visit(&mut self, book: &mut FictionBook) {
+    fn visit(&mut self, book: &FictionBook) {
         if self.access.is_allowed(book) {
             for author in book.get_book_authors() {
                 self.counter += 1;
@@ -60,9 +62,11 @@ impl <'a> algorithm::MutVisitor<'a> for Name {
             }
         }
     }
-    fn get_count(&self) -> usize {
+
+    fn get_visited(&self) -> usize {
         self.counter
     }
+
     fn report(&self){
         println!("=============================================");
         println!("Unique names was known {}", self.handled.len());

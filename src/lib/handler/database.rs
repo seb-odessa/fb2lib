@@ -1,4 +1,5 @@
 use sal;
+use types;
 use archive;
 use algorithm;
 
@@ -20,8 +21,8 @@ use visitor::collector::Collector;
 use std::path;
 
 
-fn parse<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb2Result<()>
-    where T: algorithm::Visitor<'a, Type=FictionBook> + Save + 'static
+fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb2Result<()>
+    where T: types::Visitor<'a, Type=FictionBook> + Save + 'static
 {
     let archives = sal::load_archives(conn)?;
     for archive in &archives {
@@ -33,9 +34,11 @@ fn parse<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb2Resul
             visitor.set_status(&conn, &name, sal::STATUS::STARTED)?;
             print!(".");
             let books = sal::load_books(conn, archive.id)?;
-            for mut book in &books {
-                visitor.visit(&mut book)
+
+            for book in &books {
+                visitor.visit(book)
             }
+
             visitor.set_status(&conn, &name, sal::STATUS::VISITED)?;
 
             let (added, visited) = (visitor.get_new_count(), visitor.get_visited());
@@ -80,7 +83,15 @@ pub fn load_langs(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let langs = sal::select_languages(&conn)?;
     let visitor = Lang::new(langs);
-    parse(&conn, force, visitor)
+    visit_books(&conn, force, visitor)
+}
+
+pub fn load_names(db: &str, force: bool) -> Fb2Result<()> {
+    let conn = sal::get_connection(db)?;
+    let access = create_access_guard(&conn)?;
+    let handled = sal::load_names(&conn)?;
+    let visitor = Name::new(access, handled);
+    visit_books(&conn, force, visitor)
 }
 
 
@@ -89,13 +100,6 @@ pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()
     let access = create_access_guard(&conn)?;
     let handled = sal::select_people(&conn)?;
     let visitor = Author::new(access, handled);
-    handle(&conn, force, archives, visitor)
-}
-pub fn load_names(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
-    let conn = sal::get_connection(db)?;
-    let access = create_access_guard(&conn)?;
-    let handled = sal::load_names(&conn)?;
-    let visitor = Name::new(access, handled);
     handle(&conn, force, archives, visitor)
 }
 

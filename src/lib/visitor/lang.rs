@@ -1,4 +1,5 @@
 use sal;
+use types;
 use algorithm;
 use result::Fb2Result;
 use fb2parser::FictionBook;
@@ -19,6 +20,7 @@ impl Lang {
         }
     }
 }
+
 impl sal::Save for Lang {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_languages(&conn, &self.langs)?;
@@ -37,8 +39,10 @@ impl sal::Save for Lang {
         self.handled.len()
     }
 }
-impl <'a> algorithm::Visitor<'a> for Lang {
+
+impl <'a> types::Visitor<'a> for Lang {
     type Type = FictionBook;
+
     fn visit(&mut self, book: &FictionBook) {
         self.counter += 1;
         let lang = book.get_book_lang().to_lowercase().as_str().trim().to_string();
@@ -59,3 +63,4 @@ impl <'a> algorithm::Visitor<'a> for Lang {
         println!();
     }
 }
+

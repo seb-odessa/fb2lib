@@ -1,4 +1,4 @@
-// use tools;
+use types;
 use archive;
 use algorithm;
 use fb2parser::FictionBook;
@@ -71,19 +71,22 @@ pub fn authors(archives: &Vec<&str>) -> Fb2Result<()> {
     //     algorithm::visit(&zip, "*.fb2", &mut visitor)?;
     // }
     // visitor.report();
-    // Ok(())
-    handle(archives, Author::new(AccessGuard::new(), HashSet::new()))
+//    handle(archives, Author::new(AccessGuard::new(), HashSet::new()))
+    Ok(())
 }
 pub fn langs(archives: &Vec<&str>) -> Fb2Result<()> {
     //handle(archives, Lang::new(HashSet::new()))
     Ok(())
 }
 pub fn titles(archives: &Vec<&str>) -> Fb2Result<()> {
-    handle(archives, Title::new(AccessGuard::new(), HashSet::new()))
+//    handle(archives, Title::new(AccessGuard::new(), HashSet::new()))
+    Ok(())
 }
 pub fn sequences(archives: &Vec<&str>) -> Fb2Result<()> {
-    handle(archives, Sequence::new(AccessGuard::new(), HashSet::new()))
+//    handle(archives, Sequence::new(AccessGuard::new(), HashSet::new()))
+    Ok(())
 }
 pub fn genres(archives: &Vec<&str>) -> Fb2Result<()> {
-    handle(archives, Genre::new(HashSet::new()))
+//    handle(archives, Genre::new(HashSet::new()))
+    Ok(())
 }

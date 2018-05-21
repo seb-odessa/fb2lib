@@ -57,7 +57,7 @@ impl <'a> algorithm::MutVisitor<'a> for Collector {
     fn visit(&mut self, book: &mut FictionBook) {
         self.counter += 1;
         if self.access.is_allowed(book) {
-            self.names.visit(book);
+            //self.names.visit(book);
             self.titles.visit(book);
             self.sequences.visit(book);
         }
@@ -66,7 +66,7 @@ impl <'a> algorithm::MutVisitor<'a> for Collector {
         self.counter
     }
     fn report(&self) {
-        self.names.report();
+        //self.names.report();
         self.titles.report();
         self.sequences.report();
     }
