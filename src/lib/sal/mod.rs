@@ -21,8 +21,6 @@ pub trait Save {
     fn set_status(&self, conn: &Connection, archive: &str, status: STATUS) -> result::Fb2Result<()> {
         set_archive_status(conn, archive, get_task_id(self.task()), get_status_id(status))
     }
-    fn get_new_count(&self) -> usize;
-    fn get_stored_count(&self) -> usize;
 }
 
 pub enum SUBSYSTEM {
@@ -69,7 +67,7 @@ pub use sal::imp::validate;
 pub use sal::imp::get_piece_hash;
 
 pub use sal::imp::insert_languages;
-pub use sal::imp::select_languages;
+pub use sal::imp::load_languages;
 pub use sal::imp::get_languages_disabled;
 pub use sal::imp::get_languages_enabled;
 pub use sal::imp::disable_language;

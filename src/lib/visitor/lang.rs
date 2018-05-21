@@ -1,6 +1,6 @@
 use sal;
 use types;
-use algorithm;
+//use algorithm;
 use result::Fb2Result;
 use fb2parser::FictionBook;
 
@@ -8,46 +8,44 @@ use std::collections::HashSet;
 
 pub struct Lang {
     counter: usize,
-    langs: HashSet<String>,
-    handled: HashSet<String>,
+    accepted: HashSet<String>,
+    already_known: HashSet<String>,
 }
+
 impl Lang {
-    pub fn new(handled: HashSet<String>) -> Self {
+    pub fn new(already_known: HashSet<String>) -> Self {
         Lang {
             counter: 0,
-            langs: HashSet::new(),
-            handled: handled,
+            accepted: HashSet::new(),
+            already_known: already_known,
         }
     }
 }
 
 impl sal::Save for Lang {
+
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::insert_languages(&conn, &self.langs)?;
-        self.handled = self.handled.union(&self.langs).map(|s| s.clone()).collect();
-        self.langs.clear();
+        sal::insert_languages(&conn, &self.accepted)?;
+        self.already_known = self.already_known.union(&self.accepted).map(|s| s.clone()).collect();
+        self.accepted.clear();
         self.counter = 0;
         Ok(())
     }
+
     fn task(&self) -> sal::TASK {
         sal::TASK::LANGUAGE
-    }
-    fn get_new_count(&self) -> usize {
-        self.langs.len()
-    }
-    fn get_stored_count(&self) -> usize {
-        self.handled.len()
     }
 }
 
 impl <'a> types::Visitor<'a> for Lang {
+
     type Type = FictionBook;
 
     fn visit(&mut self, book: &FictionBook) {
         self.counter += 1;
         let lang = book.get_book_lang().to_lowercase().as_str().trim().to_string();
-        if !self.handled.contains(&lang) {
-            self.langs.insert(lang);
+        if !self.already_known.contains(&lang) {
+            self.accepted.insert(lang);
         }
     }
 
@@ -55,12 +53,12 @@ impl <'a> types::Visitor<'a> for Lang {
         self.counter
     }
 
-    fn report(&self) {
-        println!("Visited {} languages", self.counter);
-        for lang in &self.langs {
-            print!("'{}' ", lang);
-        }
-        println!();
+    fn get_accepted(&self) -> usize {
+        self.accepted.len()
+    }
+
+    fn get_already_known(&self) -> usize {
+        self.already_known.len()
     }
 }
 

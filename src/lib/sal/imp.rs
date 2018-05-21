@@ -8,21 +8,13 @@ use types::Sizes;
 use fb2parser::FictionBook;
 
 use rusqlite;
-use rusqlite::DatabaseName;
 pub use rusqlite::Connection;
-use crypto::sha1::Sha1;
-use crypto::digest::Digest;
-use bincode::{serialize, deserialize};
 use rustc_serialize::hex::ToHex;
 
-use std::hash::Hash;
-use std::fmt::Debug;
-use std::default::Default;
 use std::iter::FromIterator;
 use std::collections::HashSet;
 use std::collections::HashMap;
 use std::collections::VecDeque;
-use std::io::{Read, Write, Seek, SeekFrom};
 
 pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
     let conn = Connection::open(db_file_name).map_err(into)?;
@@ -389,7 +381,7 @@ pub fn load_titles(conn: &Connection) -> Fb2Result<HashSet<String>> {
     Ok(HashSet::from_iter(vector))
 }
 
-pub fn select_languages(conn: &Connection) -> Fb2Result<HashSet<String>> {
+pub fn load_languages(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let vector = select_column(conn, sal::query_select::LANGUAGES, 0)?;
     Ok(HashSet::from_iter(vector))
 }

@@ -1,7 +1,7 @@
 use sal;
-use algorithm;
+use types;
 use result::Fb2Result;
-use visitor::acess::AccessGuard;
+use visitor::guard::Guard;
 use fb2parser::FictionBook;
 
 use std::collections::HashSet;
@@ -10,12 +10,12 @@ pub type AuthorDesc = (String, String, String, String);
 
 pub struct Author {
     counter: usize,
-    access: AccessGuard,
+    access: Guard,
     authors: HashSet<AuthorDesc>,
     handled: HashSet<AuthorDesc>,
 }
 impl Author {
-    pub fn new(access: AccessGuard, handled: HashSet<AuthorDesc>) -> Self {
+    pub fn new(access: Guard, handled: HashSet<AuthorDesc>) -> Self {
         Author {
             counter: 0,
             access: access,
@@ -37,16 +37,13 @@ impl sal::Save for Author {
     fn task(&self) -> sal::TASK {
         sal::TASK::NAME
     }
-    fn get_new_count(&self) -> usize {
-        self.authors.len()
-    }
-    fn get_stored_count(&self) -> usize {
-        self.handled.len()
-    }
 }
-impl <'a> algorithm::MutVisitor<'a> for Author {
+
+impl <'a> types::Visitor<'a> for Author {
+
     type Type = FictionBook;
-    fn visit(&mut self, book: &mut FictionBook) {
+
+    fn visit(&mut self, book: &FictionBook) {
         self.counter += 1;
         if self.access.is_allowed(book) {
             for author in book.get_book_authors() {
@@ -56,9 +53,19 @@ impl <'a> algorithm::MutVisitor<'a> for Author {
             }
         }
     }
-    fn get_count(&self) -> usize {
+
+    fn get_visited(&self) -> usize {
         self.counter
     }
+
+    fn get_accepted(&self) -> usize {
+        self.authors.len()
+    }
+
+    fn get_already_known(&self) -> usize {
+        self.handled.len()
+    }
+
     fn report(&self){
         for author in &self.authors {
             let (first_name, middle_name, last_name, nick_name) = author.clone();

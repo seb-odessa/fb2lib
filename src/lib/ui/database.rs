@@ -42,11 +42,6 @@ const SEQUENCES_HELP: &'static str = "Handle book sequences";
 const DESC: &'static str = "descriptions";
 const DESC_HELP: &'static str = "Handle books descriptions";
 
-
-const REFS: &'static str = "refs";
-const REFS_HELP: &'static str = "Handle dictionaries with authors, sequences and titles at once";
-
-
 const FORCE: &'static str = "force";
 const FORCE_HELP: &'static str = "Force save data to the database";
 const PATTERN: &'static str = "pattern";
@@ -83,9 +78,8 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(NAMES).about(NAMES_HELP).arg(force.clone()))
-            .subcommand(SubCommand::with_name(REFS).about(REFS_HELP).arg(force.clone()).arg(arch.clone()))
             .subcommand(SubCommand::with_name(DESC).about(DESC_HELP).arg(arch.clone()))
         )
         .subcommand(
@@ -151,12 +145,8 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
             handler::database::load_langs(database, force)
         }
         (TITLES, Some(arg)) => {
-            if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                let force = arg.is_present(FORCE);
-                handler::database::load_titles(database, force, &archives.collect::<Vec<&str>>())
-            } else {
-                ui::usage(arg)
-            }
+            let force = arg.is_present(FORCE);
+            handler::database::load_titles(database, force)
         }
         (SEQUENCES, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
@@ -169,14 +159,6 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (NAMES, Some(arg)) => {
             let force = arg.is_present(FORCE);
             handler::database::load_names(database, force)
-        }
-        (REFS, Some(arg)) => {
-            if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                let force = arg.is_present(FORCE);
-                handler::database::load_dictionary(database, force, &archives.collect::<Vec<&str>>())
-            } else {
-                ui::usage(arg)
-            }
         }
         (DESC, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {

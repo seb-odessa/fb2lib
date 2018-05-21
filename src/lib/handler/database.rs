@@ -4,19 +4,18 @@ use archive;
 use algorithm;
 
 use sal::Save;
-use algorithm::MutVisitor;
+use types::MutVisitor;
 use result::{Fb2Result, Fb2Error};
 use fb2parser::FictionBook;
 
 
-use visitor::acess;
+use visitor::guard;
 use visitor::author::Author;
 use visitor::name::Name;
 use visitor::lang::Lang;
 use visitor::title::Title;
 use visitor::sequence::Sequence;
 use visitor::description::Description;
-use visitor::collector::Collector;
 
 use std::path;
 
@@ -41,7 +40,7 @@ fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb
 
             visitor.set_status(&conn, &name, sal::STATUS::VISITED)?;
 
-            let (added, visited) = (visitor.get_new_count(), visitor.get_visited());
+            let (accepted, visited) = (visitor.get_accepted(), visitor.get_visited());
             match visitor.save(&conn) {
                 Ok(()) => {
                     visitor.set_status(&conn, &name, sal::STATUS::COMPLETE)?;
@@ -53,8 +52,10 @@ fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb
                     return Err(e);
                 }
             }
-            let added = format!("{}/{}", added, visited);
-            println!("Done.\n\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
+            let added = format!("{}/{}", accepted, visited);
+            println!("Done.\n\t Added {:>11}. Current stored recods count {}",
+                     added,
+                     visitor.get_already_known());
         } else {
             println!("...Skiped.");
         }
@@ -81,7 +82,7 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
 /************************************* LOAD HANDLERS *******************************************/
 pub fn load_langs(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
-    let langs = sal::select_languages(&conn)?;
+    let langs = sal::load_languages(&conn)?;
     let visitor = Lang::new(langs);
     visit_books(&conn, force, visitor)
 }
@@ -94,35 +95,30 @@ pub fn load_names(db: &str, force: bool) -> Fb2Result<()> {
     visit_books(&conn, force, visitor)
 }
 
-
-pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
-    let conn = sal::get_connection(db)?;
-    let access = create_access_guard(&conn)?;
-    let handled = sal::select_people(&conn)?;
-    let visitor = Author::new(access, handled);
-    handle(&conn, force, archives, visitor)
-}
-
-pub fn load_titles(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+pub fn load_titles(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
     let ignore = sal::load_titles(&conn)?;
     let visitor = Title::new(access, ignore);
-    handle(&conn, force, archives, visitor)
+    visit_books(&conn, force, visitor)
 }
+
+
+pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+    // @todo remake using names table
+    let conn = sal::get_connection(db)?;
+    let access = create_access_guard(&conn)?;
+    let handled = sal::select_people(&conn)?;
+    let visitor = Author::new(access, handled);
+    visit_books(&conn, force, visitor)
+}
+
 
 pub fn load_sequences(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
     let ignore = sal::load_sequences(&conn)?;
     let visitor = Sequence::new(access, ignore);
-    handle(&conn, force, archives, visitor)
-}
-
-pub fn load_dictionary(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
-    let conn = sal::get_connection(db)?;
-    let access = create_access_guard(&conn)?;
-    let visitor = Collector::new(access, &conn)?;
     handle(&conn, force, archives, visitor)
 }
 
@@ -135,7 +131,7 @@ pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
         print!("Processing {}", &name);
         visitor.select_archive(name)?;
-        let task = visitor.task();
+
         let status = visitor.get_stat()?;
         if !is_complete(status) {
             print!(".");
@@ -155,7 +151,7 @@ pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
                 }
             }
 
-            let (added, total) = (visitor.get_new_count(), visitor.get_count());
+            let (accepted, visited) = (visitor.get_accepted(), visitor.get_visited());
             match visitor.save_collected() {
                 Ok(()) => {
                     visitor.set_stat(sal::STATUS::COMPLETE)?;
@@ -167,8 +163,11 @@ pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
                     return Err(e);
                 }
             }
-            let added = format!("{}/{}", added, total);
-            println!("Done.\n\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
+            let added = format!("{}/{}", accepted, visited);
+            println!("Done.\n\t Added {:>11}. Current stored recods count {}",
+                     added,
+                     visitor.get_already_known()
+            );
         } else {
             println!("...Skipped.");
         }
@@ -254,10 +253,10 @@ pub fn rm_link_sequences(db: &str, src: &str, dst: &str) -> Fb2Result<()> {
     Ok(())
 }
 /************************************ PRIVATE HANDLERS *****************************************/
-fn create_access_guard(conn: &sal::Connection)-> Fb2Result<acess::AccessGuard> {
+fn create_access_guard(conn: &sal::Connection)-> Fb2Result<guard::Guard> {
     let langs: Vec<String> = sal::get_languages_disabled(&conn)?;
     let genres: Vec<String> = sal::get_genre_codes_disabled(&conn)?;
-    let mut access = acess::AccessGuard::new();
+    let mut access = guard::Guard::new();
     access.disable_langs(langs);
     access.disable_genres(genres);
     Ok(access)
@@ -293,7 +292,7 @@ fn visit<'a, T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, 
                 return Err(e);
             }
         }
-        let (added, total) = (visitor.get_new_count(), visitor.get_count());
+        let (accepted, visited) = (visitor.get_accepted(), visitor.get_visited());
         match visitor.save(&conn) {
             Ok(()) => {
                 visitor.set_status(&conn, name, sal::STATUS::COMPLETE)?;
@@ -305,8 +304,10 @@ fn visit<'a, T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, 
                 return Err(e);
             }
         }
-        let added = format!("{}/{}", added, total);
-        println!("Done.\t Added {:>11}. Current stored recods count {}", added, visitor.get_stored_count());
+        let added = format!("{}/{}", accepted, visited);
+        println!("Done.\t Added {:>11}. Current stored recods count {}",
+                 added,
+                 visitor.get_already_known());
     } else {
         println!("...Skiped.");
     }

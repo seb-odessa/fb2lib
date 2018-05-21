@@ -1,10 +1,8 @@
 use sal;
+use types;
 use archive;
-use visitor;
-use algorithm;
 use result::Fb2Result;
-use visitor::acess::AccessGuard;
-use fb2parser::FictionBook;
+use visitor::guard::Guard;
 use types::{FileDescription, BlobDescription, BookDescription};
 
 use zip::ZipFile;
@@ -18,22 +16,22 @@ pub struct Description {
     book_count: usize,
     archive_id: i64,
     archive_name: String,
-    books_new: Vec<BookDescription>,
-    books_known: HashSet<String>,
+    accepted: Vec<BookDescription>,
+    already_known: HashSet<String>,
     hasher: Sha1,
     connection: sal::Connection,
 }
 impl <'a> Description
 {
-    pub fn new(conn: sal::Connection, access: AccessGuard) -> Fb2Result<Self> {
+    pub fn new(conn: sal::Connection, access: Guard) -> Fb2Result<Self> {
         Ok(
             Self {
                 arch_count: 0,
                 book_count: 0,
                 archive_id: 0,
                 archive_name: String::new(),
-                books_new: Vec::new(),
-                books_known: sal::load_known_books(&conn)?,
+                accepted: Vec::new(),
+                already_known: sal::load_known_books(&conn)?,
                 hasher: Sha1::new(),
                 connection: conn,
             }
@@ -56,10 +54,10 @@ impl <'a> Description
     }
 
     pub fn save_collected(&mut self) -> Fb2Result<()> {
-        sal::save_books(&mut self.connection, &self.books_new)?;
-        let saved: HashSet<String> = self.books_new.iter().map(|desc| desc.blob.sha1.clone()).collect();
-        self.books_known = self.books_known.union(&saved).map(|s| s.clone()).collect();
-        self.books_new.clear();
+        sal::save_books(&mut self.connection, &self.accepted)?;
+        let saved: HashSet<String> = self.accepted.iter().map(|desc| desc.blob.sha1.clone()).collect();
+        self.already_known = self.already_known.union(&saved).map(|s| s.clone()).collect();
+        self.accepted.clear();
         Ok(())
     }
 }
@@ -72,17 +70,9 @@ impl sal::Save for Description {
     fn task(&self) -> sal::TASK {
         sal::TASK::DESC
     }
-
-    fn get_new_count(&self) -> usize {
-        self.books_new.len()
-    }
-
-    fn get_stored_count(&self) -> usize {
-        self.books_known.len()
-    }
 }
 
-impl <'a> algorithm::MutVisitor<'a> for Description{
+impl <'a> types::MutVisitor<'a> for Description{
 
     type Type = ZipFile<'a> ;
     fn visit(&mut self, zip: &mut Self::Type) {
@@ -95,10 +85,10 @@ impl <'a> algorithm::MutVisitor<'a> for Description{
                         let sha1 = self.hasher.result_str();
                         let blob = BlobDescription::from(bytes, sha1);
                         self.hasher.reset();
-                        if !self.books_known.contains(&blob.sha1) {
+                        if !self.already_known.contains(&blob.sha1) {
                             let file = FileDescription::from(zip);
                             let desc = BookDescription::from((self.archive_id, file, blob));
-                            self.books_new.push(desc);
+                            self.accepted.push(desc);
                         }
                     }
                 },
@@ -112,14 +102,23 @@ impl <'a> algorithm::MutVisitor<'a> for Description{
         }
     }
 
-    fn get_count(&self) -> usize {
+
+    fn get_visited(&self) -> usize {
         self.book_count
+    }
+
+    fn get_accepted(&self) -> usize {
+        self.accepted.len()
+    }
+
+    fn get_already_known(&self) -> usize {
+        self.already_known.len()
     }
 
     fn report(&self) {
         println!("Handled {} archives, and {} files", self.arch_count, self.book_count);
-        println!("Files processed in this session {}.", self.books_new.len());
-        println!("Total files processed {}.", self.books_known.len());
+        println!("Files processed in this session {}.", self.accepted.len());
+        println!("Total files processed {}.", self.already_known.len());
     }
 
 }

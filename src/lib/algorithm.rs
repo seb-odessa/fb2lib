@@ -1,5 +1,6 @@
 
 use tools;
+use types::MutVisitor;
 use fb2parser::FictionBook;
 use archive;
 use archive::{ZipArchive, ZipFile};
@@ -8,18 +9,7 @@ use result::{Fb2Result, Fb2Error};
 use std::error::Error;
 use std::sync::mpsc::Sender;
 use std::sync::mpsc::channel;
-use std::sync::{Arc, Mutex};
-use std::collections::VecDeque;
-
 use crossbeam;
-
-pub trait MutVisitor<'a> { // @todo eliminate mutability
-    type Type;
-    fn visit(&mut self, target: &mut Self::Type);
-    fn get_count(&self) -> usize;
-    fn report(&self) { }
-}
-
 
 pub fn visit_books<'a>(archive_name: &str, visitor: &mut MutVisitor<'a, Type=FictionBook>) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;

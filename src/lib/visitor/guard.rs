@@ -4,23 +4,15 @@ use std::iter::FromIterator;
 use std::collections::HashSet;
 
 #[derive(Clone)]
-pub struct AccessGuard {
+pub struct Guard {
     allow_all: bool,
     disabled_genres: HashSet<String>,
     disabled_langs: HashSet<String>
 }
-impl AccessGuard {
+impl Guard {
     pub fn new() -> Self {
-        AccessGuard {
+        Guard {
             allow_all: false,
-            disabled_genres: HashSet::new(),
-            disabled_langs: HashSet::new(),
-        }
-    }
-
-    pub fn all() -> Self {
-        AccessGuard {
-            allow_all: true,
             disabled_genres: HashSet::new(),
             disabled_langs: HashSet::new(),
         }

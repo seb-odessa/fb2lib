@@ -1,6 +1,6 @@
-use zip::ZipFile;
+use types;
 use archive;
-use algorithm;
+use zip::ZipFile;
 
 pub enum Show {
     Zip,
@@ -51,7 +51,7 @@ impl <'a> Header {
         archive::load_fb2(zip).ok().and_then(|_| Some(String::new()))
     }
 }
-impl <'a> algorithm::MutVisitor<'a> for Header{
+impl <'a> types::MutVisitor<'a> for Header{
     type Type = ZipFile<'a> ;
     fn visit(&mut self, zip: &mut Self::Type) {
         self.counter += 1;
@@ -67,9 +67,19 @@ impl <'a> algorithm::MutVisitor<'a> for Header{
             None => println!("Filed to process {} file.", zip.name()),
         }
     }
-    fn get_count(&self) -> usize {
+
+    fn get_visited(&self) -> usize {
         self.counter
     }
+
+    fn get_accepted(&self) -> usize {
+        0
+    }
+
+    fn get_already_known(&self) -> usize {
+        0
+    }
+
     fn report(&self) {
         println!("Handled {} files in archive", self.counter);
     }

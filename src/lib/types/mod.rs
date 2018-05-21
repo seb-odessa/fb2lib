@@ -14,5 +14,6 @@ pub use types::archive::Archive;
 pub use types::archive::Sizes;
 pub use types::people::People;
 pub use types::visitor::Visitor;
+pub use types::visitor::MutVisitor;
 
 

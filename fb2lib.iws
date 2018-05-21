@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/lib/visitor/lang.rs" line="41" />
+    <bookmark url="file://$PROJECT_DIR$/src/lib/visitor/lang.rs" line="43" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8a6cee8-ee61-4c7c-932a-967d440e1761" name="Default" comment="Add loading of blobs into DB">
-      <change afterPath="$PROJECT_DIR$/src/lib/types/blob_description.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/types/book_description.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/types/file_description.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fb2lib.iws" beforeDir="false" afterPath="$PROJECT_DIR$/fb2lib.iws" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/algorithm.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/algorithm.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/handler/archive.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/handler/archive.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/handler/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/handler/database.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/sal/imp.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/sal/imp.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/sal/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/sal/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/sal/query_select.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/sal/query_select.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/types/archive.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/types/archive.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/types/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/types/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/types/visitor.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/types/visitor.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/ui/database.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/ui/database.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/visitor/acess.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/guard.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/author.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/author.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/visitor/collector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/collector.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/visitor/collector.rs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/description.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/description.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/genre.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/genre.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/header.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/header.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/lang.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/lang.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/visitor/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/mod.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/name.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/name.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/sequence.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/sequence.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/visitor/title.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/visitor/title.rs" afterDir="false" />
@@ -39,51 +36,88 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="database.rs" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/lib/handler/database.rs">
+      <file leaf-file-name="database.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/ui/database.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="53" column="29" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
+            <state relative-caret-position="-750">
+              <caret line="80" column="91" selection-start-line="80" selection-start-column="91" selection-end-line="80" selection-end-column="91" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="lang.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/lib/visitor/lang.rs">
+      <file leaf-file-name="guard.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/visitor/guard.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="529">
-              <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
-              <folding>
-                <element signature="e#1276#1277#0" expanded="true" />
-                <element signature="e#1303#1304#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="imp.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/lib/sal/imp.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="512" column="5" selection-start-line="512" selection-start-column="5" selection-end-line="512" selection-end-column="5" />
+            <state relative-caret-position="90">
+              <caret line="6" column="11" selection-start-line="6" selection-start-column="11" selection-end-line="6" selection-end-column="11" />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="mod.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/lib/sal/mod.rs">
+        <entry file="file://$PROJECT_DIR$/src/lib/visitor/mod.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="454">
-              <caret line="120" column="23" selection-start-line="120" selection-start-column="23" selection-end-line="120" selection-end-column="23" />
+            <state relative-caret-position="150">
+              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="query_select.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/lib/sal/query_select.rs">
+      <file leaf-file-name="description.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/visitor/description.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="500">
-              <caret line="60" column="96" selection-start-line="60" selection-start-column="96" selection-end-line="60" selection-end-column="96" />
+            <state relative-caret-position="15">
+              <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="algorithm.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/algorithm.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" column="4" lean-forward="true" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mod.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/types/mod.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="16" column="27" selection-start-line="16" selection-start-column="27" selection-end-line="16" selection-end-column="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="archive.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/handler/archive.rs">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="genre.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/visitor/genre.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" selection-start-line="2" selection-end-line="2" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sequence.rs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/lib/visitor/sequence.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" selection-start-line="2" selection-end-line="2" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="header.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/visitor/header.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" selection-start-line="2" selection-end-line="2" />
             </state>
           </provider>
         </entry>
@@ -106,7 +140,15 @@
       <find>BOOK</find>
       <find>Fict</find>
       <find>visit_books</find>
+      <find>Colle</find>
+      <find>task`</find>
+      <find>task</find>
+      <find>algorithm::MutVisitor</find>
     </findStrings>
+    <replaceStrings>
+      <replace />
+      <replace>types::MutVisitor</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -119,22 +161,30 @@
         <option value="$PROJECT_DIR$/scripts/cleanup_DB_and_load_langs.sh" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/lib/sal/query_create.rs" />
-        <option value="$PROJECT_DIR$/src/lib/visitor/mod.rs" />
         <option value="$PROJECT_DIR$/src/lib/sal/query_insert.rs" />
-        <option value="$PROJECT_DIR$/src/lib/visitor/description.rs" />
         <option value="$PROJECT_DIR$/src/lib/types/file_description.rs" />
         <option value="$PROJECT_DIR$/src/lib/types/blob_description.rs" />
         <option value="$PROJECT_DIR$/src/lib/types/book_description.rs" />
         <option value="$PROJECT_DIR$/src/lib/types/archive.rs" />
-        <option value="$PROJECT_DIR$/src/lib/types/mod.rs" />
-        <option value="$PROJECT_DIR$/src/lib/ui/database.rs" />
         <option value="$PROJECT_DIR$/src/lib/sal/query_select.rs" />
-        <option value="$PROJECT_DIR$/src/lib/sal/imp.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/mod.rs" />
         <option value="$PROJECT_DIR$/src/lib/sal/mod.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/title.rs" />
+        <option value="$PROJECT_DIR$/src/lib/sal/imp.rs" />
         <option value="$PROJECT_DIR$/src/lib/visitor/lang.rs" />
-        <option value="$PROJECT_DIR$/src/lib/algorithm.rs" />
-        <option value="$PROJECT_DIR$/src/lib/handler/archive.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/name.rs" />
         <option value="$PROJECT_DIR$/src/lib/handler/database.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/author.rs" />
+        <option value="$PROJECT_DIR$/src/lib/ui/database.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/acess.rs" />
+        <option value="$PROJECT_DIR$/src/lib/types/visitor.rs" />
+        <option value="$PROJECT_DIR$/src/lib/algorithm.rs" />
+        <option value="$PROJECT_DIR$/src/lib/types/mod.rs" />
+        <option value="$PROJECT_DIR$/src/lib/handler/archive.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/header.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/description.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/genre.rs" />
+        <option value="$PROJECT_DIR$/src/lib/visitor/sequence.rs" />
       </list>
     </option>
   </component>
@@ -285,7 +335,7 @@
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.3281493" />
       <window_info id="Designer" order="2" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27954546" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32917318" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -309,25 +359,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Add loading of blobs into DB" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/lang.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="41" column="43" selection-start-line="41" selection-start-column="43" selection-end-line="41" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/acess.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/author.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/book.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/collector.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/sal/query_create.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1185">
@@ -406,25 +437,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/header.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/author.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/book.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/collector.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/ui/archive.rs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/ui/filter.rs">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -457,22 +469,8 @@
     <entry file="file://$PROJECT_DIR$/src/lib/archive.rs">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/mod.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/handler/lang.rs">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/description.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="117" selection-start-line="117" selection-end-line="117" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/sal/query_insert.rs">
       <provider selected="true" editor-type-id="text-editor">
@@ -505,24 +503,10 @@
     <entry file="file://$PROJECT_DIR$/src/lib/types/people.rs">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/types/mod.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="31" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/sal/query_create.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="243">
           <caret line="381" column="36" selection-start-line="381" selection-start-column="36" selection-end-line="381" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/sal/query_select.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="60" column="96" selection-start-line="60" selection-start-column="96" selection-end-line="60" selection-end-column="96" />
         </state>
       </provider>
     </entry>
@@ -533,34 +517,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/ui/database.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="150" column="58" lean-forward="true" selection-start-line="150" selection-start-column="58" selection-end-line="150" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/visitor/acess.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="27" lean-forward="true" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/sal/mod.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="120" column="23" selection-start-line="120" selection-start-column="23" selection-end-line="120" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/sal/imp.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="512" column="5" selection-start-line="512" selection-start-column="5" selection-end-line="512" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.cargo/git/checkouts/fb2parser-1f94783d4e747ec2/8764193/src/fictionbook.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="555">
@@ -568,39 +524,159 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/handler/archive.rs">
+    <entry file="file://$PROJECT_DIR$/src/lib/sal/query_select.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="78" column="8" selection-start-line="78" selection-start-column="8" selection-end-line="78" selection-end-column="8" />
+        <state relative-caret-position="500">
+          <caret line="60" column="96" selection-start-line="60" selection-start-column="96" selection-end-line="60" selection-end-column="96" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/collector.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-221" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/sal/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/ui/archive.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1466" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/title.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
           <folding>
-            <element signature="e#2259#2260#0" expanded="true" />
-            <element signature="e#2309#2310#0" expanded="true" />
+            <element signature="e#840#841#0" expanded="true" />
+            <element signature="e#871#872#0" expanded="true" />
+            <element signature="e#1418#1419#0" expanded="true" />
+            <element signature="e#1445#1446#0" expanded="true" />
+            <element signature="e#1521#1522#0" expanded="true" />
+            <element signature="e#1555#1556#0" expanded="true" />
+            <element signature="e#1599#1600#0" expanded="true" />
+            <element signature="e#1638#1639#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/book.rs">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/sal/imp.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/visitor/lang.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
-          <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
-          <folding>
-            <element signature="e#1276#1277#0" expanded="true" />
-            <element signature="e#1303#1304#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="45">
+          <caret line="3" column="16" lean-forward="true" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/algorithm.rs">
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/name.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="56" selection-start-line="12" selection-start-column="56" selection-end-line="12" selection-end-column="56" />
+        <state relative-caret-position="45">
+          <caret line="3" column="16" lean-forward="true" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
+          <folding>
+            <element signature="e#1655#1656#0" expanded="true" />
+            <element signature="e#1689#1690#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/handler/database.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="53" column="29" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
+        <state relative-caret-position="556">
+          <caret line="309" column="44" selection-start-line="309" selection-start-column="44" selection-end-line="309" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/author.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="65" column="20" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/ui/database.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-750">
+          <caret line="80" column="91" selection-start-line="80" selection-start-column="91" selection-end-line="80" selection-end-column="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/guard.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="11" selection-start-line="6" selection-start-column="11" selection-end-line="6" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/types/visitor.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="5" selection-start-line="29" selection-start-column="5" selection-end-line="29" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/algorithm.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="4" lean-forward="true" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/types/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="27" selection-start-line="16" selection-start-column="27" selection-end-line="16" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/handler/archive.rs">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/header.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/description.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/genre.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/visitor/sequence.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
     </entry>
