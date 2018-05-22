@@ -5,6 +5,7 @@ mod blob_description;
 mod book_description;
 mod people;
 mod visitor;
+mod report;
 
 pub use types::file_description::FileDescription;
 pub use types::blob_description::BlobDescription;
@@ -15,5 +16,6 @@ pub use types::archive::Sizes;
 pub use types::people::People;
 pub use types::visitor::Visitor;
 pub use types::visitor::MutVisitor;
+pub use types::report::Report;
 
 

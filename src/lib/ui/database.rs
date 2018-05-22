@@ -77,7 +77,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
             SubCommand::with_name(LOAD).about(LOAD_HELP)
             .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()).arg(arch.clone()))
-            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(NAMES).about(NAMES_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(DESC).about(DESC_HELP).arg(arch.clone()))
@@ -149,12 +149,8 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
             handler::database::load_titles(database, force)
         }
         (SEQUENCES, Some(arg)) => {
-            if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                let force = arg.is_present(FORCE);
-                handler::database::load_sequences(database, force, &archives.collect::<Vec<&str>>())
-            } else {
-                ui::usage(arg)
-            }
+            let force = arg.is_present(FORCE);
+            handler::database::load_sequences(database, force)
         }
         (NAMES, Some(arg)) => {
             let force = arg.is_present(FORCE);

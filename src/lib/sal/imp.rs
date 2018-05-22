@@ -35,11 +35,6 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
             conn.execute_batch(sal::query_create::GENRE_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
         },
-
-        sal::SUBSYSTEM::VERSION => {
-            conn.execute_batch(sal::query_drop::VERSION_SUBSYSTEM).map_err(into)?;
-            conn.execute_batch(sal::query_create::VERSION_SUBSYSTEM).map_err(into)?;
-        },
         sal::SUBSYSTEM::TITLES => {
             conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
@@ -62,7 +57,6 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
 
 pub fn get_task_id(oper: sal::TASK) -> i64 {
     match oper {
-        sal::TASK::UNDEFINED => 0,
         sal::TASK::LANGUAGE => 1,
         sal::TASK::GENRE => 2,
         sal::TASK::NAME => 3,
@@ -305,38 +299,38 @@ pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, St
     Ok(authors)
 }
 
-pub fn load_people(conn: &Connection) -> Fb2Result<HashMap<(String, String, String, String), i64>> {
-    let mut map = HashMap::new();
-    let mut stmt = conn.prepare(sal::query_select::LOAD_ID_BY_NAME).map_err(into)?;
-    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3), row.get(4))).map_err(into)?;
-    for row in rows {
-        let author = row.map_err(into)? as (i64, String,String,String,String);
-        map.insert((author.1, author.2, author.3, author.4), author.0);
-    }
-    Ok(map)
-}
+//pub fn load_people(conn: &Connection) -> Fb2Result<HashMap<(String, String, String, String), i64>> {
+//    let mut map = HashMap::new();
+//    let mut stmt = conn.prepare(sal::query_select::LOAD_ID_BY_NAME).map_err(into)?;
+//    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3), row.get(4))).map_err(into)?;
+//    for row in rows {
+//        let author = row.map_err(into)? as (i64, String,String,String,String);
+//        map.insert((author.1, author.2, author.3, author.4), author.0);
+//    }
+//    Ok(map)
+//}
 
-pub fn load_id_by_name(conn: &Connection, sql: &str) -> Fb2Result<HashMap<String, i64>> {
-    let mut map = HashMap::new();
-    let mut stmt = conn.prepare(sql).map_err(into)?;
-    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)?;
-    for row in rows {
-        let tuple = row.map_err(into)? as (i64, String);
-        map.insert(tuple.1, tuple.0);
-    }
-    Ok(map)
-}
+//pub fn load_id_by_name(conn: &Connection, sql: &str) -> Fb2Result<HashMap<String, i64>> {
+//    let mut map = HashMap::new();
+//    let mut stmt = conn.prepare(sql).map_err(into)?;
+//    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)?;
+//    for row in rows {
+//        let tuple = row.map_err(into)? as (i64, String);
+//        map.insert(tuple.1, tuple.0);
+//    }
+//    Ok(map)
+//}
 
-pub fn load_hash_to_id(conn: &Connection, sql: &str) -> Fb2Result<HashMap<u64, i64>> {
-    let mut map = HashMap::new();
-    let mut stmt = conn.prepare(sql).map_err(into)?;
-    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)?;
-    for row in rows {
-        let (id, value) = row.map_err(into)? as (i64, String);
-        map.insert(tools::get_hash(&value), id);
-    }
-    Ok(map)
-}
+//pub fn load_hash_to_id(conn: &Connection, sql: &str) -> Fb2Result<HashMap<u64, i64>> {
+//    let mut map = HashMap::new();
+//    let mut stmt = conn.prepare(sql).map_err(into)?;
+//    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1))).map_err(into)?;
+//    for row in rows {
+//        let (id, value) = row.map_err(into)? as (i64, String);
+//        map.insert(tools::get_hash(&value), id);
+//    }
+//    Ok(map)
+//}
 
 fn insert_from_set(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
     let mut stmt = conn.prepare(sql).map_err(into)?;
@@ -390,6 +384,12 @@ pub fn load_sequences(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let vector = select_column(conn, sal::query_select::SEQUENCES, 0)?;
     Ok(HashSet::from_iter(vector))
 }
+
+//pub fn load_genres(conn: &Connection) -> Fb2Result<HashSet<String>> {
+//    let vector = select_column(conn, sal::query_select::GENRE, 0)?;
+//    Ok(HashSet::from_iter(vector))
+//}
+
 
 pub fn select_authors_joined(conn: &Connection) -> Fb2Result<Vec<(i64, String, String)>> {
     let mut result = Vec::new();
@@ -508,15 +508,15 @@ pub fn load_archives(conn: &Connection) -> Fb2Result<VecDeque<Archive>> {
 
 
 
-fn make_index_by_name(stmt: &rusqlite::Statement)->Fb2Result<HashMap<String, i32>> {
-    let mut result = HashMap::new();
-    let columns = stmt.column_names();
-    for column_name in &columns {
-        let column_index = stmt.column_index(column_name).map_err(into)?;
-        result.insert(String::from(*column_name), column_index);
-    }
-    Ok(result)
-}
+//fn make_index_by_name(stmt: &rusqlite::Statement)->Fb2Result<HashMap<String, i32>> {
+//    let mut result = HashMap::new();
+//    let columns = stmt.column_names();
+//    for column_name in &columns {
+//        let column_index = stmt.column_index(column_name).map_err(into)?;
+//        result.insert(String::from(*column_name), column_index);
+//    }
+//    Ok(result)
+//}
 
 pub fn load_names(conn: &Connection) -> Fb2Result<HashSet<String>> {
     let mut names = HashSet::new();
@@ -528,14 +528,14 @@ pub fn load_names(conn: &Connection) -> Fb2Result<HashSet<String>> {
     }
     Ok(names)
 }
-
-pub fn load_id_by_names(conn: &Connection) -> Fb2Result<HashMap<String, i64>> {
-    let mut names = HashMap::new();
-    let mut stmt = conn.prepare(sal::query_select::ID_BY_NAMES).map_err(into)?;
-    let mut rows = stmt.query(&[]).map_err(into)?;
-    while let Some(result) = rows.next() {
-        let row = result?;
-        names.insert(row.get(0), row.get(1));
-    }
-    Ok(names)
-}
+//
+//pub fn load_id_by_names(conn: &Connection) -> Fb2Result<HashMap<String, i64>> {
+//    let mut names = HashMap::new();
+//    let mut stmt = conn.prepare(sal::query_select::ID_BY_NAMES).map_err(into)?;
+//    let mut rows = stmt.query(&[]).map_err(into)?;
+//    while let Some(result) = rows.next() {
+//        let row = result?;
+//        names.insert(row.get(0), row.get(1));
+//    }
+//    Ok(names)
+//}

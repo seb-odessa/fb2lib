@@ -26,7 +26,6 @@ pub trait Save {
 pub enum SUBSYSTEM {
     TORRENT,
     LANGUAGE,
-    VERSION,
     TITLES,
     SEQUENCES,
     DESCRIPTIONS,
@@ -47,7 +46,6 @@ pub enum STATUS {
 
 #[derive(Debug, Clone, Copy)]
 pub enum TASK {
-    UNDEFINED,
     LANGUAGE,
     GENRE,
     NAME,
@@ -106,13 +104,13 @@ pub use sal::imp::select_sequences_joined;
 pub use sal::imp::link_sequences;
 pub use sal::imp::unlink_sequences;
 
-pub use sal::imp::load_people;
-pub use sal::query_select::LOAD_ID_BY_GENRE;
-pub use sal::query_select::LOAD_ID_BY_LANG;
-pub use sal::query_select::LOAD_ID_BY_TITLE;
-pub use sal::query_select::LOAD_ID_BY_SEQUENCE;
-pub use sal::imp::load_id_by_name;
-pub use sal::imp::load_hash_to_id;
+//pub use sal::imp::load_people;
+//pub use sal::query_select::LOAD_ID_BY_GENRE;
+//pub use sal::query_select::LOAD_ID_BY_LANG;
+//pub use sal::query_select::LOAD_ID_BY_TITLE;
+//pub use sal::query_select::LOAD_ID_BY_SEQUENCE;
+//pub use sal::imp::load_id_by_name;
+//pub use sal::imp::load_hash_to_id;
 
 pub use sal::imp::save_books;
 pub use sal::imp::load_known_books;
@@ -120,4 +118,6 @@ pub use sal::imp::load_books;
 
 pub use sal::imp::load_names;
 pub use sal::imp::save_names;
-pub use sal::imp::load_id_by_names;
+//pub use sal::imp::load_id_by_names;
+
+//pub use sal::imp::load_genres;

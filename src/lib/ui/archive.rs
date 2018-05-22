@@ -100,7 +100,7 @@ fn handle_show<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
         }
         (LANGS, Some(arg)) => {
             if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                handler::archive::langs(&archives.collect::<Vec<&str>>())
+                handler::archive::languages(&archives.collect::<Vec<&str>>())
             } else {
                 ui::usage(arg)
             }

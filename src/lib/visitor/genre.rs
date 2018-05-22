@@ -1,5 +1,5 @@
 use sal;
-use types;
+use types::{Visitor, Report};
 use result::Fb2Result;
 use fb2parser::FictionBook;
 
@@ -28,9 +28,9 @@ impl sal::Save for Genre {
         sal::TASK::GENRE
     }
 }
-impl <'a> types::MutVisitor<'a> for Genre {
+impl <'a> Visitor<'a> for Genre {
     type Type = FictionBook;
-    fn visit(&mut self, book: &mut FictionBook) {
+    fn visit(&mut self, book: &FictionBook) {
         for genre in book.get_book_genres().into_iter() {
             for genre in genre.split(",") {
                 self.counter += 1;
@@ -53,20 +53,18 @@ impl <'a> types::MutVisitor<'a> for Genre {
         self.already_known.len()
     }
 
-    fn report(&self) {
-        let mut total = 0;
-        let mut unknown = 0;
+}
+
+impl Report for Genre {
+
+    fn report(&self){
+        println!("=============================== Genres ===============================");
+        println!("Total books was visited {}.",self.get_visited());
+        println!("Unique genres was discovered {}: ", self.get_accepted());
+        let mut num = 1;
         for (code, count) in &self.accepted {
-            total += count;
-            if !self.already_known.contains(code) {
-                unknown += 1;
-                println!("{} - {}", code, count);
-            }
+            println!("{:>5} {} - {}", num, code, count);
+            num += 1;
         }
-        if !self.already_known.is_empty() {
-            println!("Total unknown genres was found {}", unknown);
-        }
-        println!("Total genres was processed: {}", total);
-        println!("Total unique genres was found {}", &self.accepted.len());
     }
 }

@@ -4,15 +4,16 @@ use algorithm;
 use fb2parser::FictionBook;
 use result::Fb2Result;
 use types::MutVisitor;
-//use visitor::acess::AccessGuard;
+use visitor::guard::Guard;
+use visitor::lang::Lang;
+use visitor::title::Title;
+use visitor::sequence::Sequence;
+use visitor::genre::Genre;
 //use visitor::author::Author;
-//use visitor::lang::Lang;
-//use visitor::genre::Genre;
-//use visitor::title::Title;
-//use visitor::sequence::Sequence;
+
 use visitor::header::{Header, Show};
 
-//use std::collections::HashSet;
+use std::collections::HashSet;
 
 pub fn show_zip(archive: &str, pattern: &str) -> Fb2Result<()> {
     let zip = archive::open(archive)?;
@@ -55,7 +56,7 @@ pub fn show_bad(archive: &str, pattern: &str) -> Fb2Result<()> {
 }
 
 fn handle<'a, T>(archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
-    where T: types::MutVisitor<'a, Type=FictionBook> + 'static
+    where T: types::Report + types::Visitor<'a, Type=FictionBook> + 'static
 {
     for archive in archives {
         algorithm::visit_books(archive, &mut visitor)?;
@@ -68,19 +69,15 @@ pub fn authors(_archives: &Vec<&str>) -> Fb2Result<()> {
 //    handle(archives, Author::new(AccessGuard::new(), HashSet::new()))
     Ok(())
 }
-pub fn langs(_archives: &Vec<&str>) -> Fb2Result<()> {
-    //handle(archives, Lang::new(HashSet::new()))
-    Ok(())
+pub fn languages(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Lang::new(HashSet::new()))
 }
-pub fn titles(_archives: &Vec<&str>) -> Fb2Result<()> {
-//    handle(archives, Title::new(AccessGuard::new(), HashSet::new()))
-    Ok(())
+pub fn titles(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Title::new(Guard::new(), HashSet::new()))
 }
-pub fn sequences(_archives: &Vec<&str>) -> Fb2Result<()> {
-//    handle(archives, Sequence::new(AccessGuard::new(), HashSet::new()))
-    Ok(())
+pub fn sequences(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Sequence::new(Guard::new(), HashSet::new()))
 }
-pub fn genres(_archives: &Vec<&str>) -> Fb2Result<()> {
-//    handle(archives, Genre::new(HashSet::new()))
-    Ok(())
+pub fn genres(archives: &Vec<&str>) -> Fb2Result<()> {
+    handle(archives, Genre::new(HashSet::new()))
 }

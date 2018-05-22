@@ -1,6 +1,5 @@
 use sal;
-use types;
-//use algorithm;
+use types::{Visitor, Report};
 use result::Fb2Result;
 use fb2parser::FictionBook;
 
@@ -17,13 +16,12 @@ impl Lang {
         Lang {
             counter: 0,
             accepted: HashSet::new(),
-            already_known: already_known,
+            already_known,
         }
     }
 }
 
 impl sal::Save for Lang {
-
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::insert_languages(&conn, &self.accepted)?;
         self.already_known = self.already_known.union(&self.accepted).map(|s| s.clone()).collect();
@@ -37,7 +35,7 @@ impl sal::Save for Lang {
     }
 }
 
-impl <'a> types::Visitor<'a> for Lang {
+impl <'a> Visitor<'a> for Lang {
 
     type Type = FictionBook;
 
@@ -62,3 +60,17 @@ impl <'a> types::Visitor<'a> for Lang {
     }
 }
 
+impl Report for Lang {
+
+    fn report(&self){
+        println!("=============================== Languages ===============================");
+        println!("Total books was visited {}.",self.get_visited());
+        print!("Unique languages was discovered {}: ", self.get_accepted());
+        let mut items: Vec<String> = self.accepted.iter().map(|s| s.clone()).collect();
+        items.sort();
+        for item in &items {
+            print!("'{}' ", item);
+        }
+        println!();
+    }
+}

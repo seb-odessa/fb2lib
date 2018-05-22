@@ -42,20 +42,22 @@ pub const TITLES_JOINED: &'static str = "SELECT id, src_title, dst_title FROM ti
 
 pub const SEQUENCES_JOINED: &'static str = "SELECT id, src_sequence, dst_sequence FROM sequences_joined";
 
-pub const LOAD_ID_BY_NAME: &'static str = "SELECT id, first_name, middle_name, last_name, nickname FROM people";
+//pub const LOAD_ID_BY_NAME: &'static str = "SELECT id, first_name, middle_name, last_name, nickname FROM people";
 
-pub const LOAD_ID_BY_GENRE: &'static str = "SELECT id, code FROM genres";
+//pub const LOAD_ID_BY_GENRE: &'static str = "SELECT id, code FROM genres";
 
-pub const LOAD_ID_BY_LANG: &'static str = "SELECT id, name FROM languages";
+//pub const LOAD_ID_BY_LANG: &'static str = "SELECT id, name FROM languages";
 
-pub const LOAD_ID_BY_TITLE: &'static str = "SELECT id,title FROM titles";
+//pub const LOAD_ID_BY_TITLE: &'static str = "SELECT id,title FROM titles";
 
-pub const LOAD_ID_BY_SEQUENCE: &'static str = "SELECT id, sequence FROM sequences";
+//pub const LOAD_ID_BY_SEQUENCE: &'static str = "SELECT id, sequence FROM sequences";
 
 pub const NAMES: &'static str = "SELECT name FROM names";
 
-pub const ID_BY_NAMES: &'static str = "SELECT name, id FROM names";
+//pub const ID_BY_NAMES: &'static str = "SELECT name, id FROM names";
 
 pub const BOOKS_SHA1: &'static str = "SELECT sha1 FROM books";
 
 pub const BOOKS_IN_ARCHIVE: &'static str = "SELECT description FROM books where archive_id = :id";
+
+//pub const GENRE: &'static str = "SELECT code FROM genres";

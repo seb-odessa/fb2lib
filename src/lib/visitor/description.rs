@@ -23,7 +23,7 @@ pub struct Description {
 }
 impl <'a> Description
 {
-    pub fn new(conn: sal::Connection, access: Guard) -> Fb2Result<Self> {
+    pub fn new(conn: sal::Connection) -> Fb2Result<Self> {
         Ok(
             Self {
                 arch_count: 0,

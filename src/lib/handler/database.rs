@@ -4,6 +4,7 @@ use archive;
 use algorithm;
 
 use sal::Save;
+use types::Visitor;
 use types::MutVisitor;
 use result::{Fb2Result, Fb2Error};
 use fb2parser::FictionBook;
@@ -114,18 +115,17 @@ pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()
 }
 
 
-pub fn load_sequences(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
+pub fn load_sequences(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
     let ignore = sal::load_sequences(&conn)?;
     let visitor = Sequence::new(access, ignore);
-    handle(&conn, force, archives, visitor)
+    visit_books(&conn, force, visitor)
 }
 
 pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
-    let access = create_access_guard(&conn)?;
-    let mut visitor = Description::new(conn, access)?;
+    let mut visitor = Description::new(conn)?;
 
     for archive in archives {
         let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
@@ -272,54 +272,54 @@ fn is_complete(status: sal::STATUS) -> bool {
     }
 }
 
-fn visit<'a, T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
-    where T: MutVisitor<'a, Type=FictionBook> + Save + 'static
-{
-    print!("Processing {}", &name);
-    let task = visitor.task();
-    let status = sal::get_archive_status(&conn, name, task)?;
-    if force || !is_complete(status) {
-        visitor.set_status(&conn, name, sal::STATUS::STARTED)?;
-        print!(".");
-        match algorithm::visit_books(archive, visitor) {
-            Ok(()) => {
-                visitor.set_status(&conn, name, sal::STATUS::VISITED)?;
-                print!(".");
-            },
-            Err(e) => {
-                visitor.set_status(&conn, name, sal::STATUS::FAILURE)?;
-                println!("{}", e);
-                return Err(e);
-            }
-        }
-        let (accepted, visited) = (visitor.get_accepted(), visitor.get_visited());
-        match visitor.save(&conn) {
-            Ok(()) => {
-                visitor.set_status(&conn, name, sal::STATUS::COMPLETE)?;
-                print!(".");
-            },
-            Err(e) => {
-                visitor.set_status(&conn, name, sal::STATUS::FAILURE)?;
-                println!("{}", e);
-                return Err(e);
-            }
-        }
-        let added = format!("{}/{}", accepted, visited);
-        println!("Done.\t Added {:>11}. Current stored recods count {}",
-                 added,
-                 visitor.get_already_known());
-    } else {
-        println!("...Skiped.");
-    }
-    Ok(())
-}
+//fn visit<'a, T>(conn: &sal::Connection, archive: &str, name: &str, force: bool, visitor: &mut T) -> Fb2Result<()>
+//    where T: Visitor<'a, Type=FictionBook> + Save + 'static
+//{
+//    print!("Processing {}", &name);
+//    let task = visitor.task();
+//    let status = sal::get_archive_status(&conn, name, task)?;
+//    if force || !is_complete(status) {
+//        visitor.set_status(&conn, name, sal::STATUS::STARTED)?;
+//        print!(".");
+//        match algorithm::visit_books(archive, visitor) {
+//            Ok(()) => {
+//                visitor.set_status(&conn, name, sal::STATUS::VISITED)?;
+//                print!(".");
+//            },
+//            Err(e) => {
+//                visitor.set_status(&conn, name, sal::STATUS::FAILURE)?;
+//                println!("{}", e);
+//                return Err(e);
+//            }
+//        }
+//        let (accepted, visited) = (visitor.get_accepted(), visitor.get_visited());
+//        match visitor.save(&conn) {
+//            Ok(()) => {
+//                visitor.set_status(&conn, name, sal::STATUS::COMPLETE)?;
+//                print!(".");
+//            },
+//            Err(e) => {
+//                visitor.set_status(&conn, name, sal::STATUS::FAILURE)?;
+//                println!("{}", e);
+//                return Err(e);
+//            }
+//        }
+//        let added = format!("{}/{}", accepted, visited);
+//        println!("Done.\t Added {:>11}. Current stored recods count {}",
+//                 added,
+//                 visitor.get_already_known());
+//    } else {
+//        println!("...Skiped.");
+//    }
+//    Ok(())
+//}
 
-fn handle<'a, T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
-    where T: MutVisitor<'a, Type=FictionBook> + Save + 'static
-{
-    for archive in archives {
-        let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
-        visit(&conn, archive, name, force, &mut visitor)?;
-    }
-    Ok(())
-}
+//fn handle<'a, T>(conn: &sal::Connection, force: bool, archives: &Vec<&str>, mut visitor: T) -> Fb2Result<()>
+//    where T: Visitor<'a, Type=FictionBook> + Save + 'static
+//{
+//    for archive in archives {
+//        let name = path::Path::new(archive).file_name().unwrap_or_default().to_str().unwrap_or_default();
+//        visit(&conn, archive, name, force, &mut visitor)?;
+//    }
+//    Ok(())
+//}

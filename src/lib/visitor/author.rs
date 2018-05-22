@@ -66,26 +66,26 @@ impl <'a> types::Visitor<'a> for Author {
         self.handled.len()
     }
 
-    fn report(&self){
-        for author in &self.authors {
-            let (first_name, middle_name, last_name, nick_name) = author.clone();
-            if first_name.is_empty() && middle_name.is_empty() && last_name.is_empty() && !nick_name.is_empty() {
-                println!("{}", nick_name);
-            } else {
-                print!("{}", last_name);
-                if !last_name.is_empty() && !first_name.is_empty() {
-                    print!(" ");
-                }
-                print!("{}", first_name);
-
-                if (!last_name.is_empty() || !first_name.is_empty()) && !middle_name.is_empty() {
-                    print!(" ");
-                }
-                println!("{}", middle_name);
-            }
-        }
-        println!("=============================================");
-        println!("Unique authors was found {}", self.authors.len());
-        println!("Total authors was found {}", self.counter);
-    }
+//    fn report(&self){
+//        for author in &self.authors {
+//            let (first_name, middle_name, last_name, nick_name) = author.clone();
+//            if first_name.is_empty() && middle_name.is_empty() && last_name.is_empty() && !nick_name.is_empty() {
+//                println!("{}", nick_name);
+//            } else {
+//                print!("{}", last_name);
+//                if !last_name.is_empty() && !first_name.is_empty() {
+//                    print!(" ");
+//                }
+//                print!("{}", first_name);
+//
+//                if (!last_name.is_empty() || !first_name.is_empty()) && !middle_name.is_empty() {
+//                    print!(" ");
+//                }
+//                println!("{}", middle_name);
+//            }
+//        }
+//        println!("=============================================");
+//        println!("Unique authors was found {}", self.authors.len());
+//        println!("Total authors was found {}", self.counter);
+//    }
 }

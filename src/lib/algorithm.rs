@@ -1,5 +1,6 @@
 
 use tools;
+use types::Visitor;
 use types::MutVisitor;
 use fb2parser::FictionBook;
 use archive;
@@ -11,13 +12,13 @@ use std::sync::mpsc::Sender;
 use std::sync::mpsc::channel;
 use crossbeam;
 
-pub fn visit_books<'a>(archive_name: &str, visitor: &mut MutVisitor<'a, Type=FictionBook>) -> Fb2Result<()> {
+pub fn visit_books<'a>(archive_name: &str, visitor: &mut Visitor<'a, Type=FictionBook>) -> Fb2Result<()> {
     let zip = archive::open(archive_name)?;
     let (sender, receiver) = channel();
     apply_and_collect(zip, "*.fb2", sender, tools::into_fb2)?;
     for fb2 in receiver.iter() {
-        if let Some(mut book) = fb2.ok() {
-            visitor.visit(&mut book);
+        if let Some(book) = fb2.ok() {
+            visitor.visit(&book);
         }
     }
     Ok(())

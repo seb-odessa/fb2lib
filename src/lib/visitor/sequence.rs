@@ -1,5 +1,5 @@
 use sal;
-use types;
+use types::{Visitor, Report};
 use fb2parser::FictionBook;
 use visitor::guard::Guard;
 use result::Fb2Result;
@@ -39,11 +39,11 @@ impl sal::Save for Sequence {
     }
 }
 
-impl <'a> types::MutVisitor<'a> for Sequence {
+impl <'a> Visitor<'a> for Sequence {
 
     type Type = FictionBook;
 
-    fn visit(&mut self, book: &mut FictionBook) {
+    fn visit(&mut self, book: &FictionBook) {
         if self.guard.is_allowed(&book) {
             self.counter += 1;
             let sequences = book.get_book_sequences();
@@ -67,13 +67,21 @@ impl <'a> types::MutVisitor<'a> for Sequence {
     fn get_already_known(&self) -> usize {
         self.already_known.len()
     }
+}
 
-    fn report(&self) {
-        for name in &self.accepted {
-            println!("'{}'", name);
+impl Report for Sequence {
+
+    fn report(&self){
+        println!("=============================== Sequences ===============================");
+        println!("Total books was visited {}.",self.get_visited());
+        println!("Unique sequences was discovered {}: ", self.get_accepted());
+        let mut items: Vec<String> = self.accepted.iter().map(|s| s.clone()).collect();
+        items.sort();
+        let mut num = 1;
+        for item in &items {
+            println!("{:>5} {} ", num, item);
+            num += 1;
         }
-        println!("=============================================");
-        println!("Unique book sequences was found {}", self.accepted.len());
-        println!("Total sequences was found {}", self.counter);
+        println!();
     }
 }
