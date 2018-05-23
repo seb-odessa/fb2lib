@@ -2,7 +2,7 @@ use sal;
 use types;
 use archive;
 use result::Fb2Result;
-use visitor::guard::Guard;
+//use visitor::guard::Guard;
 use types::{FileDescription, BlobDescription, BookDescription};
 
 use zip::ZipFile;

@@ -31,7 +31,8 @@ pub enum SUBSYSTEM {
     DESCRIPTIONS,
     FILTER,
     GENRE,
-    PEOPLE,
+    NAMES,
+    AUTHORS,
     PROGRESS,
 }
 
@@ -52,6 +53,7 @@ pub enum TASK {
     TITLE,
     SEQUENCE,
     DESC,
+    AUTHOR,
 }
 
 pub use sal::imp::reset;
@@ -86,8 +88,8 @@ pub use sal::imp::set_archive_status;
 pub use sal::imp::get_task_id;
 pub use sal::imp::get_status_id;
 
-pub use sal::imp::insert_people;
-pub use sal::imp::select_people;
+//pub use sal::imp::insert_people;
+//pub use sal::imp::select_people;
 pub use sal::imp::select_authors_joined;
 pub use sal::imp::link_authors;
 pub use sal::imp::unlink_authors;
@@ -104,7 +106,9 @@ pub use sal::imp::select_sequences_joined;
 pub use sal::imp::link_sequences;
 pub use sal::imp::unlink_sequences;
 
-//pub use sal::imp::load_people;
+pub use sal::imp::load_people;
+pub use sal::imp::save_people;
+
 //pub use sal::query_select::LOAD_ID_BY_GENRE;
 //pub use sal::query_select::LOAD_ID_BY_LANG;
 //pub use sal::query_select::LOAD_ID_BY_TITLE;
@@ -118,6 +122,8 @@ pub use sal::imp::load_books;
 
 pub use sal::imp::load_names;
 pub use sal::imp::save_names;
-//pub use sal::imp::load_id_by_names;
+pub use sal::imp::load_id_by_names;
+
+
 
 //pub use sal::imp::load_genres;

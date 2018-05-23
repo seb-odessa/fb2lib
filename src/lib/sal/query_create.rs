@@ -36,8 +36,8 @@ pub const PROGRESS_SUBSYSTEM: &'static str = "
 	INSERT OR IGNORE INTO task VALUES (3, 'Заполнение справочника имен');
 	INSERT OR IGNORE INTO task VALUES (4, 'Заполнение справочника названий');
 	INSERT OR IGNORE INTO task VALUES (5, 'Заполнение справочника циклов');
-    INSERT OR IGNORE INTO task VALUES (6, 'Заполнение таблицы описаний');
-	INSERT OR IGNORE INTO task VALUES (7, 'Обработка данных библиотеки');
+    INSERT OR IGNORE INTO task VALUES (6, 'Заполнение справочника авторов');
+    INSERT OR IGNORE INTO task VALUES (7, 'Заполнение таблицы описаний');
 
     DROP TABLE IF EXISTS status;
 	CREATE TABLE status (
@@ -191,6 +191,11 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 
 #[allow(dead_code)]
 pub const PEOPLE_SUBSYSTEM: &'static str = "
+";
+
+
+#[allow(dead_code)]
+pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
 
 	DROP TABLE IF EXISTS names;
@@ -202,16 +207,12 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 
     CREATE TABLE people (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    first_name 	    TEXT NOT NULL,
-        middle_name	    TEXT NOT NULL,
-        last_name	    TEXT NOT NULL,
-        nickname	    TEXT NOT NULL,
-		UNIQUE (first_name, middle_name, last_name, nickname) ON CONFLICT IGNORE
+	    first_name_id   INTEGER NOT NULL,	/* FK to names.id */
+        middle_name_id  INTEGER NOT NULL,	/* FK to names.id */
+        last_name_id	INTEGER NOT NULL,	/* FK to names.id */
+        nick_name_id    INTEGER NOT NULL,	/* FK to names.id */
+		UNIQUE (first_name_id, middle_name_id, last_name_id, nick_name_id) ON CONFLICT IGNORE
     );
-	CREATE INDEX first_name_idx on people (first_name ASC);
-	CREATE INDEX middle_name_idx on people (middle_name ASC);
-	CREATE INDEX last_name_idx on people (last_name ASC);
-	CREATE INDEX nick_name_idx on people (nickname ASC);
 
 	CREATE TABLE people_links (
 		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -219,7 +220,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
     	dst_id 		INTEGER NOT NULL,	/* FK to people.id */
     	version_id 	INTEGER NOT NULL /* FK to versions.id */
 	);
-
+/*
 	CREATE VIEW IF NOT EXISTS authors AS
 		SELECT
 			id,
@@ -233,7 +234,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 	CREATE VIEW authors_joined AS
 		SELECT A.id, A.name AS src_name, ifnull(B.name, A.name) AS dst_name
 		FROM authors A LEFT JOIN people_links ON src_id = A.id LEFT JOIN authors B ON dst_id = B.id;
-
+*/
     COMMIT;";
 
 
@@ -242,7 +243,6 @@ pub const TITLES_SUBSYSTEM: &'static str = "
 	BEGIN;
 	CREATE TABLE titles (
    		id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        use_id          INTEGER, /* use row with id == this.use_id instead */
 	    title       	TEXT NOT NULL,
 		UNIQUE (title) ON CONFLICT IGNORE
     );
@@ -263,7 +263,6 @@ pub const SEQUENCES_SUBSYSTEM: &'static str = "
 	BEGIN;
 	CREATE TABLE sequences (
    		id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-        use_id          INTEGER, /* use row with id == this.use_id instead */
 	    sequence       	TEXT NOT NULL,
 		UNIQUE (sequence) ON CONFLICT IGNORE
     );

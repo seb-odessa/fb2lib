@@ -30,7 +30,7 @@ pub const ARCHIVES: &'static str = "SELECT id, name FROM  archives";
 
 pub const ARCHIVE_ID_BY_NAME: &'static str = "SELECT id FROM archives WHERE name = ?1";
 
-pub const PEOPLE: &'static str = "SELECT first_name, middle_name, last_name, nickname FROM people";
+pub const PEOPLE: &'static str = "SELECT first_name_id, middle_name_id, last_name_id, nick_name_id FROM people";
 
 pub const TITLES: &'static str = "SELECT title FROM titles";
 
@@ -54,7 +54,7 @@ pub const SEQUENCES_JOINED: &'static str = "SELECT id, src_sequence, dst_sequenc
 
 pub const NAMES: &'static str = "SELECT name FROM names";
 
-//pub const ID_BY_NAMES: &'static str = "SELECT name, id FROM names";
+pub const ID_BY_NAMES: &'static str = "SELECT name, id FROM names";
 
 pub const BOOKS_SHA1: &'static str = "SELECT sha1 FROM books";
 

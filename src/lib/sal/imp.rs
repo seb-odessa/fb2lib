@@ -1,5 +1,4 @@
 use sal;
-use tools;
 use result::{into, Fb2Result, Fb2Error};
 use torrent::Metainfo;
 use types::BookDescription;
@@ -7,7 +6,6 @@ use types::Archive;
 use types::Sizes;
 use fb2parser::FictionBook;
 
-use rusqlite;
 pub use rusqlite::Connection;
 use rustc_serialize::hex::ToHex;
 
@@ -62,7 +60,8 @@ pub fn get_task_id(oper: sal::TASK) -> i64 {
         sal::TASK::NAME => 3,
         sal::TASK::TITLE => 4,
         sal::TASK::SEQUENCE => 5,
-        sal::TASK::DESC => 6,
+        sal::TASK::AUTHOR => 6,
+        sal::TASK::DESC => 7,
     }
 }
 
@@ -279,7 +278,7 @@ pub fn get_genre_codes_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     Ok(result)
 }
 
-pub fn insert_people(conn: &Connection, authors: &HashSet<(String, String, String, String)>) -> Fb2Result<()> {
+pub fn save_people(conn: &Connection, authors: &HashSet<(i64, i64, i64, i64)>) -> Fb2Result<()> {
     let mut stmt = conn.prepare(sal::query_insert::PEOPLE).map_err(into)?;
     for author in authors {
         let &(ref first_name, ref middle_name, ref last_name, ref nick_name) = author;
@@ -288,27 +287,27 @@ pub fn insert_people(conn: &Connection, authors: &HashSet<(String, String, Strin
     Ok(())
 }
 
-pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, String, String)>> {
-    let mut authors = HashSet::new();
+//pub fn select_people(conn: &Connection) -> Fb2Result<HashSet<(String, String, String, String)>> {
+//    let mut authors = HashSet::new();
+//    let mut stmt = conn.prepare(sal::query_select::PEOPLE).map_err(into)?;
+//    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3))).map_err(into)?;
+//    for row in rows {
+//        let author = row.map_err(into)? as (String,String,String,String);
+//        authors.insert(author);
+//    }
+//    Ok(authors)
+//}
+
+pub fn load_people(conn: &Connection) -> Fb2Result<HashSet<(i64, i64, i64, i64)>> {
+    let mut result = HashSet::new();
     let mut stmt = conn.prepare(sal::query_select::PEOPLE).map_err(into)?;
     let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3))).map_err(into)?;
     for row in rows {
-        let author = row.map_err(into)? as (String,String,String,String);
-        authors.insert(author);
+        let author = row.map_err(into)? as (i64, i64, i64, i64);
+        result.insert((author.0, author.1, author.2, author.3));
     }
-    Ok(authors)
+    Ok(result)
 }
-
-//pub fn load_people(conn: &Connection) -> Fb2Result<HashMap<(String, String, String, String), i64>> {
-//    let mut map = HashMap::new();
-//    let mut stmt = conn.prepare(sal::query_select::LOAD_ID_BY_NAME).map_err(into)?;
-//    let rows = stmt.query_map(&[], |row| (row.get(0), row.get(1), row.get(2), row.get(3), row.get(4))).map_err(into)?;
-//    for row in rows {
-//        let author = row.map_err(into)? as (i64, String,String,String,String);
-//        map.insert((author.1, author.2, author.3, author.4), author.0);
-//    }
-//    Ok(map)
-//}
 
 //pub fn load_id_by_name(conn: &Connection, sql: &str) -> Fb2Result<HashMap<String, i64>> {
 //    let mut map = HashMap::new();
@@ -528,14 +527,14 @@ pub fn load_names(conn: &Connection) -> Fb2Result<HashSet<String>> {
     }
     Ok(names)
 }
-//
-//pub fn load_id_by_names(conn: &Connection) -> Fb2Result<HashMap<String, i64>> {
-//    let mut names = HashMap::new();
-//    let mut stmt = conn.prepare(sal::query_select::ID_BY_NAMES).map_err(into)?;
-//    let mut rows = stmt.query(&[]).map_err(into)?;
-//    while let Some(result) = rows.next() {
-//        let row = result?;
-//        names.insert(row.get(0), row.get(1));
-//    }
-//    Ok(names)
-//}
+
+pub fn load_id_by_names(conn: &Connection) -> Fb2Result<HashMap<String, i64>> {
+    let mut names = HashMap::new();
+    let mut stmt = conn.prepare(sal::query_select::ID_BY_NAMES).map_err(into)?;
+    let mut rows = stmt.query(&[]).map_err(into)?;
+    while let Some(result) = rows.next() {
+        let row = result?;
+        names.insert(row.get(0), row.get(1));
+    }
+    Ok(names)
+}

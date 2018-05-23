@@ -50,7 +50,7 @@ pub const ENABLE_GENRE_GROUP: &'static str = "
  	)";
 
 pub const PEOPLE: &'static str = "
-	INSERT INTO people (first_name, middle_name, last_name, nickname) VALUES (?, ?, ?, ?)";
+	INSERT INTO people (first_name_id, middle_name_id, last_name_id, nick_name_id) VALUES (?, ?, ?, ?)";
 
 pub const PROGRESS: &'static str = "
 	INSERT INTO progress (archive_id, task_id, status_id) VALUES (?, ?, ?)";

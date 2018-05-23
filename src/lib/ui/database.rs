@@ -63,20 +63,21 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
         SubCommand::with_name(CMD).about(CMD_HELP).arg(database)
         .subcommand(
             SubCommand::with_name(RESET).about(RESET_HELP)
-            .subcommand(SubCommand::with_name(TORRENT).about(TORRENT_HELP))
-            .subcommand(SubCommand::with_name(PROGRESS).about(PROGRESS_HELP))
-            .subcommand(SubCommand::with_name(FILTER).about(FILTER_HELP))
-            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP))
-            .subcommand(SubCommand::with_name(GENRE).about(GENRE_HELP))
-            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP))
-            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP))
-            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP))
-            .subcommand(SubCommand::with_name(DESC).about(DESC_HELP))
+                .subcommand(SubCommand::with_name(TORRENT).about(TORRENT_HELP))
+                .subcommand(SubCommand::with_name(PROGRESS).about(PROGRESS_HELP))
+                .subcommand(SubCommand::with_name(FILTER).about(FILTER_HELP))
+                .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP))
+                .subcommand(SubCommand::with_name(GENRE).about(GENRE_HELP))
+                .subcommand(SubCommand::with_name(NAMES).about(NAMES_HELP))
+                .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP))
+                .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP))
+                .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP))
+                .subcommand(SubCommand::with_name(DESC).about(DESC_HELP))
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
             .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()))
-            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()))
             .subcommand(SubCommand::with_name(NAMES).about(NAMES_HELP).arg(force.clone()))
@@ -122,6 +123,7 @@ fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (FILTER, Some(_)) => handler::database::reset(database, "filter"),
         (LANGS, Some(_)) => handler::database::reset(database, "lang"),
         (GENRE, Some(_)) => handler::database::reset(database, "genre"),
+        (NAMES, Some(_)) => handler::database::reset(database, NAMES),
         (AUTHORS, Some(_)) => handler::database::reset(database, "author"),
         (TITLES, Some(_)) => handler::database::reset(database, "title"),
         (SEQUENCES, Some(_)) => handler::database::reset(database, "sequence"),
@@ -133,12 +135,8 @@ fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
 fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
         (AUTHORS, Some(arg)) => {
-            if let Some(archives) = arg.values_of(ui::ARCH_FILE) {
-                let force = arg.is_present(FORCE);
-                handler::database::load_authors(database, force, &archives.collect::<Vec<&str>>())
-            } else {
-                ui::usage(arg)
-            }
+            let force = arg.is_present(FORCE);
+            handler::database::load_authors(database, force)
         }
         (LANGS, Some(arg)) => {
             let force = arg.is_present(FORCE);

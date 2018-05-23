@@ -3,8 +3,8 @@ use fb2parser::FictionBook;
 use result::{Fb2Result, Fb2Error};
 
 use std::error::Error;
-use std::hash::Hash;
-use std::hash::Hasher;
+//use std::hash::Hash;
+//use std::hash::Hasher;
 //use std::collections::hash_map::DefaultHasher;
 
 

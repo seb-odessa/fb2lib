@@ -5,37 +5,43 @@ use visitor::guard::Guard;
 use fb2parser::FictionBook;
 
 use std::collections::HashSet;
+use std::collections::HashMap;
 
-pub type AuthorDesc = (String, String, String, String);
+pub type AuthorDesc = (i64, i64, i64, i64);
 
 pub struct Author {
     counter: usize,
-    access: Guard,
-    authors: HashSet<AuthorDesc>,
-    handled: HashSet<AuthorDesc>,
+    guard: Guard,
+    names: HashMap<String, i64>,
+    accepted: HashSet<AuthorDesc>,
+    already_known: HashSet<AuthorDesc>,
 }
 impl Author {
-    pub fn new(access: Guard, handled: HashSet<AuthorDesc>) -> Self {
+    pub fn new(guard: Guard, names: HashMap<String, i64>, already_known: HashSet<AuthorDesc>) -> Self {
         Author {
             counter: 0,
-            access: access,
-            authors: HashSet::new(),
-            handled: handled,
+            guard,
+            names,
+            accepted: HashSet::new(),
+            already_known,
         }
+    }
+
+    fn get_name_id(&self, name: &str) -> Option<i64> {
+        self.names.get(name.trim()).map(|value| value.clone())
     }
 }
 impl sal::Save for Author {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::insert_people(&conn, &self.authors)?;
-        self.handled = self.handled.union(&self.authors)
-            .map(|a| (a.0.clone(), a.1.clone(), a.2.clone(), a.3.clone()))
-            .collect();
-        self.authors.clear();
+        sal::save_people(&conn, &self.accepted)?;
+        self.already_known = self.already_known.union(&self.accepted).map(|s| s.clone()).collect();
+        self.accepted.clear();
         self.counter = 0;
         Ok(())
     }
+
     fn task(&self) -> sal::TASK {
-        sal::TASK::NAME
+        sal::TASK::AUTHOR
     }
 }
 
@@ -45,12 +51,31 @@ impl <'a> types::Visitor<'a> for Author {
 
     fn visit(&mut self, book: &FictionBook) {
         self.counter += 1;
-        if self.access.is_allowed(book) {
+        if self.guard.is_allowed(book) {
             for author in book.get_book_authors() {
-                if !self.handled.contains(&author) {
-                    self.authors.insert(author);
+                if let Some(first_name_id) = self.get_name_id(&author.0) {
+                    if let Some(middle_name_id) = self.get_name_id(&author.1) {
+                        if let Some(last_name_id) = self.get_name_id(&author.2) {
+                            if let Some(nick_name_id) = self.get_name_id(&author.3) {
+                                let desc = (first_name_id, middle_name_id, last_name_id, nick_name_id);
+                                if !self.already_known.contains(&desc) {
+                                    self.accepted.insert(desc);
+                                }
+                            }
+                        }
+                    }
                 }
+//                if !self.handled.contains(&author) {
+//                    self.authors.insert(author);
+//                }
             }
+//
+//
+//            if !self.already_known.contains(name) {
+//                self.accepted.insert(name.to_string());
+//            }
+//
+
         }
     }
 
@@ -59,11 +84,11 @@ impl <'a> types::Visitor<'a> for Author {
     }
 
     fn get_accepted(&self) -> usize {
-        self.authors.len()
+        self.accepted.len()
     }
 
     fn get_already_known(&self) -> usize {
-        self.handled.len()
+        self.already_known.len()
     }
 
 //    fn report(&self){

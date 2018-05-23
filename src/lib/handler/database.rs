@@ -4,7 +4,7 @@ use archive;
 use algorithm;
 
 use sal::Save;
-use types::Visitor;
+//use types::Visitor;
 use types::MutVisitor;
 use result::{Fb2Result, Fb2Error};
 use fb2parser::FictionBook;
@@ -73,9 +73,10 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
         "filter" => sal::reset(db_file_name, sal::SUBSYSTEM::FILTER),
         "lang" => sal::reset(db_file_name, sal::SUBSYSTEM::LANGUAGE),
         "genre" => sal::reset(db_file_name, sal::SUBSYSTEM::GENRE),
-        "author" => sal::reset(db_file_name, sal::SUBSYSTEM::PEOPLE),
-        "sequence" => sal::reset(db_file_name, sal::SUBSYSTEM::SEQUENCES),
-        "title" => sal::reset(db_file_name, sal::SUBSYSTEM::TITLES),
+        "names" => sal::reset(db_file_name, sal::SUBSYSTEM::NAMES),
+        "authors" => sal::reset(db_file_name, sal::SUBSYSTEM::AUTHORS),
+        "sequences" => sal::reset(db_file_name, sal::SUBSYSTEM::SEQUENCES),
+        "titles" => sal::reset(db_file_name, sal::SUBSYSTEM::TITLES),
         "descriptions" => sal::reset(db_file_name, sal::SUBSYSTEM::DESCRIPTIONS),
         _ => Err(Fb2Error::Custom(String::from("Unknown Subsystem")))
     }
@@ -105,12 +106,12 @@ pub fn load_titles(db: &str, force: bool) -> Fb2Result<()> {
 }
 
 
-pub fn load_authors(db: &str, force: bool, archives: &Vec<&str>) -> Fb2Result<()> {
-    // @todo remake using names table
+pub fn load_authors(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
-    let handled = sal::select_people(&conn)?;
-    let visitor = Author::new(access, handled);
+    let names = sal::load_id_by_names(&conn)?;
+    let known = sal::load_people(&conn)?;
+    let visitor = Author::new(access, names, known);
     visit_books(&conn, force, visitor)
 }
 
