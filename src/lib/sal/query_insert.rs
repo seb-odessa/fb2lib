@@ -59,7 +59,7 @@ pub const TITLES: &'static str = "INSERT INTO titles (title) VALUES (?)";
 
 pub const SEQUENCES: &'static str = "INSERT INTO sequences (sequence) VALUES (?)";
 
-pub const NAMES: &'static str = "INSERT INTO names (name) VALUES (:name)";
+pub const NAMES: &'static str = "INSERT INTO names (name) VALUES (?)";
 
 pub const AUTHOR_LINK: &'static str = "INSERT INTO people_links VALUES (NULL, ?, ?, 0);";
 

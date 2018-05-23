@@ -33,8 +33,8 @@ impl Name {
 
 }
 impl sal::Save for Name {
-    fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::save_names(&conn, &self.accepted)?;
+    fn save(&mut self, conn: &mut sal::Connection) -> Fb2Result<()> {
+        sal::save_names(conn, &self.accepted)?;
         for item in self.accepted.drain() {
             self.already_known.insert(item);
         }

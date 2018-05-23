@@ -63,7 +63,7 @@ impl <'a> Description
 }
 
 impl sal::Save for Description {
-    fn save(&mut self, _: &sal::Connection) -> Fb2Result<()> {
+    fn save(&mut self, _: &mut sal::Connection) -> Fb2Result<()> {
         Ok(())
     }
 

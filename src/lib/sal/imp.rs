@@ -4,6 +4,7 @@ use torrent::Metainfo;
 use types::BookDescription;
 use types::Archive;
 use types::Sizes;
+use types::TimeMeasure;
 use fb2parser::FictionBook;
 
 pub use rusqlite::Connection;
@@ -279,12 +280,13 @@ pub fn get_genre_codes_disabled(conn: &Connection) -> Fb2Result<Vec<String>> {
     Ok(result)
 }
 
-pub fn save_people(conn: &Connection, authors: &HashSet<(i64, i64, i64, i64)>) -> Fb2Result<()> {
-    let mut stmt = conn.prepare(sal::query_insert::PEOPLE).map_err(into)?;
+pub fn save_people(conn: &mut Connection, authors: &HashSet<(i64, i64, i64, i64)>) -> Fb2Result<()> {
+    let tr = conn.transaction().map_err(into)?;
     for author in authors {
-        let &(ref first_name, ref middle_name, ref last_name, ref nick_name) = author;
-        stmt.query(&[first_name, middle_name, last_name, nick_name]).map_err(into)?;
+        tr.execute(sal::query_insert::PEOPLE,
+                   &[&author.0, &author.1, &author.2, &author.3]).map_err(into)?;
     }
+    tr.commit().map_err(into)?;
     Ok(())
 }
 
@@ -332,27 +334,28 @@ pub fn load_people(conn: &Connection) -> Fb2Result<HashSet<(i64, i64, i64, i64)>
 //    Ok(map)
 //}
 
-fn save(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
-//    let mut stmt = conn.prepare(sql).map_err(into)?;
+fn save(conn: &mut Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
+    let tr = conn.transaction().map_err(into)?;
     for item in items {
-        conn.execute(sql, &[item]).map_err(into_with_trace)?;
+        tr.execute(sql, &[item]).map_err(into_with_trace)?;
     }
+    tr.commit().map_err(into)?;
     Ok(())
 }
 
-pub fn save_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {
+pub fn save_languages(conn: &mut Connection, langs: &HashSet<String>) -> Fb2Result<()> {
     save(conn, sal::query_insert::LANGUAGE, langs)
 }
 
-pub fn save_titles(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
+pub fn save_titles(conn: &mut Connection, titles: &HashSet<String>) -> Fb2Result<()> {
     save(conn, sal::query_insert::TITLES, titles)
 }
 
-pub fn save_sequences(conn: &Connection, sequences: &HashSet<String>) -> Fb2Result<()> {
+pub fn save_sequences(conn: &mut Connection, sequences: &HashSet<String>) -> Fb2Result<()> {
     save(conn, sal::query_insert::SEQUENCES, sequences)
 }
 
-pub fn save_names(conn: &Connection, names: &HashSet<String>) -> Fb2Result<()> {
+pub fn save_names(conn: &mut Connection, names: &HashSet<String>) -> Fb2Result<()> {
     save(conn, sal::query_insert::NAMES, names)
 }
 

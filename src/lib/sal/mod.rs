@@ -16,7 +16,7 @@ pub type HashesByIdx = HashMap<i64, String>;
 pub type Connection = rusqlite::Connection;
 
 pub trait Save {
-    fn save(&mut self, conn: &Connection) -> result::Fb2Result<()>;
+    fn save(&mut self, conn: &mut Connection) -> result::Fb2Result<()>;
     fn task(&self) -> TASK;
     fn set_status(&self, conn: &Connection, archive: &str, status: STATUS) -> result::Fb2Result<()> {
         set_archive_status(conn, archive, get_task_id(self.task()), get_status_id(status))

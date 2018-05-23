@@ -21,7 +21,7 @@ impl Genre {
     }
 }
 impl sal::Save for Genre {
-    fn save(&mut self, _: &sal::Connection) -> Fb2Result<()> {
+    fn save(&mut self, _: &mut sal::Connection) -> Fb2Result<()> {
         Ok(())
     }
     fn task(&self) -> sal::TASK {

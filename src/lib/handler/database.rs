@@ -21,10 +21,10 @@ use std::path;
 
 
 
-fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb2Result<()>
+fn visit_books<'a, T>(mut conn: sal::Connection, force: bool, mut visitor: T) -> Fb2Result<()>
     where T: types::Visitor<'a, Type=FictionBook> + Save + 'static
 {
-    let archives = sal::load_archives(conn)?;
+    let archives = sal::load_archives(&conn)?;
 
     for archive in &archives {
         let name = &archive.name;
@@ -33,14 +33,14 @@ fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb
         let status = sal::get_archive_status(&conn, &name, task)?;
         if force || !is_complete(status) {
             visitor.set_status(&conn, &name, sal::STATUS::STARTED)?;
-            let books = sal::load_books(conn, archive.id)?;
+            let books = sal::load_books(&conn, archive.id)?;
             for book in &books {
                 visitor.visit(book)
             }
             visitor.set_status(&conn, &name, sal::STATUS::VISITED)?;
 
             let (accepted, visited) = (visitor.get_accepted(), visitor.get_visited());
-            match visitor.save(&conn) {
+            match visitor.save(&mut conn) {
                 Ok(()) => {
                     visitor.set_status(&conn, &name, sal::STATUS::COMPLETE)?;
                 },
@@ -80,9 +80,9 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
 /************************************* LOAD HANDLERS *******************************************/
 pub fn load_langs(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
-    let langs = sal::load_languages(&conn)?;
-    let visitor = Lang::new(langs);
-    visit_books(&conn, force, visitor)
+    let languages = sal::load_languages(&conn)?;
+    let visitor = Lang::new(languages);
+    visit_books(conn, force, visitor)
 }
 
 pub fn load_names(db: &str, force: bool) -> Fb2Result<()> {
@@ -90,7 +90,7 @@ pub fn load_names(db: &str, force: bool) -> Fb2Result<()> {
     let access = create_access_guard(&conn)?;
     let handled = sal::load_names(&conn)?;
     let visitor = Name::new(access, handled);
-    visit_books(&conn, force, visitor)
+    visit_books(conn, force, visitor)
 }
 
 pub fn load_titles(db: &str, force: bool) -> Fb2Result<()> {
@@ -98,7 +98,7 @@ pub fn load_titles(db: &str, force: bool) -> Fb2Result<()> {
     let access = create_access_guard(&conn)?;
     let ignore = sal::load_titles(&conn)?;
     let visitor = Title::new(access, ignore);
-    visit_books(&conn, force, visitor)
+    visit_books(conn, force, visitor)
 }
 
 
@@ -108,7 +108,7 @@ pub fn load_authors(db: &str, force: bool) -> Fb2Result<()> {
     let names = sal::load_id_by_names(&conn)?;
     let known = sal::load_people(&conn)?;
     let visitor = Author::new(access, names, known);
-    visit_books(&conn, force, visitor)
+    visit_books(conn, force, visitor)
 }
 
 
@@ -117,7 +117,7 @@ pub fn load_sequences(db: &str, force: bool) -> Fb2Result<()> {
     let access = create_access_guard(&conn)?;
     let ignore = sal::load_sequences(&conn)?;
     let visitor = Sequence::new(access, ignore);
-    visit_books(&conn, force, visitor)
+    visit_books(conn, force, visitor)
 }
 
 pub fn load_descriptions(db: &str, archives: &Vec<&str>) -> Fb2Result<()> {

@@ -26,8 +26,8 @@ impl Sequence {
 
 impl sal::Save for Sequence {
 
-    fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::save_sequences(&conn, &self.accepted)?;
+    fn save(&mut self, conn: &mut sal::Connection) -> Fb2Result<()> {
+        sal::save_sequences(conn, &self.accepted)?;
         self.already_known = self.already_known.union(&self.accepted).map(|s| s.clone()).collect();
         self.accepted.clear();
         self.counter = 0;

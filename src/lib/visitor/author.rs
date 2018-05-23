@@ -32,8 +32,8 @@ impl Author {
     }
 }
 impl sal::Save for Author {
-    fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::save_people(&conn, &self.accepted)?;
+    fn save(&mut self, conn: &mut sal::Connection) -> Fb2Result<()> {
+        sal::save_people(conn, &self.accepted)?;
         for item in self.accepted.drain() {
             self.already_known.insert(item);
         }

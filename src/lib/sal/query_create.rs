@@ -197,8 +197,7 @@ pub const NAMES_SUBSYSTEM: &'static str = "
 	DROP TABLE IF EXISTS names;
 	CREATE TABLE names (
     	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    	name 	TEXT NOT NULL,
-        UNIQUE (name) ON CONFLICT IGNORE
+    	name 	TEXT NOT NULL
 	);
     COMMIT;
 ";
