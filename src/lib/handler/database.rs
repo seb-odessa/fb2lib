@@ -4,7 +4,6 @@ use archive;
 use algorithm;
 
 use sal::Save;
-//use types::Visitor;
 use types::MutVisitor;
 use result::{Fb2Result, Fb2Error};
 use fb2parser::FictionBook;
@@ -21,10 +20,12 @@ use visitor::description::Description;
 use std::path;
 
 
+
 fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb2Result<()>
     where T: types::Visitor<'a, Type=FictionBook> + Save + 'static
 {
     let archives = sal::load_archives(conn)?;
+
     for archive in &archives {
         let name = &archive.name;
         print!("Processing {}", &name);
@@ -32,20 +33,16 @@ fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb
         let status = sal::get_archive_status(&conn, &name, task)?;
         if force || !is_complete(status) {
             visitor.set_status(&conn, &name, sal::STATUS::STARTED)?;
-            print!(".");
             let books = sal::load_books(conn, archive.id)?;
-
             for book in &books {
                 visitor.visit(book)
             }
-
             visitor.set_status(&conn, &name, sal::STATUS::VISITED)?;
 
             let (accepted, visited) = (visitor.get_accepted(), visitor.get_visited());
             match visitor.save(&conn) {
                 Ok(()) => {
                     visitor.set_status(&conn, &name, sal::STATUS::COMPLETE)?;
-                    print!(".");
                 },
                 Err(e) => {
                     visitor.set_status(&conn, &name, sal::STATUS::FAILURE)?;
@@ -53,12 +50,11 @@ fn visit_books<'a, T>(conn: &sal::Connection, force: bool, mut visitor: T) -> Fb
                     return Err(e);
                 }
             }
+
             let added = format!("{}/{}", accepted, visited);
-            println!("Done.\n\t Added {:>11}. Current stored recods count {}",
-                     added,
-                     visitor.get_already_known());
+            println!("\n\t Added {:>11}. Current stored records count {}", added, visitor.get_already_known());
         } else {
-            println!("...Skiped.");
+            println!("...Skipped.");
         }
     }
     Ok(())
@@ -71,7 +67,7 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
         "torrent" => sal::reset(db_file_name, sal::SUBSYSTEM::TORRENT),
         "progress" => sal::reset(db_file_name, sal::SUBSYSTEM::PROGRESS),
         "filter" => sal::reset(db_file_name, sal::SUBSYSTEM::FILTER),
-        "lang" => sal::reset(db_file_name, sal::SUBSYSTEM::LANGUAGE),
+        "langs" => sal::reset(db_file_name, sal::SUBSYSTEM::LANGUAGE),
         "genre" => sal::reset(db_file_name, sal::SUBSYSTEM::GENRE),
         "names" => sal::reset(db_file_name, sal::SUBSYSTEM::NAMES),
         "authors" => sal::reset(db_file_name, sal::SUBSYSTEM::AUTHORS),

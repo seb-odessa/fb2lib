@@ -23,7 +23,7 @@ impl Lang {
 
 impl sal::Save for Lang {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
-        sal::insert_languages(&conn, &self.accepted)?;
+        sal::save_languages(&conn, &self.accepted)?;
         self.already_known = self.already_known.union(&self.accepted).map(|s| s.clone()).collect();
         self.accepted.clear();
         self.counter = 0;

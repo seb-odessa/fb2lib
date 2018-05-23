@@ -1,5 +1,5 @@
 use sal;
-use result::{into, Fb2Result, Fb2Error};
+use result::{into, into_with_trace, Fb2Result, Fb2Error};
 use torrent::Metainfo;
 use types::BookDescription;
 use types::Archive;
@@ -41,10 +41,12 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
             conn.execute_batch(sal::query_drop::SEQUENCES_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::SEQUENCES_SUBSYSTEM).map_err(into)?;
         },
-        sal::SUBSYSTEM::PEOPLE => {
-            conn.execute_batch(sal::query_drop::PEOPLE_SUBSYSTEM).map_err(into)?;
-            conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+        sal::SUBSYSTEM::NAMES => {
+            conn.execute_batch(sal::query_create::NAMES_SUBSYSTEM).map_err(into)?;
         },
+        sal::SUBSYSTEM::AUTHORS => {
+            conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+        }
         sal::SUBSYSTEM::DESCRIPTIONS => {
             conn.execute_batch(sal::query_drop::DESC_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::DESC_SUBSYSTEM).map_err(into)?;
@@ -153,11 +155,10 @@ pub fn get_piece_hash(conn: &Connection, id: i64, index: i64) -> Fb2Result<Optio
 fn get_archive_id(conn: &Connection, metainfo: &Metainfo) -> Fb2Result<i64> {
     let mut stmt = conn.prepare(sal::query_select::ID_BY_HASH).map_err(into)?;
     let rows = stmt.query_map(&[&metainfo.get_info_hash()], |row| row.get(0)).map_err(into)?;
-     for row in rows {
+    for row in rows {
         let id = row.map_err(into)?;
         return Ok(id);
-
-     }
+    }
     conn.execute(sal::query_insert::ARCHIVE, &[
         &metainfo.get_file_name(),
         &metainfo.get_creation_date(),
@@ -179,7 +180,7 @@ pub fn register(db_file_name: &str, metainfo: Metainfo) -> Fb2Result<()> {
         let pieces: &[u8] = metainfo.info.pieces.as_ref();
         let mut index = 0;
         for sha1 in pieces.chunks(20) {
-            stmt.execute(&[&archive_id, &index, &sha1.to_hex()]).map_err(into)?;
+            stmt.query(&[&archive_id, &index, &sha1.to_hex()]).map_err(into)?;
             index += 1;
         }
     }
@@ -282,7 +283,7 @@ pub fn save_people(conn: &Connection, authors: &HashSet<(i64, i64, i64, i64)>) -
     let mut stmt = conn.prepare(sal::query_insert::PEOPLE).map_err(into)?;
     for author in authors {
         let &(ref first_name, ref middle_name, ref last_name, ref nick_name) = author;
-        stmt.execute(&[first_name, middle_name, last_name, nick_name]).map_err(into)?;
+        stmt.query(&[first_name, middle_name, last_name, nick_name]).map_err(into)?;
     }
     Ok(())
 }
@@ -331,31 +332,28 @@ pub fn load_people(conn: &Connection) -> Fb2Result<HashSet<(i64, i64, i64, i64)>
 //    Ok(map)
 //}
 
-fn insert_from_set(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
-    let mut stmt = conn.prepare(sql).map_err(into)?;
+fn save(conn: &Connection, sql: &str, items: &HashSet<String>) -> Fb2Result<()> {
+//    let mut stmt = conn.prepare(sql).map_err(into)?;
     for item in items {
-        match stmt.execute(&[item]).map_err(into) {
-            Ok(_) => {},
-            Err(e) => {println!("\n'{}' -> {}", item, e); return Err(e); }
-        }
+        conn.execute(sql, &[item]).map_err(into_with_trace)?;
     }
     Ok(())
 }
 
-pub fn insert_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {
-    insert_from_set(conn, sal::query_insert::LANGUAGE, langs)
+pub fn save_languages(conn: &Connection, langs: &HashSet<String>) -> Fb2Result<()> {
+    save(conn, sal::query_insert::LANGUAGE, langs)
 }
 
-pub fn insert_titles(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
-    insert_from_set(conn, sal::query_insert::TITLES, titles)
+pub fn save_titles(conn: &Connection, titles: &HashSet<String>) -> Fb2Result<()> {
+    save(conn, sal::query_insert::TITLES, titles)
 }
 
-pub fn insert_sequences(conn: &Connection, sequences: &HashSet<String>) -> Fb2Result<()> {
-    insert_from_set(conn, sal::query_insert::SEQUENCES, sequences)
+pub fn save_sequences(conn: &Connection, sequences: &HashSet<String>) -> Fb2Result<()> {
+    save(conn, sal::query_insert::SEQUENCES, sequences)
 }
 
 pub fn save_names(conn: &Connection, names: &HashSet<String>) -> Fb2Result<()> {
-    insert_from_set(conn, sal::query_insert::NAMES, names)
+    save(conn, sal::query_insert::NAMES, names)
 }
 
 fn select_column(conn: &Connection, sql: &str, col_num: i32) -> Fb2Result<Vec<String>> {
@@ -493,13 +491,13 @@ pub fn load_books(conn: &Connection, archive_id: i64) -> Fb2Result<VecDeque<Fict
     Ok(result)
 }
 //================== Archives ==================
-pub fn load_archives(conn: &Connection) -> Fb2Result<VecDeque<Archive>> {
-    let mut result = VecDeque::new();
+pub fn load_archives(conn: &Connection) -> Fb2Result<Vec<Archive>> {
+    let mut result = Vec::new();
     let mut stmt = conn.prepare(sal::query_select::ARCHIVES).map_err(into)?;
     let mut rows = stmt.query(&[]).map_err(into)?;
     while let Some(row) = rows.next() {
         if let Some(row) = row.ok() {
-            result.push_back(Archive::new(row.get(0), row.get(1)))
+            result.push(Archive::new(row.get(0), row.get(1)))
         }
     }
     Ok(result)

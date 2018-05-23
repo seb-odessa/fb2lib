@@ -142,3 +142,9 @@ impl error::Error for Fb2Error {
 pub fn into<F: Error>(e: F) -> Fb2Error {
     Fb2Error::Custom(e.description().to_string())
 }
+
+pub fn into_with_trace<F: Error>(e: F) -> Fb2Error {
+    let desc = e.description().to_string();
+    println!("{}", &desc);
+    Fb2Error::Custom(desc)
+}

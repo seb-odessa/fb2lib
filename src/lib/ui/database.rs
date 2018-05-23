@@ -10,10 +10,13 @@ const CMD_HELP: &'static str = "Use to work with database structure";
 
 const RESET: &'static str = "reset";
 const RESET_HELP: &'static str = "Re-Initialize database (drop/create tables)";
+
 const LOAD: &'static str = "load";
 const LOAD_HELP: &'static str = "Load data to the database from the archive";
+
 const SHOW: &'static str = "show";
 const SHOW_HELP: &'static str = "Show data from the database";
+
 const LINK: &'static str = "link";
 const LINK_HELP: &'static str = "Make link between records in the database";
 const UNLINK: &'static str = "unlink";
@@ -118,15 +121,15 @@ pub fn handle<'a>(arg: &ArgMatches<'a>) -> Fb2Result<()> {
 
 fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
-        (TORRENT, Some(_)) => handler::database::reset(database, "torrent"),
-        (PROGRESS, Some(_)) => handler::database::reset(database, "progress"),
-        (FILTER, Some(_)) => handler::database::reset(database, "filter"),
-        (LANGS, Some(_)) => handler::database::reset(database, "lang"),
-        (GENRE, Some(_)) => handler::database::reset(database, "genre"),
+        (TORRENT, Some(_)) => handler::database::reset(database, TORRENT),
+        (PROGRESS, Some(_)) => handler::database::reset(database, PROGRESS),
+        (FILTER, Some(_)) => handler::database::reset(database, FILTER),
+        (LANGS, Some(_)) => handler::database::reset(database, LANGS),
+        (GENRE, Some(_)) => handler::database::reset(database, GENRE),
         (NAMES, Some(_)) => handler::database::reset(database, NAMES),
-        (AUTHORS, Some(_)) => handler::database::reset(database, "author"),
-        (TITLES, Some(_)) => handler::database::reset(database, "title"),
-        (SEQUENCES, Some(_)) => handler::database::reset(database, "sequence"),
+        (AUTHORS, Some(_)) => handler::database::reset(database, AUTHORS),
+        (TITLES, Some(_)) => handler::database::reset(database, TITLES),
+        (SEQUENCES, Some(_)) => handler::database::reset(database, SEQUENCES),
         (DESC, Some(_)) => handler::database::reset(database, DESC),
         (_, _) => ui::usage(arg)
     }

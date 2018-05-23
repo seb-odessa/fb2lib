@@ -1,6 +1,5 @@
 use sal;
 use types;
-//use algorithm;
 use result::Fb2Result;
 use visitor::guard::Guard;
 use fb2parser::FictionBook;
@@ -16,12 +15,12 @@ pub struct Name {
 
 impl Name {
 
-    pub fn new(access: Guard, already_known: HashSet<String>) -> Self {
+    pub fn new(guard: Guard, already_known: HashSet<String>) -> Self {
         Self {
             counter: 0,
-            guard: access,
+            guard,
             accepted: HashSet::new(),
-            already_known: already_known,
+            already_known,
         }
     }
 
@@ -36,8 +35,9 @@ impl Name {
 impl sal::Save for Name {
     fn save(&mut self, conn: &sal::Connection) -> Fb2Result<()> {
         sal::save_names(&conn, &self.accepted)?;
-        self.already_known = self.already_known.union(&self.accepted).map(|s| s.clone()).collect();
-        self.accepted.clear();
+        for item in self.accepted.drain() {
+            self.already_known.insert(item);
+        }
         self.counter = 0;
         Ok(())
     }

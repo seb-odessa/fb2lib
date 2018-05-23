@@ -66,7 +66,7 @@ pub use sal::imp::register;
 pub use sal::imp::validate;
 pub use sal::imp::get_piece_hash;
 
-pub use sal::imp::insert_languages;
+pub use sal::imp::save_languages;
 pub use sal::imp::load_languages;
 pub use sal::imp::get_languages_disabled;
 pub use sal::imp::get_languages_enabled;
@@ -94,13 +94,13 @@ pub use sal::imp::select_authors_joined;
 pub use sal::imp::link_authors;
 pub use sal::imp::unlink_authors;
 
-pub use sal::imp::insert_titles;
+pub use sal::imp::save_titles;
 pub use sal::imp::load_titles;
 pub use sal::imp::select_titles_joined;
 pub use sal::imp::link_titles;
 pub use sal::imp::unlink_titles;
 
-pub use sal::imp::insert_sequences;
+pub use sal::imp::save_sequences;
 pub use sal::imp::load_sequences;
 pub use sal::imp::select_sequences_joined;
 pub use sal::imp::link_sequences;

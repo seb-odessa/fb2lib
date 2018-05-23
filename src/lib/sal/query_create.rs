@@ -190,7 +190,17 @@ pub const GENRE_SUBSYSTEM: &'static str = "
     COMMIT;";
 
 #[allow(dead_code)]
-pub const PEOPLE_SUBSYSTEM: &'static str = "
+pub const NAMES_SUBSYSTEM: &'static str = "
+    BEGIN;
+
+    DELETE FROM progress WHERE progress.task_id = 3;
+	DROP TABLE IF EXISTS names;
+	CREATE TABLE names (
+    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    	name 	TEXT NOT NULL,
+        UNIQUE (name) ON CONFLICT IGNORE
+	);
+    COMMIT;
 ";
 
 
@@ -198,13 +208,8 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
 pub const PEOPLE_SUBSYSTEM: &'static str = "
 	BEGIN;
 
-	DROP TABLE IF EXISTS names;
-	CREATE TABLE names (
-    	id 		INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    	name 	TEXT NOT NULL UNIQUE
-	);
-    CREATE INDEX name_idx on names (name ASC);
-
+    DELETE FROM progress WHERE progress.task_id = 6;
+    DROP TABLE IF EXISTS people;
     CREATE TABLE people (
 	    id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    first_name_id   INTEGER NOT NULL,	/* FK to names.id */
@@ -213,7 +218,7 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
         nick_name_id    INTEGER NOT NULL,	/* FK to names.id */
 		UNIQUE (first_name_id, middle_name_id, last_name_id, nick_name_id) ON CONFLICT IGNORE
     );
-
+    DROP TABLE IF EXISTS people_links;
 	CREATE TABLE people_links (
 		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     	src_id 		INTEGER NOT NULL,	/* FK to people.id */
