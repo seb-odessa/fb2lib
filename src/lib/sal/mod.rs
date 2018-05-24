@@ -33,6 +33,7 @@ pub enum SUBSYSTEM {
     GENRE,
     NAMES,
     AUTHORS,
+    LINKS,
     PROGRESS,
 }
 

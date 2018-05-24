@@ -192,7 +192,6 @@ pub const GENRE_SUBSYSTEM: &'static str = "
 #[allow(dead_code)]
 pub const NAMES_SUBSYSTEM: &'static str = "
     BEGIN;
-
     DELETE FROM progress WHERE progress.task_id = 3;
 	DROP TABLE IF EXISTS names;
 	CREATE TABLE names (
@@ -217,69 +216,45 @@ pub const PEOPLE_SUBSYSTEM: &'static str = "
         nick_name_id    INTEGER NOT NULL,	/* FK to names.id */
 		UNIQUE (first_name_id, middle_name_id, last_name_id, nick_name_id) ON CONFLICT IGNORE
     );
-    DROP TABLE IF EXISTS people_links;
-	CREATE TABLE people_links (
-		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    	src_id 		INTEGER NOT NULL,	/* FK to people.id */
-    	dst_id 		INTEGER NOT NULL,	/* FK to people.id */
-    	version_id 	INTEGER NOT NULL /* FK to versions.id */
-	);
-/*
+
+    DROP VIEW IF EXISTS authors;
 	CREATE VIEW IF NOT EXISTS authors AS
 		SELECT
-			id,
-			trim(trim(last_name) || ' ' || trim(first_name) || ' ' || trim(middle_name) || ' ' || trim(nickname)) AS name,
-			last_name,
-			first_name,
-			middle_name,
-			nickname
-		FROM people;
+	        p.id as id,
+	        l.name || ' ' || f.name || ' ' || m.name as full_name,
+	        f.name as first_name,
+	        m.name as middle_name,
+	        l.name as last_name,
+	        n.name as nick_name
+        FROM people p
+	        JOIN names f on (p.first_name_id = f.id)
+	        JOIN names m on (p.middle_name_id = m.id)
+	        JOIN names l on (p.last_name_id = l.id)
+	        JOIN names n on (p.nick_name_id = n.id);
 
-	CREATE VIEW authors_joined AS
-		SELECT A.id, A.name AS src_name, ifnull(B.name, A.name) AS dst_name
-		FROM authors A LEFT JOIN people_links ON src_id = A.id LEFT JOIN authors B ON dst_id = B.id;
-*/
     COMMIT;";
 
 
 #[allow(dead_code)]
 pub const TITLES_SUBSYSTEM: &'static str = "
 	BEGIN;
+    DROP TABLE IF EXISTS titles;
 	CREATE TABLE titles (
    		id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    title       	TEXT NOT NULL,
 		UNIQUE (title) ON CONFLICT IGNORE
     );
-	CREATE TABLE titles_links (
-		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    	src_id 		INTEGER NOT NULL,	/* FK to titles.id */
-    	dst_id 		INTEGER NOT NULL,	/* FK to titles.id */
-    	version_id 	INTEGER NOT NULL /* FK to versions.id */
-	);
-	CREATE VIEW titles_joined AS
-		SELECT A.id, A.title AS src_title, ifnull(B.title, A.title) AS dst_title
-		FROM titles A LEFT JOIN titles_links ON src_id = A.id LEFT JOIN titles B ON dst_id = B.id;
-
     COMMIT;";
 
 #[allow(dead_code)]
 pub const SEQUENCES_SUBSYSTEM: &'static str = "
 	BEGIN;
+    DROP TABLE IF EXISTS sequences;
 	CREATE TABLE sequences (
    		id  	        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    sequence       	TEXT NOT NULL,
 		UNIQUE (sequence) ON CONFLICT IGNORE
     );
-	CREATE TABLE sequences_links (
-		id  	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    	src_id 		INTEGER NOT NULL,	/* FK to sequences.id */
-    	dst_id 		INTEGER NOT NULL,	/* FK to sequences.id */
-    	version_id 	INTEGER NOT NULL /* FK to versions.id */
-	);
-	CREATE VIEW sequences_joined AS
-		SELECT A.id, A.sequence AS src_sequence, ifnull(B.sequence, A.sequence) AS dst_sequence
-		FROM sequences A LEFT JOIN sequences_links ON src_id = A.id LEFT JOIN sequences B ON dst_id = B.id;
-
     COMMIT;";
 
 #[allow(dead_code)]
@@ -298,6 +273,68 @@ pub const VERSION_SUBSYSTEM: &'static str = "
     COMMIT;";
 
 
+pub const LINKS_SUBSYSTEM: &'static str = "
+    BEGIN;
+    DROP TABLE IF EXISTS people_links;
+	CREATE TABLE people_links (
+    	src_id 		INTEGER NOT NULL,	/* FK to people.id */
+    	dst_id 		INTEGER NOT NULL,	/* FK to people.id */
+        UNIQUE (src_id, dst_id) ON CONFLICT IGNORE
+	);
+
+    DROP VIEW IF EXISTS people_joined;
+    CREATE VIEW people_joined AS
+        SELECT
+	        ifnull(B.id,  A.id) AS id,
+	        ifnull(B.first_name_id,  A.first_name_id) AS first_name_id,
+	        ifnull(B.middle_name_id,  A.middle_name_id) AS middle_name_id,
+	        ifnull(B.last_name_id,  A.last_name_id) AS last_name_id,
+	        ifnull(B.nick_name_id,  A.nick_name_id) AS nick_name_id
+        FROM people A LEFT JOIN people_links ON src_id = A.id LEFT JOIN people B ON dst_id = B.id;
+
+    DROP VIEW IF EXISTS authors_joined;
+    CREATE VIEW IF NOT EXISTS authors_joined AS
+		SELECT DISTINCT
+	        p.id as id,
+	        l.name || ' ' || f.name || ' ' || m.name as full_name,
+	        f.name as first_name,
+	        m.name as middle_name,
+	        l.name as last_name,
+	        n.name as nick_name
+        FROM people_joined p
+	        JOIN names f on (p.first_name_id = f.id)
+	        JOIN names m on (p.middle_name_id = m.id)
+	        JOIN names l on (p.last_name_id = l.id)
+	        JOIN names n on (p.nick_name_id = n.id);
+
+    DROP TABLE IF EXISTS sequences_links;
+	CREATE TABLE sequences_links (
+    	src_id 		INTEGER NOT NULL,	/* FK to sequences.id */
+    	dst_id 		INTEGER NOT NULL,	/* FK to sequences.id */
+        UNIQUE (src_id, dst_id) ON CONFLICT IGNORE
+	);
+
+    DROP VIEW IF EXISTS sequences_joined;
+	CREATE VIEW sequences_joined AS
+		SELECT DISTINCT
+	        ifnull(B.id, A.id) AS id,
+	        ifnull(B.sequence, A.sequence) AS sequence
+        FROM sequences A LEFT JOIN sequences_links ON src_id = A.id LEFT JOIN sequences B ON dst_id = B.id;
+
+    DROP TABLE IF EXISTS titles_links;
+	CREATE TABLE titles_links (
+    	src_id 		INTEGER NOT NULL,	/* FK to titles.id */
+    	dst_id 		INTEGER NOT NULL,	/* FK to titles.id */
+        UNIQUE (src_id, dst_id) ON CONFLICT IGNORE
+	);
+
+    DROP VIEW IF EXISTS titles_joined;
+	CREATE VIEW titles_joined AS
+		SELECT DISTINCT
+	        ifnull(B.id, A.id) AS id,
+	        ifnull(B.title, A.title) AS title
+        FROM titles A LEFT JOIN titles_links ON src_id = A.id LEFT JOIN titles B ON dst_id = B.id;
+    COMMIT;";
 
 
 /*********************************************************************************************************************
@@ -379,6 +416,7 @@ Book
 #[allow(dead_code)]
 pub const DESC_SUBSYSTEM: &'static str = "
 	BEGIN;
+
 	CREATE TABLE books (
         id              	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
         archive_id      	INTEGER NOT NULL,       /* FK to archives.id */

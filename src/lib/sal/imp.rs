@@ -4,7 +4,6 @@ use torrent::Metainfo;
 use types::BookDescription;
 use types::Archive;
 use types::Sizes;
-use types::TimeMeasure;
 use fb2parser::FictionBook;
 
 pub use rusqlite::Connection;
@@ -14,6 +13,10 @@ use std::iter::FromIterator;
 use std::collections::HashSet;
 use std::collections::HashMap;
 use std::collections::VecDeque;
+
+#[allow(unused_imports)]
+use types::TimeMeasure;
+
 
 pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
     let conn = Connection::open(db_file_name).map_err(into)?;
@@ -35,11 +38,9 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
             conn.execute_batch(sal::query_init::INSERT_GENRES).map_err(into)?;
         },
         sal::SUBSYSTEM::TITLES => {
-            conn.execute_batch(sal::query_drop::TITLES_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::TITLES_SUBSYSTEM).map_err(into)?;
         },
         sal::SUBSYSTEM::SEQUENCES => {
-            conn.execute_batch(sal::query_drop::SEQUENCES_SUBSYSTEM).map_err(into)?;
             conn.execute_batch(sal::query_create::SEQUENCES_SUBSYSTEM).map_err(into)?;
         },
         sal::SUBSYSTEM::NAMES => {
@@ -47,6 +48,9 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
         },
         sal::SUBSYSTEM::AUTHORS => {
             conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+        }
+        sal::SUBSYSTEM::LINKS => {
+            conn.execute_batch(sal::query_create::LINKS_SUBSYSTEM).map_err(into)?;
         }
         sal::SUBSYSTEM::DESCRIPTIONS => {
             conn.execute_batch(sal::query_drop::DESC_SUBSYSTEM).map_err(into)?;

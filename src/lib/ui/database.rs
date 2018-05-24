@@ -33,7 +33,9 @@ const GENRE_HELP: &'static str = "Handle book genres";
 const LANGS: &'static str = "langs";
 const LANGS_HELP: &'static str = "Handle book languages";
 const NAMES: &'static str = "names";
-const NAMES_HELP: &'static str = "Handle people names";
+const NAMES_HELP: &'static str = "Handle names";
+const LINKS: &'static str = "links";
+const LINKS_HELP: &'static str = "Handle links relations";
 
 
 const AUTHORS: &'static str = "authors";
@@ -76,6 +78,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
                 .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP))
                 .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP))
                 .subcommand(SubCommand::with_name(DESC).about(DESC_HELP))
+                .subcommand(SubCommand::with_name(LINKS).about(LINKS_HELP))
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
@@ -131,6 +134,7 @@ fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (TITLES, Some(_)) => handler::database::reset(database, TITLES),
         (SEQUENCES, Some(_)) => handler::database::reset(database, SEQUENCES),
         (DESC, Some(_)) => handler::database::reset(database, DESC),
+        (LINKS, Some(_)) => handler::database::reset(database, LINKS),
         (_, _) => ui::usage(arg)
     }
 }
