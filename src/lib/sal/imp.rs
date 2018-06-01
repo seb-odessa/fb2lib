@@ -43,11 +43,13 @@ pub fn reset(db_file_name: &str, system: sal::SUBSYSTEM) -> Fb2Result<()> {
         sal::SUBSYSTEM::SEQUENCES => {
             conn.execute_batch(sal::query_create::SEQUENCES_SUBSYSTEM).map_err(into)?;
         },
-        sal::SUBSYSTEM::NAMES => {
-            conn.execute_batch(sal::query_create::NAMES_SUBSYSTEM).map_err(into)?;
-        },
+//        sal::SUBSYSTEM::NAMES => {
+//            conn.execute_batch(sal::query_create::NAMES_SUBSYSTEM).map_err(into)?;
+//        },
         sal::SUBSYSTEM::AUTHORS => {
-            conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM).map_err(into)?;
+            conn.execute_batch(sal::query_create::NAMES_SUBSYSTEM)
+                .and_then(|()|conn.execute_batch(sal::query_create::PEOPLE_SUBSYSTEM))
+                .map_err(into)?;
         }
         sal::SUBSYSTEM::LINKS => {
             conn.execute_batch(sal::query_create::LINKS_SUBSYSTEM).map_err(into)?;

@@ -3,19 +3,27 @@ use handler;
 use result::Fb2Result;
 use clap::{App, Arg, SubCommand, ArgMatches};
 
-// @todo Add method for storing FictionBook descriptions into the DB. This will allow
-
 pub const CMD: &'static str = "database";
-const CMD_HELP: &'static str = "Use to work with database structure";
+const CMD_HELP: &'static str = "Use to manage data in the database";
 
 const RESET: &'static str = "reset";
 const RESET_HELP: &'static str = "Re-Initialize database (drop/create tables)";
+const RESET_TORRENT_HELP: &'static str = "Reset database torrents subsystem";
+
 
 const LOAD: &'static str = "load";
 const LOAD_HELP: &'static str = "Load data to the database from the archive";
+const LOAD_DESC_HELP: &'static str = "Load FictionBook description blob into database from archive";
+const LOAD_LANG_HELP: &'static str = "Parse FictionBook blobs and fill language dictionary";
+const LOAD_SQNS_HELP: &'static str = "Parse FictionBook blobs and fill book sequences dictionary";
+const LOAD_TTLS_HELP: &'static str = "Parse FictionBook blobs and fill book titles dictionary";
+const LOAD_AUTH_HELP: &'static str = "Parse FictionBook blobs and fill book authors dictionary in the database";
+
 
 const SHOW: &'static str = "show";
 const SHOW_HELP: &'static str = "Show data from the database";
+
+
 
 const LINK: &'static str = "link";
 const LINK_HELP: &'static str = "Make link between records in the database";
@@ -23,7 +31,7 @@ const UNLINK: &'static str = "unlink";
 const UNLINK_HELP: &'static str = "Drop link between records in the database";
 
 const TORRENT: &'static str = "torrent";
-const TORRENT_HELP: &'static str = "Handle torrents";
+
 const PROGRESS: &'static str = "progress";
 const PROGRESS_HELP: &'static str = "Handle progress subsystem";
 const FILTER: &'static str = "filter";
@@ -68,7 +76,7 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
         SubCommand::with_name(CMD).about(CMD_HELP).arg(database)
         .subcommand(
             SubCommand::with_name(RESET).about(RESET_HELP)
-                .subcommand(SubCommand::with_name(TORRENT).about(TORRENT_HELP))
+                .subcommand(SubCommand::with_name(TORRENT).about(RESET_TORRENT_HELP))
                 .subcommand(SubCommand::with_name(PROGRESS).about(PROGRESS_HELP))
                 .subcommand(SubCommand::with_name(FILTER).about(FILTER_HELP))
                 .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP))
@@ -82,12 +90,11 @@ pub fn add<'a, 'b>(app: App<'a, 'b>) -> App<'a, 'b> {
         )
         .subcommand(
             SubCommand::with_name(LOAD).about(LOAD_HELP)
-            .subcommand(SubCommand::with_name(LANGS).about(LANGS_HELP).arg(force.clone()))
-            .subcommand(SubCommand::with_name(AUTHORS).about(AUTHORS_HELP).arg(force.clone()))
-            .subcommand(SubCommand::with_name(SEQUENCES).about(SEQUENCES_HELP).arg(force.clone()))
-            .subcommand(SubCommand::with_name(TITLES).about(TITLES_HELP).arg(force.clone()))
-            .subcommand(SubCommand::with_name(NAMES).about(NAMES_HELP).arg(force.clone()))
-            .subcommand(SubCommand::with_name(DESC).about(DESC_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(DESC).about(LOAD_DESC_HELP).arg(arch.clone()))
+            .subcommand(SubCommand::with_name(LANGS).about(LOAD_LANG_HELP).arg(force.clone()))
+            .subcommand(SubCommand::with_name(AUTHORS).about(LOAD_AUTH_HELP).arg(force.clone()))
+            .subcommand(SubCommand::with_name(SEQUENCES).about(LOAD_SQNS_HELP).arg(force.clone()))
+            .subcommand(SubCommand::with_name(TITLES).about(LOAD_TTLS_HELP).arg(force.clone()))
         )
         .subcommand(
             SubCommand::with_name(SHOW).about(SHOW_HELP)
@@ -129,7 +136,7 @@ fn handle_reset<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
         (FILTER, Some(_)) => handler::database::reset(database, FILTER),
         (LANGS, Some(_)) => handler::database::reset(database, LANGS),
         (GENRE, Some(_)) => handler::database::reset(database, GENRE),
-        (NAMES, Some(_)) => handler::database::reset(database, NAMES),
+//        (NAMES, Some(_)) => handler::database::reset(database, NAMES),
         (AUTHORS, Some(_)) => handler::database::reset(database, AUTHORS),
         (TITLES, Some(_)) => handler::database::reset(database, TITLES),
         (SEQUENCES, Some(_)) => handler::database::reset(database, SEQUENCES),
@@ -143,7 +150,8 @@ fn handle_load<'a>(database: &str, arg: &ArgMatches<'a>) -> Fb2Result<()> {
     match arg.subcommand() {
         (AUTHORS, Some(arg)) => {
             let force = arg.is_present(FORCE);
-            handler::database::load_authors(database, force)
+            handler::database::load_names(database, force)
+                .and_then(|()|handler::database::load_authors(database, force))
         }
         (LANGS, Some(arg)) => {
             let force = arg.is_present(FORCE);

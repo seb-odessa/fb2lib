@@ -1,10 +1,11 @@
 extern crate lib;
 extern crate clap;
+include!(concat!(env!("OUT_DIR"), "/version.rs"));
+
 
 use clap::{App, AppSettings};
 use lib::ui;
 
-const VERSION: &'static str = "v0.6.5";
 const AUTHOR: &'static str = "seb <seb@ukr.net>";
 const ABOUT: &'static str = "FictionBook Library Archive Manager";
 
@@ -18,7 +19,7 @@ fn main() {
         .unwrap();
 
     let app = App::new(program)
-        .version(VERSION)
+        .version(get_version())
         .author(AUTHOR)
         .about(ABOUT)
         .setting(AppSettings::ArgRequiredElseHelp);

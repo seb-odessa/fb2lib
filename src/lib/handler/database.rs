@@ -69,7 +69,7 @@ pub fn reset(db_file_name: &str, subsystem: &str) -> Fb2Result<()> {
         "filter" => sal::reset(db_file_name, sal::SUBSYSTEM::FILTER),
         "langs" => sal::reset(db_file_name, sal::SUBSYSTEM::LANGUAGE),
         "genre" => sal::reset(db_file_name, sal::SUBSYSTEM::GENRE),
-        "names" => sal::reset(db_file_name, sal::SUBSYSTEM::NAMES),
+//        "names" => sal::reset(db_file_name, sal::SUBSYSTEM::NAMES),
         "authors" => sal::reset(db_file_name, sal::SUBSYSTEM::AUTHORS),
         "sequences" => sal::reset(db_file_name, sal::SUBSYSTEM::SEQUENCES),
         "titles" => sal::reset(db_file_name, sal::SUBSYSTEM::TITLES),
@@ -102,7 +102,6 @@ pub fn load_titles(db: &str, force: bool) -> Fb2Result<()> {
     visit_books(conn, force, visitor)
 }
 
-
 pub fn load_authors(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
     let access = create_access_guard(&conn)?;
@@ -111,7 +110,6 @@ pub fn load_authors(db: &str, force: bool) -> Fb2Result<()> {
     let visitor = Author::new(access, names, known);
     visit_books(conn, force, visitor)
 }
-
 
 pub fn load_sequences(db: &str, force: bool) -> Fb2Result<()> {
     let conn = sal::get_connection(db)?;
